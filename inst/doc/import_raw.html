@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<meta name="author" content="Benjamin Becker" />
+
+<meta name="date" content="2020-11-23" />
+
+<title>Handling meta data</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+<script>// Hide empty <a> tag within highlighted CodeBlock for screen reader accessibility (see https://github.com/jgm/pandoc/issues/6352#issuecomment-626106786) -->
+// v0.0.1
+// Written by JooYoung Seo (jooyoung@psu.edu) and Atsushi Yasumoto on June 1st, 2020.
+
+document.addEventListener('DOMContentLoaded', function() {
+  const codeList = document.getElementsByClassName("sourceCode");
+  for (var i = 0; i < codeList.length; i++) {
+    var linkList = codeList[i].getElementsByTagName('a');
+    for (var j = 0; j < linkList.length; j++) {
+      if (linkList[j].innerHTML === "") {
+        linkList[j].setAttribute('aria-hidden', 'true');
+      }
+    }
+  }
+});
+</script>
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Handling meta data</h1>
+<h4 class="author">Benjamin Becker</h4>
+<h4 class="date">2020-11-23</h4>
+
+
+
+<p>When trying to understand data, most often not only the actual data is required, but also so called meta data. Meta data usually includes:</p>
+<ul>
+<li>variable labels: Labels describing, what a variable in the data represents</li>
+<li>value labels: Labels describing, what a certain value on a certain variable represents</li>
+</ul>
+<p>While the <code>data.frame</code> class in <code>R</code> supports value labels to a certain degree with the <code>factor</code> class, its functionality is limited. Other data formats like <code>.xlsx</code> or <code>.csv</code> support no meta data at all. Commercial software like <code>SPSS</code> provides such functionality but can not compete with the various tools for analyzing data that <code>R</code> provides.</p>
+<p><code>eatGADS</code> is an <code>R</code> package that was developed to bridge this gap. Its main purpose is providing a data format in <code>R</code> specifically designed for storing meta data together with data in on place. Therefore it provides an <code>S3</code> class called <code>GADSdat</code>. The following vignette concentrates on how to import data into the <code>GADSdat</code> format and work with it in the <code>R</code> environment. In collaboration with the <code>IQB Forschungsdatenzentrum (FDZ)</code> the package can also be used to distribute data.</p>
+<p>Note that <code>eatGADS</code> also allows the handling of large hierarchical data structures via relational data bases. This functionality is explained in more detail in an additional vignette.</p>
+<div id="setup" class="section level2">
+<h2>Setup</h2>
+<p>The package can be installed from GitHub. Note that older R versions had issues with installations from online repositories like GitHub. <code>R</code> version <code>&gt; 3.6.0</code> should work without any issues.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a>devtools<span class="op">::</span><span class="kw">install_github</span>(<span class="st">&quot;beckerbenj/eatGADS&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a><span class="co"># loading the package</span></span>
+<span id="cb2-2"><a href="#cb2-2"></a><span class="kw">library</span>(eatGADS)</span></code></pre></div>
+</div>
+<div id="importing-data-into-the-gadsdat-format" class="section level2">
+<h2>Importing data into the <code>GADSdat</code> format</h2>
+<div id="importing-from-spss" class="section level3">
+<h3>Importing from SPSS</h3>
+<p><code>R</code> offers a variety of tools to import data from all sorts of data formats. <code>SPSS</code> data (<code>.sav</code> files) can be imported directly into the <code>GADSdat</code> format, with <code>haven</code> used as a backend. Note that this is the easiest way to import data into the <code>GADSdat</code> format.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="co"># importing an SPSS file</span></span>
+<span id="cb3-2"><a href="#cb3-2"></a>gads &lt;-<span class="st"> </span><span class="kw">import_spss</span>(<span class="st">&quot;path/example.sav&quot;</span>)</span></code></pre></div>
+</div>
+<div id="importing-from-excel-etc." class="section level3">
+<h3>Importing from Excel etc.</h3>
+<p>All other file types should be imported into <code>R</code> first and then supplied as <code>data.frames</code> to <code>import_raw</code>. Below is a small selection of functions that import data as <code>data.frames</code>. For an extensive overview of importing functions using the package <code>readr</code> see also <a href="https://r4ds.had.co.nz/data-import.html">this book chapter</a>, while the package <code>readxl</code> is explained in more detail on this [homepage] (<a href="https://readxl.tidyverse.org/" class="uri">https://readxl.tidyverse.org/</a>). As these files are plain data files, meta data has to be supplied as separate data sheets.</p>
+<p>Note that none of the <code>data.frames</code> can contain variables of the class <code>factor</code>, as this in itself constitutes meta data. If using base <code>R</code> to import data make sure to use the argument <code>stringsAsFactors = FALSE</code>. If necessary, convert <code>factors</code> to character via <code>as.character</code>.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="co"># importing text files</span></span>
+<span id="cb4-2"><a href="#cb4-2"></a>input_txt &lt;-<span class="st"> </span><span class="kw">read.table</span>(<span class="st">&quot;path/example.txt&quot;</span>, <span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>)</span>
+<span id="cb4-3"><a href="#cb4-3"></a><span class="co"># importing German csv files (; separated)</span></span>
+<span id="cb4-4"><a href="#cb4-4"></a>input_csv &lt;-<span class="st"> </span><span class="kw">read.csv2</span>(<span class="st">&quot;path/example.csv&quot;</span>, <span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>)</span>
+<span id="cb4-5"><a href="#cb4-5"></a><span class="co"># importing Excel files</span></span>
+<span id="cb4-6"><a href="#cb4-6"></a>input_xlsx &lt;-<span class="st"> </span>readxl<span class="op">::</span><span class="kw">read_excel</span>(<span class="st">&quot;path/example.xlsx&quot;</span>)</span></code></pre></div>
+<p><code>import_raw</code> takes three separate <code>data.frames</code> as input. The actual data set (<code>df</code>), the variable labels (<code>varLabels</code>) and the value labels (<code>valLabels</code>). These three objects have to be supplied in a very specific format.</p>
+<p>The <code>varLabels</code> object has to contain two variables: <code>varName</code>, which should exactly correspond to the variable names in <code>df</code> and <code>varLabels</code> which should contain the desired variable labels as strings. Note that this <code>data.frame</code> should contain as many rows as there are variables in <code>df</code>.</p>
+<p>The optional <code>valLabels</code> object has to contain 4 variables: <code>varName</code>, which should exactly correspond to the variable names in <code>df</code>; <code>values</code>, which should correspond to the respective values in <code>df</code> and has to be a numeric vector (labels for character vectors are currently not supported); <code>valLabels</code>, which should contain the value labels as strings and <code>missings</code>, a column indicating whether the value indicates a missing value. Valid values for <code>missings</code> are <code>&quot;valid&quot;</code> = no missing code and <code>&quot;miss&quot;</code> = missing code. Note that this <code>data.frame</code> can not contain any <code>varNames</code> that are not variables in <code>df</code>. However, not all variables in <code>df</code> have to occur in <code>valLabels</code>.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="co"># Example data set</span></span>
+<span id="cb5-2"><a href="#cb5-2"></a>df &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">ID =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">4</span>, <span class="dt">sex =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>), </span>
+<span id="cb5-3"><a href="#cb5-3"></a>                 <span class="dt">forename =</span> <span class="kw">c</span>(<span class="st">&quot;Tim&quot;</span>, <span class="st">&quot;Bill&quot;</span>, <span class="st">&quot;Ann&quot;</span>, <span class="st">&quot;Chris&quot;</span>), <span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>)</span>
+<span id="cb5-4"><a href="#cb5-4"></a><span class="co"># Example variable labels</span></span>
+<span id="cb5-5"><a href="#cb5-5"></a>varLabels &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">varName =</span> <span class="kw">c</span>(<span class="st">&quot;ID&quot;</span>, <span class="st">&quot;sex&quot;</span>, <span class="st">&quot;forename&quot;</span>), </span>
+<span id="cb5-6"><a href="#cb5-6"></a>                        <span class="dt">varLabel =</span> <span class="kw">c</span>(<span class="st">&quot;Person Identifier&quot;</span>, <span class="st">&quot;Sex as self reported&quot;</span>, </span>
+<span id="cb5-7"><a href="#cb5-7"></a>                                     <span class="st">&quot;first name as reported by teacher&quot;</span>), </span>
+<span id="cb5-8"><a href="#cb5-8"></a>                        <span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>)</span>
+<span id="cb5-9"><a href="#cb5-9"></a><span class="co"># Example value labels</span></span>
+<span id="cb5-10"><a href="#cb5-10"></a>valLabels &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">varName =</span> <span class="kw">rep</span>(<span class="st">&quot;sex&quot;</span>, <span class="dv">3</span>), </span>
+<span id="cb5-11"><a href="#cb5-11"></a>                        <span class="dt">value =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">-99</span>), </span>
+<span id="cb5-12"><a href="#cb5-12"></a>                        <span class="dt">valLabel =</span> <span class="kw">c</span>(<span class="st">&quot;male&quot;</span>, <span class="st">&quot;female&quot;</span>, <span class="st">&quot;missing - omission&quot;</span>), </span>
+<span id="cb5-13"><a href="#cb5-13"></a>                        <span class="dt">missings =</span> <span class="kw">c</span>(<span class="st">&quot;valid&quot;</span>, <span class="st">&quot;valid&quot;</span>, <span class="st">&quot;miss&quot;</span>), <span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>)</span>
+<span id="cb5-14"><a href="#cb5-14"></a></span>
+<span id="cb5-15"><a href="#cb5-15"></a>df</span>
+<span id="cb5-16"><a href="#cb5-16"></a><span class="co">#&gt;   ID sex forename</span></span>
+<span id="cb5-17"><a href="#cb5-17"></a><span class="co">#&gt; 1  1   0      Tim</span></span>
+<span id="cb5-18"><a href="#cb5-18"></a><span class="co">#&gt; 2  2   0     Bill</span></span>
+<span id="cb5-19"><a href="#cb5-19"></a><span class="co">#&gt; 3  3   1      Ann</span></span>
+<span id="cb5-20"><a href="#cb5-20"></a><span class="co">#&gt; 4  4   1    Chris</span></span>
+<span id="cb5-21"><a href="#cb5-21"></a>varLabels</span>
+<span id="cb5-22"><a href="#cb5-22"></a><span class="co">#&gt;    varName                          varLabel</span></span>
+<span id="cb5-23"><a href="#cb5-23"></a><span class="co">#&gt; 1       ID                 Person Identifier</span></span>
+<span id="cb5-24"><a href="#cb5-24"></a><span class="co">#&gt; 2      sex              Sex as self reported</span></span>
+<span id="cb5-25"><a href="#cb5-25"></a><span class="co">#&gt; 3 forename first name as reported by teacher</span></span>
+<span id="cb5-26"><a href="#cb5-26"></a>valLabels</span>
+<span id="cb5-27"><a href="#cb5-27"></a><span class="co">#&gt;   varName value           valLabel missings</span></span>
+<span id="cb5-28"><a href="#cb5-28"></a><span class="co">#&gt; 1     sex     0               male    valid</span></span>
+<span id="cb5-29"><a href="#cb5-29"></a><span class="co">#&gt; 2     sex     1             female    valid</span></span>
+<span id="cb5-30"><a href="#cb5-30"></a><span class="co">#&gt; 3     sex   -99 missing - omission     miss</span></span>
+<span id="cb5-31"><a href="#cb5-31"></a></span>
+<span id="cb5-32"><a href="#cb5-32"></a><span class="co"># import </span></span>
+<span id="cb5-33"><a href="#cb5-33"></a>gads &lt;-<span class="st"> </span><span class="kw">import_raw</span>(<span class="dt">df =</span> df, <span class="dt">varLabels =</span> varLabels, <span class="dt">valLabels =</span> valLabels)</span></code></pre></div>
+</div>
+</div>
+<div id="gadsdat-class" class="section level2">
+<h2><code>GADSdat</code> class</h2>
+<p>The resulting object is of the class <code>GADSdat</code> and contains a data sheet and a meta data sheet.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a><span class="co"># Inpsect resulting object </span></span>
+<span id="cb6-2"><a href="#cb6-2"></a>gads </span>
+<span id="cb6-3"><a href="#cb6-3"></a><span class="co">#&gt; $dat</span></span>
+<span id="cb6-4"><a href="#cb6-4"></a><span class="co">#&gt;   ID sex forename</span></span>
+<span id="cb6-5"><a href="#cb6-5"></a><span class="co">#&gt; 1  1   0      Tim</span></span>
+<span id="cb6-6"><a href="#cb6-6"></a><span class="co">#&gt; 2  2   0     Bill</span></span>
+<span id="cb6-7"><a href="#cb6-7"></a><span class="co">#&gt; 3  3   1      Ann</span></span>
+<span id="cb6-8"><a href="#cb6-8"></a><span class="co">#&gt; 4  4   1    Chris</span></span>
+<span id="cb6-9"><a href="#cb6-9"></a><span class="co">#&gt; </span></span>
+<span id="cb6-10"><a href="#cb6-10"></a><span class="co">#&gt; $labels</span></span>
+<span id="cb6-11"><a href="#cb6-11"></a><span class="co">#&gt;           varName                          varLabel format display_width</span></span>
+<span id="cb6-12"><a href="#cb6-12"></a><span class="co">#&gt; ID             ID                 Person Identifier   &lt;NA&gt;            NA</span></span>
+<span id="cb6-13"><a href="#cb6-13"></a><span class="co">#&gt; sex           sex              Sex as self reported   &lt;NA&gt;            NA</span></span>
+<span id="cb6-14"><a href="#cb6-14"></a><span class="co">#&gt; 4             sex              Sex as self reported   &lt;NA&gt;            NA</span></span>
+<span id="cb6-15"><a href="#cb6-15"></a><span class="co">#&gt; 5             sex              Sex as self reported   &lt;NA&gt;            NA</span></span>
+<span id="cb6-16"><a href="#cb6-16"></a><span class="co">#&gt; forename forename first name as reported by teacher   &lt;NA&gt;            NA</span></span>
+<span id="cb6-17"><a href="#cb6-17"></a><span class="co">#&gt;          labeled value           valLabel missings</span></span>
+<span id="cb6-18"><a href="#cb6-18"></a><span class="co">#&gt; ID            no    NA               &lt;NA&gt;     &lt;NA&gt;</span></span>
+<span id="cb6-19"><a href="#cb6-19"></a><span class="co">#&gt; sex          yes     0               male    valid</span></span>
+<span id="cb6-20"><a href="#cb6-20"></a><span class="co">#&gt; 4            yes     1             female    valid</span></span>
+<span id="cb6-21"><a href="#cb6-21"></a><span class="co">#&gt; 5            yes   -99 missing - omission     miss</span></span>
+<span id="cb6-22"><a href="#cb6-22"></a><span class="co">#&gt; forename      no    NA               &lt;NA&gt;     &lt;NA&gt;</span></span>
+<span id="cb6-23"><a href="#cb6-23"></a><span class="co">#&gt; </span></span>
+<span id="cb6-24"><a href="#cb6-24"></a><span class="co">#&gt; attr(,&quot;class&quot;)</span></span>
+<span id="cb6-25"><a href="#cb6-25"></a><span class="co">#&gt; [1] &quot;GADSdat&quot; &quot;list&quot;</span></span></code></pre></div>
+<div id="saving-gadsdat-objects" class="section level3">
+<h3>Saving <code>GADSdat</code> objects</h3>
+<p><code>GADSdat</code> objects can for example be saved as <code>RDS</code> files. This is also the preferred data format for distributing <code>GADSdat</code> objects to the <code>FDZ</code>.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="co"># Inpsect resulting object </span></span>
+<span id="cb7-2"><a href="#cb7-2"></a><span class="kw">saveRDS</span>(gads, <span class="st">&quot;path/gads.RDS&quot;</span>)</span></code></pre></div>
+</div>
+<div id="using-gadsdat-objects-in-r" class="section level3">
+<h3>Using <code>GADSdat</code> objects in R</h3>
+<p><code>eatGADS</code> provides convenient functions for extracting data and meta data from <code>GADSdat</code> objects. <code>extractMeta</code> is used to access the meta data for specific variables (or all variables, if no specific variable name is provided).</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a><span class="co"># Inpsect resulting object </span></span>
+<span id="cb8-2"><a href="#cb8-2"></a><span class="kw">extractMeta</span>(gads, <span class="dt">vars =</span> <span class="kw">c</span>(<span class="st">&quot;sex&quot;</span>))</span>
+<span id="cb8-3"><a href="#cb8-3"></a><span class="co">#&gt;     varName             varLabel format display_width labeled value</span></span>
+<span id="cb8-4"><a href="#cb8-4"></a><span class="co">#&gt; sex     sex Sex as self reported   &lt;NA&gt;            NA     yes     0</span></span>
+<span id="cb8-5"><a href="#cb8-5"></a><span class="co">#&gt; 4       sex Sex as self reported   &lt;NA&gt;            NA     yes     1</span></span>
+<span id="cb8-6"><a href="#cb8-6"></a><span class="co">#&gt; 5       sex Sex as self reported   &lt;NA&gt;            NA     yes   -99</span></span>
+<span id="cb8-7"><a href="#cb8-7"></a><span class="co">#&gt;               valLabel missings</span></span>
+<span id="cb8-8"><a href="#cb8-8"></a><span class="co">#&gt; sex               male    valid</span></span>
+<span id="cb8-9"><a href="#cb8-9"></a><span class="co">#&gt; 4               female    valid</span></span>
+<span id="cb8-10"><a href="#cb8-10"></a><span class="co">#&gt; 5   missing - omission     miss</span></span>
+<span id="cb8-11"><a href="#cb8-11"></a><span class="kw">extractMeta</span>(gads)</span>
+<span id="cb8-12"><a href="#cb8-12"></a><span class="co">#&gt;           varName                          varLabel format display_width</span></span>
+<span id="cb8-13"><a href="#cb8-13"></a><span class="co">#&gt; ID             ID                 Person Identifier   &lt;NA&gt;            NA</span></span>
+<span id="cb8-14"><a href="#cb8-14"></a><span class="co">#&gt; sex           sex              Sex as self reported   &lt;NA&gt;            NA</span></span>
+<span id="cb8-15"><a href="#cb8-15"></a><span class="co">#&gt; 4             sex              Sex as self reported   &lt;NA&gt;            NA</span></span>
+<span id="cb8-16"><a href="#cb8-16"></a><span class="co">#&gt; 5             sex              Sex as self reported   &lt;NA&gt;            NA</span></span>
+<span id="cb8-17"><a href="#cb8-17"></a><span class="co">#&gt; forename forename first name as reported by teacher   &lt;NA&gt;            NA</span></span>
+<span id="cb8-18"><a href="#cb8-18"></a><span class="co">#&gt;          labeled value           valLabel missings</span></span>
+<span id="cb8-19"><a href="#cb8-19"></a><span class="co">#&gt; ID            no    NA               &lt;NA&gt;     &lt;NA&gt;</span></span>
+<span id="cb8-20"><a href="#cb8-20"></a><span class="co">#&gt; sex          yes     0               male    valid</span></span>
+<span id="cb8-21"><a href="#cb8-21"></a><span class="co">#&gt; 4            yes     1             female    valid</span></span>
+<span id="cb8-22"><a href="#cb8-22"></a><span class="co">#&gt; 5            yes   -99 missing - omission     miss</span></span>
+<span id="cb8-23"><a href="#cb8-23"></a><span class="co">#&gt; forename      no    NA               &lt;NA&gt;     &lt;NA&gt;</span></span></code></pre></div>
+<p><code>extractData</code> is used to extract data. With its arguments the structure of the resulting data can be defined. If <code>convertMiss = TRUE</code>, which is the default, is used, values that are listed as missing codes are recoded to <code>NAs</code>. With the <code>convertLabels</code> argument it can be specified how value labels should be used. If set to <code>&quot;character&quot;</code> all labeled values are recoded to character, the same applies to “<code>factor</code>”. If set to <code>&quot;numeric&quot;</code>, the value labels are not applied.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a><span class="co"># Extract data without applying labels</span></span>
+<span id="cb9-2"><a href="#cb9-2"></a>dat1 &lt;-<span class="st"> </span><span class="kw">extractData</span>(gads, <span class="dt">convertMiss =</span> <span class="ot">TRUE</span>, <span class="dt">convertLabels =</span> <span class="st">&quot;numeric&quot;</span>)</span>
+<span id="cb9-3"><a href="#cb9-3"></a>dat1</span>
+<span id="cb9-4"><a href="#cb9-4"></a><span class="co">#&gt;   ID sex forename</span></span>
+<span id="cb9-5"><a href="#cb9-5"></a><span class="co">#&gt; 1  1   0      Tim</span></span>
+<span id="cb9-6"><a href="#cb9-6"></a><span class="co">#&gt; 2  2   0     Bill</span></span>
+<span id="cb9-7"><a href="#cb9-7"></a><span class="co">#&gt; 3  3   1      Ann</span></span>
+<span id="cb9-8"><a href="#cb9-8"></a><span class="co">#&gt; 4  4   1    Chris</span></span>
+<span id="cb9-9"><a href="#cb9-9"></a></span>
+<span id="cb9-10"><a href="#cb9-10"></a>dat2 &lt;-<span class="st"> </span><span class="kw">extractData</span>(gads, <span class="dt">convertMiss =</span> <span class="ot">TRUE</span>, <span class="dt">convertLabels =</span> <span class="st">&quot;character&quot;</span>)</span>
+<span id="cb9-11"><a href="#cb9-11"></a>dat2</span>
+<span id="cb9-12"><a href="#cb9-12"></a><span class="co">#&gt;   ID    sex forename</span></span>
+<span id="cb9-13"><a href="#cb9-13"></a><span class="co">#&gt; 1  1   male      Tim</span></span>
+<span id="cb9-14"><a href="#cb9-14"></a><span class="co">#&gt; 2  2   male     Bill</span></span>
+<span id="cb9-15"><a href="#cb9-15"></a><span class="co">#&gt; 3  3 female      Ann</span></span>
+<span id="cb9-16"><a href="#cb9-16"></a><span class="co">#&gt; 4  4 female    Chris</span></span></code></pre></div>
+</div>
+</div>
+<div id="modifying-gadsdat-objects" class="section level2">
+<h2>Modifying <code>GADSdat</code> objects</h2>
+<p><code>GADSdat</code> objects can also be modified even though only a certain amount of operations are supported. For smaller changes to the meta data and data a number of convenience functions exists. These functions allow modifying variable labels (<code>chagenVarLabels</code>), modifying variable names (<code>changeVarNames</code>) and recoding values (<code>recodeGADS</code>).</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a><span class="co">### wrapper functions</span></span>
+<span id="cb10-2"><a href="#cb10-2"></a><span class="co"># Modify variable labels</span></span>
+<span id="cb10-3"><a href="#cb10-3"></a>gads2 &lt;-<span class="st"> </span><span class="kw">changeVarLabels</span>(gads, <span class="dt">varName =</span> <span class="kw">c</span>(<span class="st">&quot;ID&quot;</span>), <span class="dt">varLabel =</span> <span class="kw">c</span>(<span class="st">&quot;Test taker ID&quot;</span>))</span>
+<span id="cb10-4"><a href="#cb10-4"></a><span class="kw">extractMeta</span>(gads2, <span class="dt">vars =</span> <span class="st">&quot;ID&quot;</span>)</span>
+<span id="cb10-5"><a href="#cb10-5"></a><span class="co">#&gt;    varName      varLabel format display_width labeled value valLabel missings</span></span>
+<span id="cb10-6"><a href="#cb10-6"></a><span class="co">#&gt; ID      ID Test taker ID   &lt;NA&gt;            NA      no    NA     &lt;NA&gt;     &lt;NA&gt;</span></span>
+<span id="cb10-7"><a href="#cb10-7"></a></span>
+<span id="cb10-8"><a href="#cb10-8"></a><span class="co"># Modify variable name</span></span>
+<span id="cb10-9"><a href="#cb10-9"></a>gads3 &lt;-<span class="st"> </span><span class="kw">changeVarNames</span>(gads, <span class="dt">oldNames =</span> <span class="kw">c</span>(<span class="st">&quot;ID&quot;</span>), <span class="dt">newNames =</span> <span class="kw">c</span>(<span class="st">&quot;idstud&quot;</span>))</span>
+<span id="cb10-10"><a href="#cb10-10"></a><span class="kw">extractMeta</span>(gads3, <span class="dt">vars =</span> <span class="st">&quot;idstud&quot;</span>)</span>
+<span id="cb10-11"><a href="#cb10-11"></a><span class="co">#&gt;    varName          varLabel format display_width labeled value valLabel</span></span>
+<span id="cb10-12"><a href="#cb10-12"></a><span class="co">#&gt; ID  idstud Person Identifier   &lt;NA&gt;            NA      no    NA     &lt;NA&gt;</span></span>
+<span id="cb10-13"><a href="#cb10-13"></a><span class="co">#&gt;    missings</span></span>
+<span id="cb10-14"><a href="#cb10-14"></a><span class="co">#&gt; ID     &lt;NA&gt;</span></span>
+<span id="cb10-15"><a href="#cb10-15"></a><span class="kw">extractData</span>(gads3)</span>
+<span id="cb10-16"><a href="#cb10-16"></a><span class="co">#&gt;   idstud    sex forename</span></span>
+<span id="cb10-17"><a href="#cb10-17"></a><span class="co">#&gt; 1      1   male      Tim</span></span>
+<span id="cb10-18"><a href="#cb10-18"></a><span class="co">#&gt; 2      2   male     Bill</span></span>
+<span id="cb10-19"><a href="#cb10-19"></a><span class="co">#&gt; 3      3 female      Ann</span></span>
+<span id="cb10-20"><a href="#cb10-20"></a><span class="co">#&gt; 4      4 female    Chris</span></span>
+<span id="cb10-21"><a href="#cb10-21"></a></span>
+<span id="cb10-22"><a href="#cb10-22"></a><span class="co"># recode GADS</span></span>
+<span id="cb10-23"><a href="#cb10-23"></a>gads4 &lt;-<span class="st"> </span><span class="kw">recodeGADS</span>(gads, <span class="dt">varName =</span> <span class="st">&quot;sex&quot;</span>, <span class="dt">oldValues =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">-99</span>), <span class="dt">newValues =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">99</span>))</span>
+<span id="cb10-24"><a href="#cb10-24"></a><span class="kw">extractMeta</span>(gads4, <span class="dt">vars =</span> <span class="st">&quot;sex&quot;</span>)</span>
+<span id="cb10-25"><a href="#cb10-25"></a><span class="co">#&gt;     varName             varLabel format display_width labeled value</span></span>
+<span id="cb10-26"><a href="#cb10-26"></a><span class="co">#&gt; sex     sex Sex as self reported   &lt;NA&gt;            NA     yes     1</span></span>
+<span id="cb10-27"><a href="#cb10-27"></a><span class="co">#&gt; 4       sex Sex as self reported   &lt;NA&gt;            NA     yes     2</span></span>
+<span id="cb10-28"><a href="#cb10-28"></a><span class="co">#&gt; 5       sex Sex as self reported   &lt;NA&gt;            NA     yes    99</span></span>
+<span id="cb10-29"><a href="#cb10-29"></a><span class="co">#&gt;               valLabel missings</span></span>
+<span id="cb10-30"><a href="#cb10-30"></a><span class="co">#&gt; sex               male    valid</span></span>
+<span id="cb10-31"><a href="#cb10-31"></a><span class="co">#&gt; 4               female    valid</span></span>
+<span id="cb10-32"><a href="#cb10-32"></a><span class="co">#&gt; 5   missing - omission     miss</span></span>
+<span id="cb10-33"><a href="#cb10-33"></a><span class="kw">extractData</span>(gads4, <span class="dt">convertLabels =</span> <span class="st">&quot;numeric&quot;</span>)</span>
+<span id="cb10-34"><a href="#cb10-34"></a><span class="co">#&gt;   ID sex forename</span></span>
+<span id="cb10-35"><a href="#cb10-35"></a><span class="co">#&gt; 1  1   1      Tim</span></span>
+<span id="cb10-36"><a href="#cb10-36"></a><span class="co">#&gt; 2  2   1     Bill</span></span>
+<span id="cb10-37"><a href="#cb10-37"></a><span class="co">#&gt; 3  3   2      Ann</span></span>
+<span id="cb10-38"><a href="#cb10-38"></a><span class="co">#&gt; 4  4   2    Chris</span></span></code></pre></div>
+<p>For simultaneous changes to multiple variables a set of functions are implemented that extract a table for changes and apply the changes as written into this change table. To enable an easier work flow the change table could also be saved as an Excel file, modified via Excel and again imported into <code>R</code>. See the help pages of the respective functions for more details.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a><span class="co"># extract changeTable</span></span>
+<span id="cb11-2"><a href="#cb11-2"></a>varChanges &lt;-<span class="st"> </span><span class="kw">getChangeMeta</span>(gads, <span class="dt">level =</span> <span class="st">&quot;variable&quot;</span>)</span>
+<span id="cb11-3"><a href="#cb11-3"></a><span class="co"># modify changeTable</span></span>
+<span id="cb11-4"><a href="#cb11-4"></a>varChanges[varChanges<span class="op">$</span>varName <span class="op">==</span><span class="st"> &quot;ID&quot;</span>, <span class="st">&quot;varLabel_new&quot;</span>] &lt;-<span class="st"> &quot;Test taker ID&quot;</span></span>
+<span id="cb11-5"><a href="#cb11-5"></a><span class="co"># Apply changes</span></span>
+<span id="cb11-6"><a href="#cb11-6"></a>gads5 &lt;-<span class="st"> </span><span class="kw">applyChangeMeta</span>(varChanges, gads)</span>
+<span id="cb11-7"><a href="#cb11-7"></a><span class="kw">extractMeta</span>(gads5, <span class="dt">vars =</span> <span class="st">&quot;ID&quot;</span>)</span>
+<span id="cb11-8"><a href="#cb11-8"></a><span class="co">#&gt;    varName      varLabel format display_width labeled value valLabel missings</span></span>
+<span id="cb11-9"><a href="#cb11-9"></a><span class="co">#&gt; ID      ID Test taker ID   &lt;NA&gt;            NA      no    NA     &lt;NA&gt;     &lt;NA&gt;</span></span></code></pre></div>
+</div>
+<div id="writing-spss-files" class="section level2">
+<h2>Writing SPSS files</h2>
+<p>Objects of the class <code>GADSdat</code>can also be exported into the SPSS format, utilizing <code>haven</code>. Note that this function is slightly experimental and problems with specific character strings might occur.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a><span class="kw">write_spss</span>(gads, <span class="st">&quot;path/example_out.sav&quot;</span>)</span></code></pre></div>
+<p>If the <code>haven</code> format is preferred for working in <code>R</code>, a <code>GADSdat</code> object can also be transformed to its equivalent <code>tibble</code> format as if the data was imported from SPSS via <code>haven</code>.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a>haven_dat &lt;-<span class="st"> </span><span class="kw">export_tibble</span>(gads)</span>
+<span id="cb13-2"><a href="#cb13-2"></a>haven_dat</span>
+<span id="cb13-3"><a href="#cb13-3"></a><span class="co">#&gt; # A tibble: 4 x 3</span></span>
+<span id="cb13-4"><a href="#cb13-4"></a><span class="co">#&gt;      ID        sex forename</span></span>
+<span id="cb13-5"><a href="#cb13-5"></a><span class="co">#&gt;   &lt;int&gt;  &lt;dbl+lbl&gt; &lt;chr&gt;   </span></span>
+<span id="cb13-6"><a href="#cb13-6"></a><span class="co">#&gt; 1     1 0 [male]   Tim     </span></span>
+<span id="cb13-7"><a href="#cb13-7"></a><span class="co">#&gt; 2     2 0 [male]   Bill    </span></span>
+<span id="cb13-8"><a href="#cb13-8"></a><span class="co">#&gt; 3     3 1 [female] Ann     </span></span>
+<span id="cb13-9"><a href="#cb13-9"></a><span class="co">#&gt; 4     4 1 [female] Chris</span></span>
+<span id="cb13-10"><a href="#cb13-10"></a><span class="kw">lapply</span>(haven_dat, attributes)</span>
+<span id="cb13-11"><a href="#cb13-11"></a><span class="co">#&gt; $ID</span></span>
+<span id="cb13-12"><a href="#cb13-12"></a><span class="co">#&gt; $ID$label</span></span>
+<span id="cb13-13"><a href="#cb13-13"></a><span class="co">#&gt; [1] &quot;Person Identifier&quot;</span></span>
+<span id="cb13-14"><a href="#cb13-14"></a><span class="co">#&gt; </span></span>
+<span id="cb13-15"><a href="#cb13-15"></a><span class="co">#&gt; </span></span>
+<span id="cb13-16"><a href="#cb13-16"></a><span class="co">#&gt; $sex</span></span>
+<span id="cb13-17"><a href="#cb13-17"></a><span class="co">#&gt; $sex$label</span></span>
+<span id="cb13-18"><a href="#cb13-18"></a><span class="co">#&gt; [1] &quot;Sex as self reported&quot;</span></span>
+<span id="cb13-19"><a href="#cb13-19"></a><span class="co">#&gt; </span></span>
+<span id="cb13-20"><a href="#cb13-20"></a><span class="co">#&gt; $sex$na_values</span></span>
+<span id="cb13-21"><a href="#cb13-21"></a><span class="co">#&gt; [1] -99</span></span>
+<span id="cb13-22"><a href="#cb13-22"></a><span class="co">#&gt; </span></span>
+<span id="cb13-23"><a href="#cb13-23"></a><span class="co">#&gt; $sex$class</span></span>
+<span id="cb13-24"><a href="#cb13-24"></a><span class="co">#&gt; [1] &quot;haven_labelled_spss&quot; &quot;haven_labelled&quot;     </span></span>
+<span id="cb13-25"><a href="#cb13-25"></a><span class="co">#&gt; </span></span>
+<span id="cb13-26"><a href="#cb13-26"></a><span class="co">#&gt; $sex$labels</span></span>
+<span id="cb13-27"><a href="#cb13-27"></a><span class="co">#&gt;               male             female missing - omission </span></span>
+<span id="cb13-28"><a href="#cb13-28"></a><span class="co">#&gt;                  0                  1                -99 </span></span>
+<span id="cb13-29"><a href="#cb13-29"></a><span class="co">#&gt; </span></span>
+<span id="cb13-30"><a href="#cb13-30"></a><span class="co">#&gt; </span></span>
+<span id="cb13-31"><a href="#cb13-31"></a><span class="co">#&gt; $forename</span></span>
+<span id="cb13-32"><a href="#cb13-32"></a><span class="co">#&gt; $forename$label</span></span>
+<span id="cb13-33"><a href="#cb13-33"></a><span class="co">#&gt; [1] &quot;first name as reported by teacher&quot;</span></span></code></pre></div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

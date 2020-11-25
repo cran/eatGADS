@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<meta name="author" content="Benjamin Becker" />
+
+<meta name="date" content="2020-11-23" />
+
+<title>createGADS: Creating a relational data base</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+<script>// Hide empty <a> tag within highlighted CodeBlock for screen reader accessibility (see https://github.com/jgm/pandoc/issues/6352#issuecomment-626106786) -->
+// v0.0.1
+// Written by JooYoung Seo (jooyoung@psu.edu) and Atsushi Yasumoto on June 1st, 2020.
+
+document.addEventListener('DOMContentLoaded', function() {
+  const codeList = document.getElementsByClassName("sourceCode");
+  for (var i = 0; i < codeList.length; i++) {
+    var linkList = codeList[i].getElementsByTagName('a');
+    for (var j = 0; j < linkList.length; j++) {
+      if (linkList[j].innerHTML === "") {
+        linkList[j].setAttribute('aria-hidden', 'true');
+      }
+    }
+  }
+});
+</script>
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore"><code>createGADS</code>: Creating a relational data base</h1>
+<h4 class="author">Benjamin Becker</h4>
+<h4 class="date">2020-11-23</h4>
+
+
+
+<p>In the context of educational large-scale assessments (but also in other contexts) we frequently encounter data sets which have an hierarchical structure. In educational large-scale assessments these can, for example, be pupils nested in schools. Additional, hidden nested structures occur, if missing data are treated with multiple imputations or person parameters are estimated using plausible values. In these cases it is inefficient to store all the data in one rectangular data set. In other data science applications the use of relational data bases is a widespread measure to tackle this challenge.</p>
+<p><code>eatGADS</code> supports creating such relational data bases (based on the open source software <code>SQLite3</code> and the <code>R</code> package <code>eatDB</code>) while maintaining its meta data and providing a very user friendly interface for data users who are unfamiliar with relational data bases. In doing so, it allows the handling of large data sets even on limited hardware settings. Furthermore, this approach allows the extraction of data from different hierarchy levels, which means that data has to be reshaped very rarely.</p>
+<p>This vignette illustrates how a relational <code>eatGADS</code> data base can be created from a rectangular <code>SPSS</code> (<code>.sav</code>) data file. For illustrative purposes we use a small example data set from the campus files of the German PISA Plus assessment. The complete campus files and the original data set can be accessed <a href="https://www.iqb.hu-berlin.de/fdz/Datenzugang/CF-Antrag/AntragsformularCF">here</a> and <a href="https://www.iqb.hu-berlin.de/fdz/Datenzugang/SUF-Antrag">here</a>.</p>
+<div id="importing-data" class="section level2">
+<h2>Importing data</h2>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw">library</span>(eatGADS)</span></code></pre></div>
+<p>We can import an <code>.sav</code> (or an compressed <code>.zsav</code>) data set via the <code>import_spss()</code> function. Checks on variable names for <code>SQLite3</code> compliance are performed automatically. Changes to the variable names are reported to the console.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>sav_path &lt;-<span class="st"> </span><span class="kw">system.file</span>(<span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;pisa.zsav&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;eatGADS&quot;</span>)</span>
+<span id="cb2-2"><a href="#cb2-2"></a>dat &lt;-<span class="st"> </span><span class="kw">import_spss</span>(sav_path)</span></code></pre></div>
+<p>The next steps depend on the data structure: If the different hierarchy levels are saved in different source data sets (e.g. different <code>.sav</code> files) the next section can be skipped. However, sometimes data from different hierarchy levels is save in one data file. Then, splitting and reshaping becomes necessary.</p>
+</div>
+<div id="splitting-and-reshaping" class="section level2">
+<h2>Splitting and Reshaping</h2>
+<p>In this case, we want to split the imported <code>GADSdat</code> object into its hierarchy levels (in our example: background data on level 1 and imputed competence data on level 2). This can be achieved by the <code>splitGADS()</code> function. We specify the hierarchical structure as a <code>list</code>. After this, we can extract separate <code>GADSdat</code> objects by name via the <code>extractGADS()</code> function. These objects can then be used for reshaping.</p>
+<p>For reasons of simplicity, the example only contains two hierarchy levels. In practice, often more hierarchy levels are present. Splitting can be performed into as many hierarchy levels as desired. The reshaping has to be performed for each hierarchy level separately.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a>pvs &lt;-<span class="st"> </span><span class="kw">grep</span>(<span class="st">&quot;pv&quot;</span>, <span class="kw">namesGADS</span>(dat), <span class="dt">value =</span> T)</span>
+<span id="cb3-2"><a href="#cb3-2"></a>splitted_gads &lt;-<span class="st"> </span><span class="kw">splitGADS</span>(dat, <span class="dt">nameList =</span> <span class="kw">list</span>(<span class="dt">noImp =</span> <span class="kw">namesGADS</span>(dat)[<span class="op">!</span><span class="kw">namesGADS</span>(dat) <span class="op">%in%</span><span class="st"> </span>pvs],</span>
+<span id="cb3-3"><a href="#cb3-3"></a>                    <span class="dt">PVs =</span> <span class="kw">c</span>(<span class="st">&quot;idstud&quot;</span>, pvs)))</span>
+<span id="cb3-4"><a href="#cb3-4"></a><span class="co"># new Structure</span></span>
+<span id="cb3-5"><a href="#cb3-5"></a><span class="kw">namesGADS</span>(splitted_gads)</span>
+<span id="cb3-6"><a href="#cb3-6"></a><span class="co">#&gt; $noImp</span></span>
+<span id="cb3-7"><a href="#cb3-7"></a><span class="co">#&gt;   [1] &quot;idstud&quot;       &quot;idschool&quot;     &quot;idclass&quot;      &quot;schtype&quot;      &quot;sameteach&quot;   </span></span>
+<span id="cb3-8"><a href="#cb3-8"></a><span class="co">#&gt;   [6] &quot;g8g9&quot;         &quot;ganztag&quot;      &quot;classsize&quot;    &quot;repeated&quot;     &quot;gender&quot;      </span></span>
+<span id="cb3-9"><a href="#cb3-9"></a><span class="co">#&gt;  [11] &quot;age&quot;          &quot;language&quot;     &quot;migration&quot;    &quot;hisced&quot;       &quot;hisei&quot;       </span></span>
+<span id="cb3-10"><a href="#cb3-10"></a><span class="co">#&gt;  [16] &quot;homepos&quot;      &quot;books&quot;        &quot;pared&quot;        &quot;computer_age&quot; &quot;internet_age&quot;</span></span>
+<span id="cb3-11"><a href="#cb3-11"></a><span class="co">#&gt;  [21] &quot;int_use_a&quot;    &quot;int_use_b&quot;    &quot;truancy_a&quot;    &quot;truancy_b&quot;    &quot;truancy_c&quot;   </span></span>
+<span id="cb3-12"><a href="#cb3-12"></a><span class="co">#&gt;  [26] &quot;int_a&quot;        &quot;int_b&quot;        &quot;int_c&quot;        &quot;int_d&quot;        &quot;instmot_a&quot;   </span></span>
+<span id="cb3-13"><a href="#cb3-13"></a><span class="co">#&gt;  [31] &quot;instmot_b&quot;    &quot;instmot_c&quot;    &quot;instmot_d&quot;    &quot;norms_a&quot;      &quot;norms_b&quot;     </span></span>
+<span id="cb3-14"><a href="#cb3-14"></a><span class="co">#&gt;  [36] &quot;norms_c&quot;      &quot;norms_d&quot;      &quot;norms_e&quot;      &quot;norms_f&quot;      &quot;anxiety_a&quot;   </span></span>
+<span id="cb3-15"><a href="#cb3-15"></a><span class="co">#&gt;  [41] &quot;anxiety_b&quot;    &quot;anxiety_c&quot;    &quot;anxiety_d&quot;    &quot;anxiety_e&quot;    &quot;selfcon_a&quot;   </span></span>
+<span id="cb3-16"><a href="#cb3-16"></a><span class="co">#&gt;  [46] &quot;selfcon_b&quot;    &quot;selfcon_c&quot;    &quot;selfcon_d&quot;    &quot;selfcon_e&quot;    &quot;worketh_a&quot;   </span></span>
+<span id="cb3-17"><a href="#cb3-17"></a><span class="co">#&gt;  [51] &quot;worketh_b&quot;    &quot;worketh_c&quot;    &quot;worketh_d&quot;    &quot;worketh_e&quot;    &quot;worketh_f&quot;   </span></span>
+<span id="cb3-18"><a href="#cb3-18"></a><span class="co">#&gt;  [56] &quot;worketh_g&quot;    &quot;worketh_h&quot;    &quot;worketh_i&quot;    &quot;intent_a&quot;     &quot;intent_b&quot;    </span></span>
+<span id="cb3-19"><a href="#cb3-19"></a><span class="co">#&gt;  [61] &quot;intent_c&quot;     &quot;intent_d&quot;     &quot;intent_e&quot;     &quot;behav_a&quot;      &quot;behav_b&quot;     </span></span>
+<span id="cb3-20"><a href="#cb3-20"></a><span class="co">#&gt;  [66] &quot;behav_c&quot;      &quot;behav_d&quot;      &quot;behav_e&quot;      &quot;behav_f&quot;      &quot;behav_g&quot;     </span></span>
+<span id="cb3-21"><a href="#cb3-21"></a><span class="co">#&gt;  [71] &quot;behav_h&quot;      &quot;teach_a&quot;      &quot;teach_b&quot;      &quot;teach_c&quot;      &quot;teach_d&quot;     </span></span>
+<span id="cb3-22"><a href="#cb3-22"></a><span class="co">#&gt;  [76] &quot;teach_e&quot;      &quot;cognact_a&quot;    &quot;cognact_b&quot;    &quot;cognact_c&quot;    &quot;cognact_d&quot;   </span></span>
+<span id="cb3-23"><a href="#cb3-23"></a><span class="co">#&gt;  [81] &quot;cognact_e&quot;    &quot;cognact_f&quot;    &quot;cognact_g&quot;    &quot;cognact_h&quot;    &quot;cognact_i&quot;   </span></span>
+<span id="cb3-24"><a href="#cb3-24"></a><span class="co">#&gt;  [86] &quot;discpline_a&quot;  &quot;discpline_b&quot;  &quot;discpline_c&quot;  &quot;discpline_d&quot;  &quot;discpline_e&quot; </span></span>
+<span id="cb3-25"><a href="#cb3-25"></a><span class="co">#&gt;  [91] &quot;relation_a&quot;   &quot;relation_b&quot;   &quot;relation_c&quot;   &quot;relation_d&quot;   &quot;relation_e&quot;  </span></span>
+<span id="cb3-26"><a href="#cb3-26"></a><span class="co">#&gt;  [96] &quot;belong_a&quot;     &quot;belong_b&quot;     &quot;belong_c&quot;     &quot;belong_d&quot;     &quot;belong_e&quot;    </span></span>
+<span id="cb3-27"><a href="#cb3-27"></a><span class="co">#&gt; [101] &quot;belong_f&quot;     &quot;belong_g&quot;     &quot;belong_h&quot;     &quot;belong_i&quot;     &quot;attitud_a&quot;   </span></span>
+<span id="cb3-28"><a href="#cb3-28"></a><span class="co">#&gt; [106] &quot;attitud_b&quot;    &quot;attitud_c&quot;    &quot;attitud_d&quot;    &quot;attitud_e&quot;    &quot;attitud_f&quot;   </span></span>
+<span id="cb3-29"><a href="#cb3-29"></a><span class="co">#&gt; [111] &quot;attitud_g&quot;    &quot;attitud_h&quot;    &quot;grade_de&quot;     &quot;grade_ma&quot;     &quot;grade_bio&quot;   </span></span>
+<span id="cb3-30"><a href="#cb3-30"></a><span class="co">#&gt; [116] &quot;grade_che&quot;    &quot;grade_phy&quot;    &quot;grade_sci&quot;   </span></span>
+<span id="cb3-31"><a href="#cb3-31"></a><span class="co">#&gt; </span></span>
+<span id="cb3-32"><a href="#cb3-32"></a><span class="co">#&gt; $PVs</span></span>
+<span id="cb3-33"><a href="#cb3-33"></a><span class="co">#&gt;  [1] &quot;idstud&quot;  &quot;ma_pv1&quot;  &quot;ma_pv2&quot;  &quot;ma_pv3&quot;  &quot;ma_pv4&quot;  &quot;ma_pv5&quot;  &quot;rea_pv1&quot;</span></span>
+<span id="cb3-34"><a href="#cb3-34"></a><span class="co">#&gt;  [8] &quot;rea_pv2&quot; &quot;rea_pv3&quot; &quot;rea_pv4&quot; &quot;rea_pv5&quot; &quot;sci_pv1&quot; &quot;sci_pv2&quot; &quot;sci_pv3&quot;</span></span>
+<span id="cb3-35"><a href="#cb3-35"></a><span class="co">#&gt; [15] &quot;sci_pv4&quot; &quot;sci_pv5&quot;</span></span>
+<span id="cb3-36"><a href="#cb3-36"></a></span>
+<span id="cb3-37"><a href="#cb3-37"></a><span class="co"># Extract GADSdat objects</span></span>
+<span id="cb3-38"><a href="#cb3-38"></a>noImp_gads &lt;-<span class="st"> </span><span class="kw">extractGADSdat</span>(splitted_gads, <span class="st">&quot;noImp&quot;</span>)</span>
+<span id="cb3-39"><a href="#cb3-39"></a>pvs_gads &lt;-<span class="st"> </span><span class="kw">extractGADSdat</span>(splitted_gads, <span class="st">&quot;PVs&quot;</span>)</span></code></pre></div>
+<p>For reshaping data we highly recommend the <code>R</code> package <code>tidyr</code>. Its performance might be less optimized than for example the <code>data.table</code> package, however it is very intuitive and user friendly. For our example data set we need to reshape the <code>PVs</code> from wide to long format and then separate the resulting column into two columns, containing the <code>dimension</code> and imputation number (<code>imp</code>) (Note: This results in a data set in which different dimensions for a single student are stored in separate rows, not columns). For this, we directly access the data in the <code>GADSdat</code> object via <code>pvs_gads$dat</code>. The reshaping is performed by <code>tidyr::pivot_longer()</code>. <code>tidyr::separate()</code> is used to separate our two additional identifier columns (<code>dimension</code> and <code>imp</code>). Finally, we clean the <code>imp</code> column and transform it to numeric.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="co"># Extract raw data from pv gads</span></span>
+<span id="cb4-2"><a href="#cb4-2"></a>pvs_wide &lt;-<span class="st"> </span>pvs_gads<span class="op">$</span>dat</span>
+<span id="cb4-3"><a href="#cb4-3"></a></span>
+<span id="cb4-4"><a href="#cb4-4"></a><span class="co"># Wide format</span></span>
+<span id="cb4-5"><a href="#cb4-5"></a><span class="kw">head</span>(pvs_wide)</span>
+<span id="cb4-6"><a href="#cb4-6"></a><span class="co">#&gt;   idstud     ma_pv1     ma_pv2     ma_pv3      ma_pv4     ma_pv5    rea_pv1</span></span>
+<span id="cb4-7"><a href="#cb4-7"></a><span class="co">#&gt; 1      1  0.1537201 -0.0411933  0.5702895  0.01687233  0.3003968  0.4391437</span></span>
+<span id="cb4-8"><a href="#cb4-8"></a><span class="co">#&gt; 2      2 -0.3690980 -0.1201779 -0.2164011 -0.64099562 -0.3626861 -0.3471025</span></span>
+<span id="cb4-9"><a href="#cb4-9"></a><span class="co">#&gt; 3      3  1.7042239  2.2205527  1.7162633  2.78119427  2.6928097  0.8667544</span></span>
+<span id="cb4-10"><a href="#cb4-10"></a><span class="co">#&gt; 4      4  0.3490264  0.6069737  1.0037767  0.67002173  0.8012499 -0.7661811</span></span>
+<span id="cb4-11"><a href="#cb4-11"></a><span class="co">#&gt; 5      5 -0.6379547 -0.8142668 -0.6153099 -0.38015661 -0.1363339  0.1145925</span></span>
+<span id="cb4-12"><a href="#cb4-12"></a><span class="co">#&gt; 6      6 -1.5558856 -2.0435904 -0.7931236 -1.26866066 -1.1869012 -1.0732799</span></span>
+<span id="cb4-13"><a href="#cb4-13"></a><span class="co">#&gt;       rea_pv2     rea_pv3     rea_pv4    rea_pv5    sci_pv1    sci_pv2</span></span>
+<span id="cb4-14"><a href="#cb4-14"></a><span class="co">#&gt; 1  0.01991714  1.42848870 -0.06243637  0.8371030  0.1317762  0.6783006</span></span>
+<span id="cb4-15"><a href="#cb4-15"></a><span class="co">#&gt; 2  0.09553654  0.49335276  0.10951613  0.6657507 -0.8650453 -0.3834589</span></span>
+<span id="cb4-16"><a href="#cb4-16"></a><span class="co">#&gt; 3  0.61768689  1.17497378  1.12938438  1.3001419  1.1035166  1.2730882</span></span>
+<span id="cb4-17"><a href="#cb4-17"></a><span class="co">#&gt; 4  0.80961068  0.09573558 -0.23817788  0.2853083 -0.3049963  0.2290473</span></span>
+<span id="cb4-18"><a href="#cb4-18"></a><span class="co">#&gt; 5 -0.08762244  0.06418227  0.57376133 -0.5326255 -0.8032184 -0.6878142</span></span>
+<span id="cb4-19"><a href="#cb4-19"></a><span class="co">#&gt; 6 -1.18496034 -0.67843740 -0.06669544 -0.5332718 -0.9191711 -1.6379850</span></span>
+<span id="cb4-20"><a href="#cb4-20"></a><span class="co">#&gt;       sci_pv3     sci_pv4    sci_pv5</span></span>
+<span id="cb4-21"><a href="#cb4-21"></a><span class="co">#&gt; 1  1.46203909  0.61406429  0.4807234</span></span>
+<span id="cb4-22"><a href="#cb4-22"></a><span class="co">#&gt; 2 -0.54372393 -1.00303484 -0.8101605</span></span>
+<span id="cb4-23"><a href="#cb4-23"></a><span class="co">#&gt; 3  1.51685344  1.61485031  1.6091542</span></span>
+<span id="cb4-24"><a href="#cb4-24"></a><span class="co">#&gt; 4  0.18340247 -0.06804704  0.2677832</span></span>
+<span id="cb4-25"><a href="#cb4-25"></a><span class="co">#&gt; 5 -0.03322359  0.43998031  0.3998337</span></span>
+<span id="cb4-26"><a href="#cb4-26"></a><span class="co">#&gt; 6 -0.80060130 -0.43433496 -1.3110661</span></span>
+<span id="cb4-27"><a href="#cb4-27"></a></span>
+<span id="cb4-28"><a href="#cb4-28"></a>pvs_long1 &lt;-<span class="st"> </span>tidyr<span class="op">::</span><span class="kw">pivot_longer</span>(pvs_wide, <span class="dt">cols =</span> <span class="kw">all_of</span>(pvs))</span>
+<span id="cb4-29"><a href="#cb4-29"></a>pvs_long2 &lt;-<span class="st"> </span>tidyr<span class="op">::</span><span class="kw">separate</span>(pvs_long1, <span class="dt">col =</span> <span class="st">&quot;name&quot;</span>, <span class="dt">sep =</span> <span class="st">&quot;_&quot;</span>, <span class="dt">into =</span> <span class="kw">c</span>(<span class="st">&quot;dimension&quot;</span>, <span class="st">&quot;imp&quot;</span>))</span>
+<span id="cb4-30"><a href="#cb4-30"></a>pvs_long2<span class="op">$</span>imp &lt;-<span class="st"> </span><span class="kw">as.numeric</span>(<span class="kw">gsub</span>(<span class="st">&quot;pv&quot;</span>, <span class="st">&quot;&quot;</span>, pvs_long2<span class="op">$</span>imp))</span>
+<span id="cb4-31"><a href="#cb4-31"></a></span>
+<span id="cb4-32"><a href="#cb4-32"></a><span class="co"># Finale long format</span></span>
+<span id="cb4-33"><a href="#cb4-33"></a><span class="kw">head</span>(<span class="kw">as.data.frame</span>(pvs_long2))</span>
+<span id="cb4-34"><a href="#cb4-34"></a><span class="co">#&gt;   idstud dimension imp       value</span></span>
+<span id="cb4-35"><a href="#cb4-35"></a><span class="co">#&gt; 1      1        ma   1  0.15372011</span></span>
+<span id="cb4-36"><a href="#cb4-36"></a><span class="co">#&gt; 2      1        ma   2 -0.04119330</span></span>
+<span id="cb4-37"><a href="#cb4-37"></a><span class="co">#&gt; 3      1        ma   3  0.57028949</span></span>
+<span id="cb4-38"><a href="#cb4-38"></a><span class="co">#&gt; 4      1        ma   4  0.01687233</span></span>
+<span id="cb4-39"><a href="#cb4-39"></a><span class="co">#&gt; 5      1        ma   5  0.30039680</span></span>
+<span id="cb4-40"><a href="#cb4-40"></a><span class="co">#&gt; 6      1       rea   1  0.43914365</span></span></code></pre></div>
+</div>
+<div id="handling-meta-data" class="section level2">
+<h2>Handling meta data</h2>
+<p>After reshaping we adapt the meta data in our initial <code>GADSdat</code> object via <code>updateMeta()</code>. This is necessary, as variables have been removed from the data set (e.g. <code>&quot;ma_pv1&quot;</code> etc.) and new variables have replaced them (<code>&quot;value&quot;</code>, <code>&quot;dimension&quot;</code>, <code>&quot;imp&quot;</code>). Now we have to add some variable labels, as most of the old variable labels got lost due to the reshaping. For an extensive tutorial see the vignette <a href="import_raw.html">Handling Meta Data</a>.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a>pvs_gads2 &lt;-<span class="st"> </span><span class="kw">updateMeta</span>(pvs_gads, <span class="dt">newDat =</span> <span class="kw">as.data.frame</span>(pvs_long2))</span>
+<span id="cb5-2"><a href="#cb5-2"></a><span class="co">#&gt; Removing the following rows from meta data: ma_pv1, ma_pv2, ma_pv3, ma_pv4, ma_pv5, rea_pv1, rea_pv2, rea_pv3, rea_pv4, rea_pv5, sci_pv1, sci_pv2, sci_pv3, sci_pv4, sci_pv5</span></span>
+<span id="cb5-3"><a href="#cb5-3"></a><span class="co">#&gt; Adding meta data for the following variables: dimension, imp, value</span></span>
+<span id="cb5-4"><a href="#cb5-4"></a><span class="kw">extractMeta</span>(pvs_gads2)</span>
+<span id="cb5-5"><a href="#cb5-5"></a><span class="co">#&gt;             varName   varLabel format display_width labeled value valLabel</span></span>
+<span id="cb5-6"><a href="#cb5-6"></a><span class="co">#&gt; 1            idstud Student-ID   F8.0            NA      no    NA     &lt;NA&gt;</span></span>
+<span id="cb5-7"><a href="#cb5-7"></a><span class="co">#&gt; dimension dimension       &lt;NA&gt;   &lt;NA&gt;            NA      no    NA     &lt;NA&gt;</span></span>
+<span id="cb5-8"><a href="#cb5-8"></a><span class="co">#&gt; imp             imp       &lt;NA&gt;   &lt;NA&gt;            NA      no    NA     &lt;NA&gt;</span></span>
+<span id="cb5-9"><a href="#cb5-9"></a><span class="co">#&gt; value         value       &lt;NA&gt;   &lt;NA&gt;            NA      no    NA     &lt;NA&gt;</span></span>
+<span id="cb5-10"><a href="#cb5-10"></a><span class="co">#&gt;           missings</span></span>
+<span id="cb5-11"><a href="#cb5-11"></a><span class="co">#&gt; 1             &lt;NA&gt;</span></span>
+<span id="cb5-12"><a href="#cb5-12"></a><span class="co">#&gt; dimension     &lt;NA&gt;</span></span>
+<span id="cb5-13"><a href="#cb5-13"></a><span class="co">#&gt; imp           &lt;NA&gt;</span></span>
+<span id="cb5-14"><a href="#cb5-14"></a><span class="co">#&gt; value         &lt;NA&gt;</span></span>
+<span id="cb5-15"><a href="#cb5-15"></a></span>
+<span id="cb5-16"><a href="#cb5-16"></a><span class="co"># </span></span>
+<span id="cb5-17"><a href="#cb5-17"></a>pvs_gads2 &lt;-<span class="st"> </span><span class="kw">changeVarLabels</span>(pvs_gads2, <span class="dt">varName =</span> <span class="kw">c</span>(<span class="st">&quot;dimension&quot;</span>, <span class="st">&quot;imp&quot;</span>, <span class="st">&quot;value&quot;</span>),</span>
+<span id="cb5-18"><a href="#cb5-18"></a>                <span class="dt">varLabel =</span> <span class="kw">c</span>(<span class="st">&quot;Achievement dimension (math, reading, science)&quot;</span>,</span>
+<span id="cb5-19"><a href="#cb5-19"></a>                             <span class="st">&quot;Number of imputation of plausible values&quot;</span>,</span>
+<span id="cb5-20"><a href="#cb5-20"></a>                             <span class="st">&quot;Plausible Value&quot;</span>))</span>
+<span id="cb5-21"><a href="#cb5-21"></a><span class="kw">extractMeta</span>(pvs_gads2)</span>
+<span id="cb5-22"><a href="#cb5-22"></a><span class="co">#&gt;             varName                                       varLabel format</span></span>
+<span id="cb5-23"><a href="#cb5-23"></a><span class="co">#&gt; 1            idstud                                     Student-ID   F8.0</span></span>
+<span id="cb5-24"><a href="#cb5-24"></a><span class="co">#&gt; dimension dimension Achievement dimension (math, reading, science)   &lt;NA&gt;</span></span>
+<span id="cb5-25"><a href="#cb5-25"></a><span class="co">#&gt; imp             imp       Number of imputation of plausible values   &lt;NA&gt;</span></span>
+<span id="cb5-26"><a href="#cb5-26"></a><span class="co">#&gt; value         value                                Plausible Value   &lt;NA&gt;</span></span>
+<span id="cb5-27"><a href="#cb5-27"></a><span class="co">#&gt;           display_width labeled value valLabel missings</span></span>
+<span id="cb5-28"><a href="#cb5-28"></a><span class="co">#&gt; 1                    NA      no    NA     &lt;NA&gt;     &lt;NA&gt;</span></span>
+<span id="cb5-29"><a href="#cb5-29"></a><span class="co">#&gt; dimension            NA      no    NA     &lt;NA&gt;     &lt;NA&gt;</span></span>
+<span id="cb5-30"><a href="#cb5-30"></a><span class="co">#&gt; imp                  NA      no    NA     &lt;NA&gt;     &lt;NA&gt;</span></span>
+<span id="cb5-31"><a href="#cb5-31"></a><span class="co">#&gt; value                NA      no    NA     &lt;NA&gt;     &lt;NA&gt;</span></span></code></pre></div>
+</div>
+<div id="preparing-and-creating-the-data-base" class="section level2">
+<h2>Preparing and Creating the data base</h2>
+<p>For the creation of a relational data base we recreate the initial hierarchical structure via <code>mergeLabels()</code> (which performs the reverse action as <code>extractGADS()</code>). Furthermore, we create two lists, a primary key list (<code>pkList</code>) and a foreign key list (<code>fkList</code>). Primary keys are the variables that uniquely identify each row within every hierarchy level. Foreign keys are the variables that allow merging between different hierarchy levels. In the list of foreign keys we also have to specify another hierarchy level, to which each hierarchy level connects. An exception is the lowest hierarchy levels, which serves as a basis.</p>
+<p>By setting up the order and the foreign keys of the data base we specify how the data is merged together when we extract data from it. In contrast to conventional relational data bases, <code>eatGADS</code> data bases are less flexible: The package does not support modifying the data base after its creation or extracting data from it with different merges than specified when it was set up.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a>merged_gads &lt;-<span class="st"> </span><span class="kw">mergeLabels</span>(<span class="dt">noImp =</span> noImp_gads, <span class="dt">PVs =</span> pvs_gads2)</span>
+<span id="cb6-2"><a href="#cb6-2"></a></span>
+<span id="cb6-3"><a href="#cb6-3"></a>pkList &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="dt">noImp =</span> <span class="st">&quot;idstud&quot;</span>,</span>
+<span id="cb6-4"><a href="#cb6-4"></a>               <span class="dt">PVs =</span> <span class="kw">c</span>(<span class="st">&quot;idstud&quot;</span>, <span class="st">&quot;imp&quot;</span>, <span class="st">&quot;dimension&quot;</span>))</span>
+<span id="cb6-5"><a href="#cb6-5"></a>fkList &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="dt">noImp =</span> <span class="kw">list</span>(<span class="dt">References =</span> <span class="ot">NULL</span>, <span class="dt">Keys =</span> <span class="ot">NULL</span>),</span>
+<span id="cb6-6"><a href="#cb6-6"></a>               <span class="dt">PVs =</span> <span class="kw">list</span>(<span class="dt">References =</span> <span class="st">&quot;noImp&quot;</span>, <span class="dt">Keys =</span> <span class="st">&quot;idstud&quot;</span>))</span></code></pre></div>
+<p>Finally, we create the relational data base on disc via the <code>createGADS()</code> function.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a>temp_path &lt;-<span class="st"> </span><span class="kw">paste0</span>(<span class="kw">tempfile</span>(), <span class="st">&quot;.db&quot;</span>)</span>
+<span id="cb7-2"><a href="#cb7-2"></a></span>
+<span id="cb7-3"><a href="#cb7-3"></a><span class="kw">createGADS</span>(merged_gads, <span class="dt">pkList =</span> pkList, <span class="dt">fkList =</span> fkList,</span>
+<span id="cb7-4"><a href="#cb7-4"></a>           <span class="dt">filePath =</span> temp_path)</span>
+<span id="cb7-5"><a href="#cb7-5"></a><span class="co">#&gt; NULL</span></span></code></pre></div>
+<p>For a detailed tutorial on how to use a relational <code>eatGADS</code> data base see the vignette <a href="getGADS.html"><code>getGADS</code>: Using a relational eatGADS data base</a>.</p>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
