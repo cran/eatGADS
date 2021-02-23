@@ -4,25 +4,30 @@
 \alias{checkValue}
 \title{Check for a specific value}
 \usage{
-checkValue(GADSdat, value)
+checkValue(GADSdat, value, vars = namesGADS(GADSdat))
 }
 \arguments{
 \item{GADSdat}{\code{GADSdat} object imported via \code{eatGADS}.}
 
 \item{value}{Single string indicating how missing labels are commonly named in the value labels.}
+
+\item{vars}{Character vector with the variable names to which \code{checkValue} should be applied.}
 }
 \value{
-Returns \code{NULL}.
+A named integer.
 }
 \description{
 Function to look for occurrences of a specific value in a \code{GADSdat}.
 }
 \details{
-The function checks occurrences of a specific value in all variables in the \code{GADSdat} and outputs a message
-containing a list of variables in which the value occurs.
+The function checks occurrences of a specific value in a set of variables (default: all variables) in the \code{GADSdat} and outputs a vector
+containing the count of occurrences for all variables in which the value occurs. It explicitly supports checking for \code{NA}.
 }
 \examples{
-# Example data set
-#to be done
+# for all variables in the data
+checkValue(pisa, value = 99)
+
+# only for specific variables in the data
+checkValue(pisa, vars = c("idschool", "g8g9"), value = 99)
 
 }

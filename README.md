@@ -1,21 +1,25 @@
 # eatGADS
 
 <!-- badges: start -->
-[![Travis build status](https://travis-ci.org/beckerbenj/eatGADS.svg?branch=master)](https://travis-ci.org/beckerbenj/eatGADS)
-[![AppVeyor build status](https://ci.appveyor.com/api/projects/status/github/beckerbenj/eatGADS?branch=master&svg=true)](https://ci.appveyor.com/project/beckerbenj/eatGADS)
+[![CRAN status](https://www.r-pkg.org/badges/version/eatGADS)](https://CRAN.R-project.org/package=eatGADS)
+[![R-CMD-check](https://github.com/beckerbenj/eatGADS/workflows/R-CMD-check/badge.svg)](https://github.com/beckerbenj/eatGADS/actions)
 [![Codecov test coverage](https://codecov.io/gh/beckerbenj/eatGADS/branch/master/graph/badge.svg)](https://codecov.io/gh/beckerbenj/eatGADS?branch=master)
+[![](http://cranlogs.r-pkg.org/badges/grand-total/eatGADS?color=blue)](https://cran.r-project.org/package=eatGADS)
+
 <!-- badges: end -->
 
 ## Overview
 
-`eatGADS` (educational assessment tools: GADS) is the data management and data handling tool used by the Institute for Educational Quality Improvement  in Germany (`IQB`). It uses `SQLlite3` as a back end and is especially suited for importing data stored as `SPSS` files. `eatDB` is used for data base creating and use, `haven` is used for importing SPSS files.
+`eatGADS` (educational assessment tools: GADS) is the data management and data handling tool used by the Institute for Educational Quality Improvement  in Germany (`IQB`). It uses [SQLlite3](https://www.sqlite.org/index.html) as a back end and is especially suited for importing data stored as `SPSS` files. [eatDB](https://github.com/beckerbenj/eatDB) is used for data base creating and use, [haven](https://github.com/tidyverse/haven) is used for importing SPSS files.
 
 ## Installation
 
 ```R
-# Install eatGADS from GitHub via
-remotes::install_github("beckerbenj/eatGADS", build_vignettes = TRUE,
-                        dependencies = TRUE)
+# Install stable version from CRAN via
+install.packages("eatGADS")
+
+# Install development version from GitHub via
+remotes::install_github("beckerbenj/eatGADS")
 ```
 
 ## Vignettes

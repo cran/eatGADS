@@ -4,7 +4,13 @@
 \alias{recodeGADS}
 \title{Recode a labeled variable.}
 \usage{
-recodeGADS(GADSdat, varName, oldValues, newValues, newValueLabels = NULL)
+recodeGADS(
+  GADSdat,
+  varName,
+  oldValues,
+  newValues,
+  existingMeta = c("stop", "value", "value_new")
+)
 }
 \arguments{
 \item{GADSdat}{\code{GADSdat} object imported via \code{eatGADS}.}
@@ -15,8 +21,7 @@ recodeGADS(GADSdat, varName, oldValues, newValues, newValueLabels = NULL)
 
 \item{newValues}{Vector containing the new values (in the respective order as \code{oldValues}).}
 
-\item{newValueLabels}{[optional] Named vector containing new value labels for the new values.
-All new values have to get labels. Very experimental implementation.}
+\item{existingMeta}{If values are recoded, which meta data should be used (see details)?}
 }
 \value{
 Returns a \code{GADSdat}.
@@ -29,11 +34,15 @@ Applied to a \code{GADSdat} or \code{all_GADSdat} object, this function is a wra
 and \code{\link{applyChangeMeta}}.
 \code{oldValues} and \code{newValues} are matched by ordering in the function call.
 
-Functionality including \code{newValueLabels} is still very experimental. The argument can be used to simultaneously
-change value labels. However,
-all existing (new) values need to be assigned a new label.
+If changes are performed on value levels, recoding into
+existing values can occur. In these cases, \code{existingMeta} determines how the resulting meta data conflicts are handled,
+either raising an error if any occur (\code{"stop"}), keeping the original meta data for the value (\code{"value"}) or using the meta
+data in the \code{changeTable} or, if incomplete, from the recoded value (\code{"value_new"}).
 
-For recoding character variables, using lookup tables via \code{\link{createLookup}} is recommended.
+Missing values (\code{NA}) are supported in \code{oldValues} but not in \code{newValues}. For recoding values to
+\code{NA} see \code{\link{recode2NA}} instead.
+For recoding character variables, using lookup tables via \code{\link{createLookup}} is recommended. For changing
+value labels see \code{\link{changeValLabels}}.
 }
 \examples{
 # Example gads
@@ -46,11 +55,7 @@ gads <- import_DF(example_df)
 
 # simple recode
 gads2 <- recodeGADS(gads, varName = "animal",
-                   oldValues = c(3, 4), newValues = c(2, 5))
+                   oldValues = c(3, 4), newValues = c(7, 8))
 
-# recode while changing value labels
-gads3 <- recodeGADS(gads, varName = "animal",
-                   oldValues = c(1, 3, 4), newValues = c(1, 2, 5),
-                   newValueLabels = c('1' = "cats", '2' = "dogs", '5' = "horses"))
 
 }

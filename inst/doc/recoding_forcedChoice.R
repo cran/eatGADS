@@ -12,8 +12,8 @@ gads <- import_spss(data_path)
 # Show example data set
 gads
 
-## ----recodeString2NA----------------------------------------------------------
-gads <- recodeString2NA(gads, string = "")
+## ----recode2NA----------------------------------------------------------------
+gads <- recode2NA(gads, value = "")
 
 ## ----lookup-------------------------------------------------------------------
 lookup <- createLookup(GADSdat = gads, recodeVars = "stringvar", sort_by = 'value', 
@@ -65,7 +65,7 @@ gads_final$dat
 ## ----setup miss---------------------------------------------------------------
 data_path_miss <- system.file("extdata", "forcedChoice_missings.sav", package = "eatGADS")
 gads_miss <- import_spss(data_path_miss)
-gads_miss <- recodeString2NA(gads_miss, string = "")
+gads_miss <- recode2NA(gads_miss, value = "")
 
 # Show example data set
 gads_miss

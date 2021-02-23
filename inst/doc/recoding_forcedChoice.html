@@ -12,39 +12,20 @@
 
 <meta name="author" content="Benjamin Becker, Johanna Busse" />
 
-<meta name="date" content="2020-11-23" />
+<meta name="date" content="2021-02-23" />
 
 <title>Recoding a forced choice item with a text field</title>
 
-<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
-// be compatible with the behavior of Pandoc < 2.8).
-document.addEventListener('DOMContentLoaded', function(e) {
-  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
-  var i, h, a;
-  for (i = 0; i < hs.length; i++) {
-    h = hs[i];
-    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
-    a = h.attributes;
-    while (a.length > 0) h.removeAttribute(a[0].name);
-  }
-});
-</script>
-<script>// Hide empty <a> tag within highlighted CodeBlock for screen reader accessibility (see https://github.com/jgm/pandoc/issues/6352#issuecomment-626106786) -->
-// v0.0.1
-// Written by JooYoung Seo (jooyoung@psu.edu) and Atsushi Yasumoto on June 1st, 2020.
+<script src="data:application/javascript;base64,Ly8gUGFuZG9jIDIuOSBhZGRzIGF0dHJpYnV0ZXMgb24gYm90aCBoZWFkZXIgYW5kIGRpdi4gV2UgcmVtb3ZlIHRoZSBmb3JtZXIgKHRvCi8vIGJlIGNvbXBhdGlibGUgd2l0aCB0aGUgYmVoYXZpb3Igb2YgUGFuZG9jIDwgMi44KS4KZG9jdW1lbnQuYWRkRXZlbnRMaXN0ZW5lcignRE9NQ29udGVudExvYWRlZCcsIGZ1bmN0aW9uKGUpIHsKICB2YXIgaHMgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yQWxsKCJkaXYuc2VjdGlvbltjbGFzcyo9J2xldmVsJ10gPiA6Zmlyc3QtY2hpbGQiKTsKICB2YXIgaSwgaCwgYTsKICBmb3IgKGkgPSAwOyBpIDwgaHMubGVuZ3RoOyBpKyspIHsKICAgIGggPSBoc1tpXTsKICAgIGlmICghL15oWzEtNl0kL2kudGVzdChoLnRhZ05hbWUpKSBjb250aW51ZTsgIC8vIGl0IHNob3VsZCBiZSBhIGhlYWRlciBoMS1oNgogICAgYSA9IGguYXR0cmlidXRlczsKICAgIHdoaWxlIChhLmxlbmd0aCA+IDApIGgucmVtb3ZlQXR0cmlidXRlKGFbMF0ubmFtZSk7CiAgfQp9KTsK"></script>
 
-document.addEventListener('DOMContentLoaded', function() {
-  const codeList = document.getElementsByClassName("sourceCode");
-  for (var i = 0; i < codeList.length; i++) {
-    var linkList = codeList[i].getElementsByTagName('a');
-    for (var j = 0; j < linkList.length; j++) {
-      if (linkList[j].innerHTML === "") {
-        linkList[j].setAttribute('aria-hidden', 'true');
-      }
-    }
-  }
-});
-</script>
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
 
 
 <style type="text/css">code{white-space: pre;}</style>
@@ -137,187 +118,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 
 
-<style type="text/css">body {
-background-color: #fff;
-margin: 1em auto;
-max-width: 700px;
-overflow: visible;
-padding-left: 2em;
-padding-right: 2em;
-font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-font-size: 14px;
-line-height: 1.35;
-}
-#TOC {
-clear: both;
-margin: 0 0 10px 10px;
-padding: 4px;
-width: 400px;
-border: 1px solid #CCCCCC;
-border-radius: 5px;
-background-color: #f6f6f6;
-font-size: 13px;
-line-height: 1.3;
-}
-#TOC .toctitle {
-font-weight: bold;
-font-size: 15px;
-margin-left: 5px;
-}
-#TOC ul {
-padding-left: 40px;
-margin-left: -1.5em;
-margin-top: 5px;
-margin-bottom: 5px;
-}
-#TOC ul ul {
-margin-left: -2em;
-}
-#TOC li {
-line-height: 16px;
-}
-table {
-margin: 1em auto;
-border-width: 1px;
-border-color: #DDDDDD;
-border-style: outset;
-border-collapse: collapse;
-}
-table th {
-border-width: 2px;
-padding: 5px;
-border-style: inset;
-}
-table td {
-border-width: 1px;
-border-style: inset;
-line-height: 18px;
-padding: 5px 5px;
-}
-table, table th, table td {
-border-left-style: none;
-border-right-style: none;
-}
-table thead, table tr.even {
-background-color: #f7f7f7;
-}
-p {
-margin: 0.5em 0;
-}
-blockquote {
-background-color: #f6f6f6;
-padding: 0.25em 0.75em;
-}
-hr {
-border-style: solid;
-border: none;
-border-top: 1px solid #777;
-margin: 28px 0;
-}
-dl {
-margin-left: 0;
-}
-dl dd {
-margin-bottom: 13px;
-margin-left: 13px;
-}
-dl dt {
-font-weight: bold;
-}
-ul {
-margin-top: 0;
-}
-ul li {
-list-style: circle outside;
-}
-ul ul {
-margin-bottom: 0;
-}
-pre, code {
-background-color: #f7f7f7;
-border-radius: 3px;
-color: #333;
-white-space: pre-wrap; 
-}
-pre {
-border-radius: 3px;
-margin: 5px 0px 10px 0px;
-padding: 10px;
-}
-pre:not([class]) {
-background-color: #f7f7f7;
-}
-code {
-font-family: Consolas, Monaco, 'Courier New', monospace;
-font-size: 85%;
-}
-p > code, li > code {
-padding: 2px 0px;
-}
-div.figure {
-text-align: center;
-}
-img {
-background-color: #FFFFFF;
-padding: 2px;
-border: 1px solid #DDDDDD;
-border-radius: 3px;
-border: 1px solid #CCCCCC;
-margin: 0 5px;
-}
-h1 {
-margin-top: 0;
-font-size: 35px;
-line-height: 40px;
-}
-h2 {
-border-bottom: 4px solid #f7f7f7;
-padding-top: 10px;
-padding-bottom: 2px;
-font-size: 145%;
-}
-h3 {
-border-bottom: 2px solid #f7f7f7;
-padding-top: 10px;
-font-size: 120%;
-}
-h4 {
-border-bottom: 1px solid #f7f7f7;
-margin-left: 8px;
-font-size: 105%;
-}
-h5, h6 {
-border-bottom: 1px solid #ccc;
-font-size: 105%;
-}
-a {
-color: #0033dd;
-text-decoration: none;
-}
-a:hover {
-color: #6666ff; }
-a:visited {
-color: #800080; }
-a:visited:hover {
-color: #BB00BB; }
-a[href^="http:"] {
-text-decoration: underline; }
-a[href^="https:"] {
-text-decoration: underline; }
 
-code > span.kw { color: #555; font-weight: bold; } 
-code > span.dt { color: #902000; } 
-code > span.dv { color: #40a070; } 
-code > span.bn { color: #d14; } 
-code > span.fl { color: #d14; } 
-code > span.ch { color: #d14; } 
-code > span.st { color: #d14; } 
-code > span.co { color: #888888; font-style: italic; } 
-code > span.ot { color: #007020; } 
-code > span.al { color: #ff0000; font-weight: bold; } 
-code > span.fu { color: #900; font-weight: bold; } 
-code > span.er { color: #a61717; background-color: #e3d2d2; } 
-</style>
+<link rel="stylesheet" href="data:text/css,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" type="text/css" />
 
 
 
@@ -331,7 +133,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <h1 class="title toc-ignore">Recoding a forced choice item with a text field</h1>
 <h4 class="author">Benjamin Becker, Johanna Busse</h4>
-<h4 class="date">2020-11-23</h4>
+<h4 class="date">2021-02-23</h4>
 
 
 
@@ -346,67 +148,67 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <li>summarize both remaining variables into a single numerical, labeled variable</li>
 </ul>
 <p>To illustrate the steps we have implemented a small <code>SPSS</code> example data set in this package. The data set can be loaded using the <code>import_spss()</code> function. For further information on importing <code>SPSS</code> data see <a href="import_spss.html"><code>import_spss</code>: Importing data from ‘SPSS’</a>. Note that the data set is a minimal working example, containing only the required variables for this illustration.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw">library</span>(eatGADS)</span>
-<span id="cb1-2"><a href="#cb1-2"></a>data_path &lt;-<span class="st"> </span><span class="kw">system.file</span>(<span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;forcedChoice.sav&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;eatGADS&quot;</span>)</span>
-<span id="cb1-3"><a href="#cb1-3"></a>gads &lt;-<span class="st"> </span><span class="kw">import_spss</span>(data_path)</span>
-<span id="cb1-4"><a href="#cb1-4"></a></span>
-<span id="cb1-5"><a href="#cb1-5"></a><span class="co"># Show example data set</span></span>
-<span id="cb1-6"><a href="#cb1-6"></a>gads</span>
-<span id="cb1-7"><a href="#cb1-7"></a><span class="co">#&gt; $dat</span></span>
-<span id="cb1-8"><a href="#cb1-8"></a><span class="co">#&gt;    ID mcvar stringvar</span></span>
-<span id="cb1-9"><a href="#cb1-9"></a><span class="co">#&gt; 1   1     3          </span></span>
-<span id="cb1-10"><a href="#cb1-10"></a><span class="co">#&gt; 2   2     2     Italy</span></span>
-<span id="cb1-11"><a href="#cb1-11"></a><span class="co">#&gt; 3   3     3   England</span></span>
-<span id="cb1-12"><a href="#cb1-12"></a><span class="co">#&gt; 4   4     3       Ita</span></span>
-<span id="cb1-13"><a href="#cb1-13"></a><span class="co">#&gt; 5   5     3       Eng</span></span>
-<span id="cb1-14"><a href="#cb1-14"></a><span class="co">#&gt; 6   6    NA    German</span></span>
-<span id="cb1-15"><a href="#cb1-15"></a><span class="co">#&gt; 7   7     1      Germ</span></span>
-<span id="cb1-16"><a href="#cb1-16"></a><span class="co">#&gt; 8   8     2          </span></span>
-<span id="cb1-17"><a href="#cb1-17"></a><span class="co">#&gt; 9   9     3          </span></span>
-<span id="cb1-18"><a href="#cb1-18"></a><span class="co">#&gt; 10 10     3       Eng</span></span>
-<span id="cb1-19"><a href="#cb1-19"></a><span class="co">#&gt; </span></span>
-<span id="cb1-20"><a href="#cb1-20"></a><span class="co">#&gt; $labels</span></span>
-<span id="cb1-21"><a href="#cb1-21"></a><span class="co">#&gt;     varName varLabel format display_width labeled value valLabel missings</span></span>
-<span id="cb1-22"><a href="#cb1-22"></a><span class="co">#&gt; 1        ID     &lt;NA&gt;   F8.0            NA      no    NA     &lt;NA&gt;     &lt;NA&gt;</span></span>
-<span id="cb1-23"><a href="#cb1-23"></a><span class="co">#&gt; 2     mcvar     &lt;NA&gt;   F8.2            NA     yes     1  Germany    valid</span></span>
-<span id="cb1-24"><a href="#cb1-24"></a><span class="co">#&gt; 3     mcvar     &lt;NA&gt;   F8.2            NA     yes     2   Poland    valid</span></span>
-<span id="cb1-25"><a href="#cb1-25"></a><span class="co">#&gt; 4     mcvar     &lt;NA&gt;   F8.2            NA     yes     3    other    valid</span></span>
-<span id="cb1-26"><a href="#cb1-26"></a><span class="co">#&gt; 5     mcvar     &lt;NA&gt;   F8.2            NA     yes   -99  missing     miss</span></span>
-<span id="cb1-27"><a href="#cb1-27"></a><span class="co">#&gt; 6 stringvar     &lt;NA&gt;     A7            NA      no    NA     &lt;NA&gt;     &lt;NA&gt;</span></span>
-<span id="cb1-28"><a href="#cb1-28"></a><span class="co">#&gt; </span></span>
-<span id="cb1-29"><a href="#cb1-29"></a><span class="co">#&gt; attr(,&quot;class&quot;)</span></span>
-<span id="cb1-30"><a href="#cb1-30"></a><span class="co">#&gt; [1] &quot;GADSdat&quot; &quot;list&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(eatGADS)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>data_path <span class="ot">&lt;-</span> <span class="fu">system.file</span>(<span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;forcedChoice.sav&quot;</span>, <span class="at">package =</span> <span class="st">&quot;eatGADS&quot;</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>gads <span class="ot">&lt;-</span> <span class="fu">import_spss</span>(data_path)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Show example data set</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>gads</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $dat</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    ID mcvar stringvar</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1   1     3          </span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2   2     2     Italy</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3   3     3   England</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4   4     3       Ita</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5   5     3       Eng</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6   6    NA    German</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7   7     1      Germ</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8   8     2          </span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 9   9     3          </span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10 10     3       Eng</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $labels</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     varName varLabel format display_width labeled value valLabel missings</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1        ID     &lt;NA&gt;   F8.0            NA      no    NA     &lt;NA&gt;     &lt;NA&gt;</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2     mcvar     &lt;NA&gt;   F8.2            NA     yes     1  Germany    valid</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3     mcvar     &lt;NA&gt;   F8.2            NA     yes     2   Poland    valid</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4     mcvar     &lt;NA&gt;   F8.2            NA     yes     3    other    valid</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5     mcvar     &lt;NA&gt;   F8.2            NA     yes   -99  missing     miss</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6 stringvar     &lt;NA&gt;     A7            NA      no    NA     &lt;NA&gt;     &lt;NA&gt;</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; attr(,&quot;class&quot;)</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;GADSdat&quot; &quot;list&quot;</span></span></code></pre></div>
 <p>The variable names of the data set above are connected to the forced choice question as indicated:</p>
 <p> </p>
 <p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAnAAAAC3CAYAAACSYWOGAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAABZESURBVHhe7dvNddu6GoVhN5KRy0gBLiE1eJwqPEoZnqQLj1OCa/HVjrWPd74LEoQlWob1PmthSSB+CIjK4Q6Vc/MCAACAqRDgAAAAJkOAAwAAmAwBDgAAYDIEOAAAgMkQ4AAAACZDgAMAAJgMAQ4AAGAyiwHu/v7+5ebm5uXu7u545NXDw8Pf4ypPT0/Ho698/PHx8b/xesV8PuP1e35+/u875lK/gwAAXIPFAKcQphvk7e3t8cgr1X3zVJgz3Uh9XDdaAtzcPtv1y+9XLfquAgBwTRYDXD7t0Pt6TCWfztXAR4Cb22e7fv6LQ37n8mkwAADXZPXO55ujn3A4pOkmWm+c9Yaf9fr0pMobsUo+2ZM87vd1TS5rgaMXSj2nODD4Jzrvp9VXfLy1xt7+kvvWn67zM0x5LVTqutye56xPS1vy+uXe6xNZyyezKv7czMfr55Prq5+x5TXKeVvXEwCAa7Aa4OrN3zdY1d3mG6pv4A4Q7ltv7D5meUPPovHWatcNW+dqtWltS7xurzPn8DkzGEgNFi7+XKTVrnm27C8thRKvofe5qGSfeg1lJMC1Sl6/XG8tWz4fr69V1q6jeI25HgAArsFqgHP48I3UYUw3Xrc5LOi92yQDgENehiX3q3VZ6lNv6F5PPpVpHUt13blOBwGvU+fTGtxurWOu1zX6+Nr+Ks2h9gxAdV+5bsvP1/1ac6nN/ZbWkPO7T46r8/uzE3/GOdb1+vl4fPbN8UtynNcCAMC1WA1w9UavV9+os+5+eRN3AMgbtseo6H3O3yp+SlbrknO1SgaWVNeqV9f1qnkdDnS+DEWt4vDgeq5x6/4qn9OfXevz9XrrHF6791/rkuvSflt8/fSa6nyex5+D1fW539J68zy5vhaPUannBQDgGqwGOPGNsnVD903abbqxWqt/hi7deB1Ulkq9+efNOm/yrbIU4MTr9hxat9eba9J6NY/rreI11bps3V+L+2gNXlvuye15Pqmfew1ckp/dKQEur2edp57X/ep6R9eXbXUuAACuRTfAOey4ZOjwTd4lb8KtAJA3fN18HXB0jjU5xvJGPspry/DgtfiYXkVtWV+iPiq5xq37a/EadX5fgwwzPlZDYA1EtS752dWAZK3rJ3U+z5P7lrq+pX6j6/NnqgIAwLXq3gV9I2/dUPNmqpI351YAqAEu677Rt27ertebv4/75l/nX5LnyL55zHNmX/drhYjaR7buryX7qdQAmdfFcl1ehwNSjvcxlaU15PyeK9dU58+Qqs/O/XrX0OO3BjgAAHC4rx5fF2UoaD1JcptK2hLgJINClhznY/Xmn0EhS4aVJdnfMtjkufJ4lgwdPlbXuGV/S/wUS8UBMOV8WXLupc/IZUuAqyU/37ymtWz5fEYDXCs8AwBwbbp3wbxB503WfAPOm7o4AGSYaAU4qSGjnqc1xvKGrrIlGElr3V5HK6jWQFMDlY+31tjb35Ict8T7cGkFvbr2tYBkef1yfOuzkQybKvVzWDru9ednsrY+AhwAABsCHC4nQxQAAIAR4D6h+lSt9VQPAABcLwLcJ5Q/WbZ+EgUAANeNAAcAADAZAhwAAMBkCHAAAACTIcABAABMhgAHAAAwGQIcAADAZAhwAAAAkyHAAQAATIYABwAAMBkCHAAAwGQIcAAAAJMhwAEAAEyGAAcAADAZAhwAAMBkCHAAAACTIcABAABMhgAHAAAwGQIcAADAZAhwAACg6fHx8eXm5ma4aBwG/PlzSGSHSPbt2/FA39kDnC7c8/PzsQYAAGalIHZ/f3+sbaP+BLhB379fPsA9PT293N7eHmvbaExN73d3d8dWAABwCQS4D6Dg5nLJACcKX1svni5066md5tBxAABwGR8a4PwzosqvX2/vf/x4bfdTKrcn9XFbtv/8+Vr3HOZ+puDkYyoZpHIOt+tYyrW3Sl2vud3n3zPA6aLkkzKVeqFU3/IEzU/eln5y1ZO8h4eHYw0AAHykiwW4WmrAUrEMdll+//53TnM4dKir4c/F7Q5wWTR3OiXAaazm0/u9AlwrcPkJWlJ7PdaikDfyxajhMcOd5vFa3Kb59aogmMfrT7bJT/5a7Z5Lr27zz8Xec/3SEkIBALO6WIBz4MlwZa6rf47Re3FAU7ATBzyHrlqv6vgMcHvZO8C1npQ5VFWtY5XCzdaL7PPkGjTeXyyHN4UzcxjzMc+RTwczROo120T93e7gloGsriHH954wAgDwmem+6XvcVuq/9d7+jwxj1voJ1E/jFHpq2GpxH83hc7SCkvu51ACXa6hy7a2iudfsHeDMT5uy1JDiJ1NrNK5eZI3LeR2IWmHPAUn0hannzHAmXneGPIUxn6MVtHIOB7iU4x0QLdsAAJjNlwhw4jHur3nNT/kcsuqcXyHAZXDzxXFoeU+Aa4WypC+BA5DP2yo6d/a1DF+yFODqWh3UXDzvUt88pv7ek46rHQCAGel+9qkDXI7Re2mFIc9T+7bO6UA3EuBOtXeAa4Ukh50a4HSspwasKs+n+TJ4Va211fl7Ac57ybVrDs9bw5rUY16Hnw7WzwUAgFl8+gAnCloelyWfeuXc9WldjsnylQJcDSsOKTWoOCj19EJOhrLe06zsa6rnF68X4NRWv3RqGwlw3pOO1/UAADCTKQKc+KmZS+snSwe92ubw5CI+h3yFACcKKwooLg5FebFGwov6anyGKvF5PK9eaz99SXTM708NcHpV3Tz/SIATrz3nAgBgNh8a4DBkOMBtocAzcvEcrLK0AqBDnEsGp3MEOD89c9FYteu9bA1wGqcxOt9W6p+fWa3rHBkI695qXe/z86j1um5/tlbr/my8p1pvfbaqj+ypt8fRPfX2OLqnLXsc3VNvj6N76u3xPXuq9VP31Nvj6J56exTVR/bU2+Ponnp7HN3Tlj2O7qm3x9E99fb4nj3V+ql76u1xdE+9PYrqI3vq7bHu4dy0tjzfFuqfe8I+3r6JZ6Ivav4BuEb6w7bnHygAAD6CQ+toIcDt7+wBThcu/7ZxjRRg+fICAIC9nD3AXTM9eVOA5ekbAADYEwEOAABgMgQ4AACAyRDgAAAAJkOAAwAAmAwBDgAAYDIEOAAAgMkQ4AAAACZDgAMAAJgMAQ4AAGAyBDgAAIDJEOAAAAAmQ4ADAACYDAEOAABgMgQ4AACAyRDgAAAAJkOAAwAAmAwBDgAAYDIEOAAAgMkQ4AAAACZDgAMAAJgMAQ4AADQ9Pj6+3NzcDBeNw6AfPw6p7BDLXH7/Pja0DQW4p6envxfm+fn5eOT/9doBAMAcFMTu7++PtW3UnwA3qIY3lz9/jh3+36F1uy0BTn1ub2+PtXXq57Rey9YQuGVNp9I6Hx4ejjUAAK4DAe6DHHLM3+Knbt+/v9Z//nytN5w9wMnd3d2mi7cUjHRM59mCAAcAwD4uEuD01EkZQOXXr7f3ekolDjduT/VJltsVhFT3HOZ+9u3b2zEV1S3ncHsNWLn2VqnrFYU2tbXOde4A54DlUunCKcT1rAUjzbvlC0CAAwBgHxcPcLXUgKViGeyyKCDlnOZw6FBXw5+L2x2qstR/p/aeANfivaz8O7hD63YOSwo0pgtVQ5zCVCvYVSMBTnWXPH8NcD53lvzy+Zx6dXtdg8Jnjl1bJwAAX9XFA5wDT4Yrc139c4zeiwOawpDUUNQLSXV8Brg9ea8+74KhVSw97dKxerF0rGcpGNVQqPfZTwHLIa6uqa5F73VM/cTBzf093u2aO58eei0EOADAtbl4gDOHJz8NEz+NUwCrYavFfTSHz5E/W5r7udQAl2uocu2tornXOLy11lUcem3nsFMp8NSA44C1xmGqVUzztuZSH31BMsDVYCk6pvYMcPXLqGOay33rPDpGgAMAXJsvFeDEY9xf85rDk0NWnXPvADcQ3uTQc7s9AlwvGOmLkE/EzGMzwCW167iLv0ytc/qY+rT2t2WdAAB8NdMEuByj96Ljqmcg8jy1b+ucDlQjAe69cl0bbe95sBSWMiBZKwhVW4LRaIDTcdX9hfNTNQIcAABjpglwoqDlcVnyqVfOXZ/W5Zgsewe4XFMtK+c6tG7nsFT/jZgCTnJo6tkSjNRe5xeHsgxwrQDmdn+ZWuf0Ma/bYdB0jAAHALg2UwU4UbvHqrR+snTQq21+YuciPofsFeD8U22rnDvAKczoVaUVrtTeempWbQlwovPkF0hz+7wZ4PK9eZ1bApzk3KLzavyWdQIA8JVcJMBhk6EAt5VC0JaLtzXAiYOYSgasGtocuFzUrv7+ArbOWY9p/R6vcb11aq/qa3VNevVaWnVRPT+zWm+tMf9Q1bre65jVuubSnFb30NtTb4+i+sieensc3VNvj6N72rLH0T319ji6p94e37OnWj91T709ju6pt0dRfWRPvT2O7qm3x9E9bdnj6J56exzdU2+P79lTrZ+6p94eR/fU26OoPrKn3h7rHs5Na8vzbaH+uSfs4+2beCb6ouYfAAAAMCeH1tFCgNvf2QOcLlz+bQMAAADndfYABwAAgH0R4AAAACZDgAMAAJgMAQ4AAGAyBDgAAIDJEOAAAAAmQ4ADAACYDAEOAABgMgQ4AACAyRDgAAAAJkOAAwAAmAwBDgAAYDIEOAAAgMkQ4AAAACZDgAMAAJgMAQ4AAGAyBDgAAIDJEOAAAAAmQ4ADAACYDAEOAABgMgQ4AADQ9Pj4+HJzczNcNA77OmuAu729fXl6ejrWAADAzBTE7u/vj7Vt1J8A907fvh2S2SGaqXz/fjzYdtYA9/z8/Dd5f3UPDw9/w+pnx9+CAACnIMB9oAxvLish7uxpSxdOAecrI8ABAK4BAe6D/P79Ftrkz59/6w3vCnD+jVulBhn9hDpDuDkFAQ4AcA0uFuAywPz69fb+x4/Xdj2ZyvakPm7L9p8/X+uew9zP6pMw1S3ncLuOpVx7q9T1tniOPHdxaB2jUJBP2HSh7u7ujrVX6rPl38LpAjsIqtQvSW3P8+q9zqsxbvc6ckxdR7ZlCFM9v3A+d9L8Oq8DXJ67Bjr/nOySn5HWpGMe77FrY5ZobI5JqntPde6R9QIArpPuIfXe3KP+eT99l7UQ1Pqp0TLYZdETrtZTLYdDh7oa/lzc7gCXRXOnUwNcnqPOHQ6t2+mC1Bu/6Oaf1CfDVotDTI5V3Rddr9nugOF59Zr1DCDmoGXZXzyH6AuXocXhygHQ8+vV4/JLrfO47r75BVab15IBznpjWvKcUj+znK/Orb1uXS8A4DrpvpD3mS3UP+8n75IhyIEnw5W5rv45Ru/FAc3/lswBz8Go1qs6PsPVXnKfDo4NQyvQRdnyZEZ9Mii1tAJcUnioc+gLoTGithow6hifQ3S8tXaN0bw5t+i49uv51O7z6Vj2lZxf41pfeI3RmrwuvVpvTJXrSfnZa6z61ffV6LkBANdB943W/WGN+i/dbzbLMGb586X5aZwCWA1bLe6jOXyO1s+U7udSA9xKsPpn7a2iubdwuFzof2jZThflXAFO1E8hQaXO2wocDj4KfZq/BhjV87zZX2v3uWrJwKMxKppLr16XXv0lbp07j+W+atGecl3WG1PpfK2+Kl6n3nts7Z9Gzw0AuA66B/iespX6n3zv2CvAice4v+Y1ze02qXPuFeBa8/pYri8cWrZrBZeWGqR6dKEdGFrhwzL4tNZSz5v9NW/vS6ggo/Eu4vF61XzSOnce8zxLlgLc2phKfTVmjc5RP0PvRWXregEA12mqAJdj9F50XPV8yuZ5at/WOR3oRgLce3idKl6P93aOACe68efNXu91LKnusDNCF9yhooYxUbvPpbYaouqYXuCr1EdhRsXr13t9GXOPrbnymPqvhatWgOuNqfKzWKL2pT9EDnJ6HT03AOA66B6ie8QI9V+692zWClO9ACf+2bGWfOqVc9endTkmy94BTpbWvmC5ZYVu/FmSLlovKIkDSIYYhQgHCbc7SDlwOKC1QpTqbpcalPQ+v4hu9xfN51AxryPH9QJcXavkfloBrjemRefL4FXn0HvN4ePep6iPjsl7zg0A+Pp0L5gqwImfmrm0frJ0WKpt+SRMRXwO2TPASYa4fGrYcFzR+ejCZRBY4xDhUp8COUS45Lx6PxrgJOdTqQFlKRTV8FPPXY95XBavo7UuWRuzROfM/rnOrPucWVLv3Kqv/YH0+Pw865har9er1nUd8j8cep/XptbrNah1nVtrsHodar3uacseR/fU2+Ponnp7fM+eav3UPfX2OLqn3h5F9ZE99fY4uqfeHkf3tGWPo3vq7XF0T709vmdPtX7qnnp7HN1Tb4+i+sieenusezg3rS3Pt4X6556wj7dv4hn4y4qvR/8B4g8kAFwX/Xdf9/XRwv1if2dNW/qbAhfta9LfAPNvkQAA4HJ4XIZN9nxEDwAAxhDgAAAAJkOAAwAAmAwBDgAAYDIEOAAAgMkQ4AAAACZDgAMAAJgMAQ4AAGAyBDgAAIDJEOAAAAAmQ4ADAACYDAEOAABgMgQ4AACAyRDgAAAAJkOAAwAAmAwBDgAAYDIEOAAAgMkQ4AAAACZDgAMAAJgMAQ4AAGAyBDgAAIDJEOAAAMDpfv8+pIpDrPj27XgAeyLAAQCAdT9+vLz8/HmsLCDAfSgCHAAAWKbwpmDWC3D4UAQ4AACumZ+cZfn167XN4S2L+H221ydwf/68tWk+v1dRm2U/t/m95HFTmNQxh8o6v4r3ID6W653c/DsAAADvU8NTFrX1ApzL9+/rAa6W/Jm11eb30noC6D46R28PUo9rvZM77AIAAFylLf9urRWgHITyWO8JnOTTPvGTtDx/fUrmMQ5dtd7igKe+4vlyvZM77OZybg4f5uPj47E27v7+/u8cKs/Pz8ej73fKWgAAmJLDjksNc2sBzk+4ZC3ApRzbmrs1zmvMMfkTqdW91ACX653cYTdzUmBTcHt6ejoeOc3d3d3fQAgAwFWq4ccB6TMEOP8bN/XzOs39fV5xHwLc50OAAwBgBwpJCjsKV7JngPO5Mnz5fEvjVLw2qevL8xLg9pE/oTpA6dU/iy4FKoU291HRGHl4ePjnuEoNeNl2e3v791ie08e8FgAAviyHrlapT+BcxO9PDXBZd/HTM5WU63AwE4fAViHA7UOBKQOc6g5cfsK29O/S6hM49VM9aU4HMlG7Qp5lSNMrT+AAAFenFeLy35dlEFMRvz9HgMt+Gut6PpWTOn/S/9DgORTo8idXcVuud3KH3VxOBjQFKIcpUz0DV6oBTvVKYx3gdJ4Mc+ZxBDgAAD6Yg1aGKx9rBTX851MFuBqg1kJVDXCmuo5nkXza1kKAAwDgg+XTt1r89AxNh0/ochSuzhXgMrj5mP9NnBDgAAD4hFo/4eb/pICm13RzIecMcK2+qjvA5c+pLQQ4AAAwiy8T4NRP/U3zqt0BTvQ+/01dPqEjwAEAgFl8mQAnqrvoaZt/Vl3qo2I18NVACAAA8FlcNMABAABgHAEOAABgMgS4E+VPrxQKhUKhXKrgunDFAQAAJkOAAwAAmAwBDgAAYDIEOAAAgMkQ4AAAACZDgAMAAJgMAQ4AAGAyBDgAAIDJEOAAAAAmQ4ADAACYDAEOAABgMgQ4AACAyRDgAAAAJkOAAwAAmAwBDgAAYCovL/8D8uYrrNMToWYAAAAASUVORK5CYII=" /></p>
 <div id="preparing-the-data-set" class="section level2">
 <h2>Preparing the data set</h2>
-<p>As illustrated, data can be loaded into <code>R</code> in the <code>GADSdat</code> format via the functions <code>import_spss()</code>, <code>import_DF()</code> or <code>import_raw()</code>. Depending on the original format, omitted responses to open text fields might be stored as empty strings instead of <code>NAs</code>. In these cases, the <code>recodeString2NA()</code> function should be used to recode these values to <code>NA</code>. Per default, matching strings across all variables in the data set are recoded. Specific variables selection can be specified using the <code>recodeVars</code> argument. Note that the function only performs recodings to exact matches of a single, specific string (in our example <code>&quot;&quot;</code>).</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>gads &lt;-<span class="st"> </span><span class="kw">recodeString2NA</span>(gads, <span class="dt">string =</span> <span class="st">&quot;&quot;</span>)</span>
-<span id="cb2-2"><a href="#cb2-2"></a><span class="co">#&gt; Recodes in variable ID: 0</span></span>
-<span id="cb2-3"><a href="#cb2-3"></a><span class="co">#&gt; Recodes in variable mcvar: 0</span></span>
-<span id="cb2-4"><a href="#cb2-4"></a><span class="co">#&gt; Recodes in variable stringvar: 3</span></span></code></pre></div>
+<p>As illustrated, data can be loaded into <code>R</code> in the <code>GADSdat</code> format via the functions <code>import_spss()</code>, <code>import_DF()</code> or <code>import_raw()</code>. Depending on the original format, omitted responses to open text fields might be stored as empty strings instead of <code>NAs</code>. In these cases, the <code>recode2NA()</code> function should be used to recode these values to <code>NA</code>. Per default, matching strings across all variables in the data set are recoded. Specific variables selection can be specified using the <code>recodeVars</code> argument. Note that the function only performs recodings to exact matches of a single, specific value (in our example <code>&quot;&quot;</code>).</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>gads <span class="ot">&lt;-</span> <span class="fu">recode2NA</span>(gads, <span class="at">value =</span> <span class="st">&quot;&quot;</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Recodes in variable ID: 0</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Recodes in variable mcvar: 0</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Recodes in variable stringvar: 3</span></span></code></pre></div>
 </div>
 <div id="creating-and-editing-a-lookup-table" class="section level2">
 <h2>Creating and editing a lookup table</h2>
 <p>With <code>createLookup()</code>, you can create a lookup table which allows recoding one or multiple variables.<br />
 You can choose which string variables in a <code>GADS</code> object you would like to recode by using the <code>recodeVars</code> argument. The resulting look up table is a long format <code>data.frame</code> with rows being variable x value pairings. In case you want to sort the output to make recoding easier, the argument <code>sort_by</code> can be used. Extra columns can be added to the look up table by the argument <code>addCols</code> (but can also be added later manually e.g. in Excel). The respective column names are irrelevant and just for convenience purpose.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a>lookup &lt;-<span class="st"> </span><span class="kw">createLookup</span>(<span class="dt">GADSdat =</span> gads, <span class="dt">recodeVars =</span> <span class="st">&quot;stringvar&quot;</span>, <span class="dt">sort_by =</span> <span class="st">&#39;value&#39;</span>, </span>
-<span id="cb3-2"><a href="#cb3-2"></a>                       <span class="dt">addCols =</span> <span class="kw">c</span>(<span class="st">&quot;new&quot;</span>, <span class="st">&quot;new2&quot;</span>))</span>
-<span id="cb3-3"><a href="#cb3-3"></a></span>
-<span id="cb3-4"><a href="#cb3-4"></a>lookup</span>
-<span id="cb3-5"><a href="#cb3-5"></a><span class="co">#&gt;    variable   value new new2</span></span>
-<span id="cb3-6"><a href="#cb3-6"></a><span class="co">#&gt; 1 stringvar    &lt;NA&gt;  NA   NA</span></span>
-<span id="cb3-7"><a href="#cb3-7"></a><span class="co">#&gt; 2 stringvar     Eng  NA   NA</span></span>
-<span id="cb3-8"><a href="#cb3-8"></a><span class="co">#&gt; 3 stringvar England  NA   NA</span></span>
-<span id="cb3-9"><a href="#cb3-9"></a><span class="co">#&gt; 4 stringvar    Germ  NA   NA</span></span>
-<span id="cb3-10"><a href="#cb3-10"></a><span class="co">#&gt; 5 stringvar  German  NA   NA</span></span>
-<span id="cb3-11"><a href="#cb3-11"></a><span class="co">#&gt; 6 stringvar     Ita  NA   NA</span></span>
-<span id="cb3-12"><a href="#cb3-12"></a><span class="co">#&gt; 7 stringvar   Italy  NA   NA</span></span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>lookup <span class="ot">&lt;-</span> <span class="fu">createLookup</span>(<span class="at">GADSdat =</span> gads, <span class="at">recodeVars =</span> <span class="st">&quot;stringvar&quot;</span>, <span class="at">sort_by =</span> <span class="st">&#39;value&#39;</span>, </span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>                       <span class="at">addCols =</span> <span class="fu">c</span>(<span class="st">&quot;new&quot;</span>, <span class="st">&quot;new2&quot;</span>))</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>lookup</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    variable   value new new2</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 stringvar    &lt;NA&gt;  NA   NA</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 stringvar     Eng  NA   NA</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3 stringvar England  NA   NA</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4 stringvar    Germ  NA   NA</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5 stringvar  German  NA   NA</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6 stringvar     Ita  NA   NA</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7 stringvar   Italy  NA   NA</span></span></code></pre></div>
 <p>Now you have to add the desired values for recoding. You should use (a) the existing value labels of the corresponding numerical, labeled variable and (b) consistent new values that can serve as value labels later. Spelling mistakes within the recoding will result in different values in the output!<br />
 To fill in the columns you could use <code>R</code> directly to modify the columns. Alternatively, we recommend using <code>eatAnalysis::write_xlsx()</code> to create an excel file in which you can fill in the values.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="co"># write look up table to Excel</span></span>
-<span id="cb4-2"><a href="#cb4-2"></a>eatAnalysis<span class="op">::</span><span class="kw">write_xlsx</span>(lookup, <span class="st">&quot;lookup_forcedChoice.xlsx&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># write look up table to Excel</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>eatAnalysis<span class="sc">::</span><span class="fu">write_xlsx</span>(lookup, <span class="st">&quot;lookup_forcedChoice.xlsx&quot;</span>)</span></code></pre></div>
 <p><img src="data:image/png;base64,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" /></p>
 <p> </p>
 <p>After filling out the excel sheet the look up table might look like this:</p>
@@ -415,9 +217,9 @@ To fill in the columns you could use <code>R</code> directly to modify the colum
 <p> </p>
 <p>The excel file can be read back into <code>R</code> via <code>readxl::read_xlsx()</code>. Detailed information on how missing values should be recoded is provided in the last section of this vignette.</p>
 <p>If you have more than one person working on the variable or if you want to use templates, you may have 2 different possible recode values (in our example: <code>new</code> and <code>new2</code>) . You can fill in both in the lookup table and then choose which one you want to prioritize later.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="co"># read look up table back to R</span></span>
-<span id="cb5-2"><a href="#cb5-2"></a>lookup &lt;-<span class="st"> </span>readxl<span class="op">::</span><span class="kw">read_xlsx</span>(<span class="st">&quot;lookup_forcedChoice.xlsx&quot;</span>)</span>
-<span id="cb5-3"><a href="#cb5-3"></a>lookup</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># read look up table back to R</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>lookup <span class="ot">&lt;-</span> readxl<span class="sc">::</span><span class="fu">read_xlsx</span>(<span class="st">&quot;lookup_forcedChoice.xlsx&quot;</span>)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>lookup</span></code></pre></div>
 <pre><code>#&gt;    variable   value     new    new2
 #&gt; 1 stringvar    &lt;NA&gt; missing    miss
 #&gt; 2 stringvar     Eng England England
@@ -427,157 +229,157 @@ To fill in the columns you could use <code>R</code> directly to modify the colum
 #&gt; 6 stringvar     Ita    &lt;NA&gt;   Italy
 #&gt; 7 stringvar   Italy   Italy   Italy</code></pre>
 <p>We use the <code>collapseColumns()</code> function to get the correct layout for the final look up table. The function merges both columns containing the new values. By using the <code>prioritize</code> argument you can decide which column will be preferred. Only if there is an <code>NA</code> in the prioritized column, the other column will be used instead.</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a>lookup_formatted &lt;-<span class="st"> </span><span class="kw">collapseColumns</span>(<span class="dt">lookup =</span> lookup, <span class="dt">recodeVars =</span> <span class="kw">c</span>(<span class="st">&quot;new&quot;</span>, <span class="st">&quot;new2&quot;</span>), </span>
-<span id="cb7-2"><a href="#cb7-2"></a>                                    <span class="dt">prioritize =</span> <span class="st">&quot;new&quot;</span>)</span>
-<span id="cb7-3"><a href="#cb7-3"></a>lookup_formatted</span>
-<span id="cb7-4"><a href="#cb7-4"></a><span class="co">#&gt;    variable   value value_new</span></span>
-<span id="cb7-5"><a href="#cb7-5"></a><span class="co">#&gt; 1 stringvar    &lt;NA&gt;   missing</span></span>
-<span id="cb7-6"><a href="#cb7-6"></a><span class="co">#&gt; 2 stringvar     Eng   England</span></span>
-<span id="cb7-7"><a href="#cb7-7"></a><span class="co">#&gt; 3 stringvar England   England</span></span>
-<span id="cb7-8"><a href="#cb7-8"></a><span class="co">#&gt; 4 stringvar    Germ   Germany</span></span>
-<span id="cb7-9"><a href="#cb7-9"></a><span class="co">#&gt; 5 stringvar  German   Germany</span></span>
-<span id="cb7-10"><a href="#cb7-10"></a><span class="co">#&gt; 6 stringvar     Ita     Italy</span></span>
-<span id="cb7-11"><a href="#cb7-11"></a><span class="co">#&gt; 7 stringvar   Italy     Italy</span></span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>lookup_formatted <span class="ot">&lt;-</span> <span class="fu">collapseColumns</span>(<span class="at">lookup =</span> lookup, <span class="at">recodeVars =</span> <span class="fu">c</span>(<span class="st">&quot;new&quot;</span>, <span class="st">&quot;new2&quot;</span>), </span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">prioritize =</span> <span class="st">&quot;new&quot;</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>lookup_formatted</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    variable   value value_new</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 stringvar    &lt;NA&gt;   missing</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 stringvar     Eng   England</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3 stringvar England   England</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4 stringvar    Germ   Germany</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5 stringvar  German   Germany</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6 stringvar     Ita     Italy</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7 stringvar   Italy     Italy</span></span></code></pre></div>
 </div>
 <div id="apply-look-up-to-gadsdat" class="section level2">
 <h2>Apply look up to <code>GADSdat</code></h2>
 <p>You perform the actual data recoding using the <code>applyLookup()</code> function. It applies the recodes defined in the look up table. This means that if the look up table was created for multiple variables, <code>applyLookup()</code> performs recoding for all of these variables simultaneously. If you define a <code>suffix</code>, the old variable(s) will not be overwritten.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a>gads_string &lt;-<span class="st"> </span><span class="kw">applyLookup</span>(<span class="dt">GADSdat =</span> gads, <span class="dt">lookup =</span> lookup_formatted, <span class="dt">suffix =</span> <span class="st">&quot;_r&quot;</span>)</span>
-<span id="cb8-2"><a href="#cb8-2"></a><span class="co">#&gt; No rows removed from meta data.</span></span>
-<span id="cb8-3"><a href="#cb8-3"></a><span class="co">#&gt; Adding meta data for the following variables: stringvar_r</span></span>
-<span id="cb8-4"><a href="#cb8-4"></a></span>
-<span id="cb8-5"><a href="#cb8-5"></a>gads_string<span class="op">$</span>dat</span>
-<span id="cb8-6"><a href="#cb8-6"></a><span class="co">#&gt;    ID mcvar stringvar stringvar_r</span></span>
-<span id="cb8-7"><a href="#cb8-7"></a><span class="co">#&gt; 1   1     3      &lt;NA&gt;     missing</span></span>
-<span id="cb8-8"><a href="#cb8-8"></a><span class="co">#&gt; 2   2     2     Italy       Italy</span></span>
-<span id="cb8-9"><a href="#cb8-9"></a><span class="co">#&gt; 3   3     3   England     England</span></span>
-<span id="cb8-10"><a href="#cb8-10"></a><span class="co">#&gt; 4   4     3       Ita       Italy</span></span>
-<span id="cb8-11"><a href="#cb8-11"></a><span class="co">#&gt; 5   5     3       Eng     England</span></span>
-<span id="cb8-12"><a href="#cb8-12"></a><span class="co">#&gt; 6   6    NA    German     Germany</span></span>
-<span id="cb8-13"><a href="#cb8-13"></a><span class="co">#&gt; 7   7     1      Germ     Germany</span></span>
-<span id="cb8-14"><a href="#cb8-14"></a><span class="co">#&gt; 8   8     2      &lt;NA&gt;     missing</span></span>
-<span id="cb8-15"><a href="#cb8-15"></a><span class="co">#&gt; 9   9     3      &lt;NA&gt;     missing</span></span>
-<span id="cb8-16"><a href="#cb8-16"></a><span class="co">#&gt; 10 10     3       Eng     England</span></span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>gads_string <span class="ot">&lt;-</span> <span class="fu">applyLookup</span>(<span class="at">GADSdat =</span> gads, <span class="at">lookup =</span> lookup_formatted, <span class="at">suffix =</span> <span class="st">&quot;_r&quot;</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; No rows removed from meta data.</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Adding meta data for the following variables: stringvar_r</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>gads_string<span class="sc">$</span>dat</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    ID mcvar stringvar stringvar_r</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1   1     3      &lt;NA&gt;     missing</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2   2     2     Italy       Italy</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3   3     3   England     England</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4   4     3       Ita       Italy</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5   5     3       Eng     England</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6   6    NA    German     Germany</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7   7     1      Germ     Germany</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8   8     2      &lt;NA&gt;     missing</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 9   9     3      &lt;NA&gt;     missing</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10 10     3       Eng     England</span></span></code></pre></div>
 </div>
 <div id="integrate-character-and-numeric-variable" class="section level2">
 <h2>Integrate character and numeric variable</h2>
 <p>The next step is to integrate the string variable into the integer via the <code>collapseMC_Text()</code> function. With <code>mc_var</code> and <code>text_var</code> we specify the variables used for recoding. With the <code>mc_code4text</code> argument we specify the value label of <code>mc_var</code> which indicates that <code>text_var</code> contains valid information (in our example <code>&quot;other&quot;</code>). If the <code>mc_var</code> is missing, <code>text_var</code> is also utilized (e.g. row 6). If there is a valid value in <code>mc_var</code> other than the code for <code>mc_code4text</code>, information in <code>text_var</code> is ignored (e.g. row 2). New value labels are created for entries in <code>text_var</code> without corresponding value labels. The new value labels are ordered alphabetically and inserted after the already existing ones. Additional information on how missings are treated by the function can be found in the last section of the vignette.</p>
 <p>Note that in contrast to <code>createLookup()</code>, <code>collapseColumns()</code> and <code>applyLookup()</code> this function only works on a single forced choice variable pair. Integrating multiple variable pairs has to be performed in separate steps.</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a>gads_final &lt;-<span class="st"> </span><span class="kw">collapseMC_Text</span>(<span class="dt">GADSdat =</span> gads_string, <span class="dt">mc_var =</span> <span class="st">&quot;mcvar&quot;</span>, </span>
-<span id="cb9-2"><a href="#cb9-2"></a>                              <span class="dt">text_var =</span> <span class="st">&quot;stringvar_r&quot;</span>, <span class="dt">mc_code4text =</span> <span class="st">&quot;other&quot;</span>, </span>
-<span id="cb9-3"><a href="#cb9-3"></a>                              <span class="dt">var_suffix =</span> <span class="st">&quot;_r&quot;</span>, <span class="dt">label_suffix =</span> <span class="st">&quot;(recoded)&quot;</span>)</span>
-<span id="cb9-4"><a href="#cb9-4"></a><span class="co">#&gt; No rows removed from meta data.</span></span>
-<span id="cb9-5"><a href="#cb9-5"></a><span class="co">#&gt; Adding meta data for the following variables: mcvar_r</span></span>
-<span id="cb9-6"><a href="#cb9-6"></a></span>
-<span id="cb9-7"><a href="#cb9-7"></a>gads_final<span class="op">$</span>dat</span>
-<span id="cb9-8"><a href="#cb9-8"></a><span class="co">#&gt;    ID mcvar stringvar stringvar_r mcvar_r</span></span>
-<span id="cb9-9"><a href="#cb9-9"></a><span class="co">#&gt; 1   1     3      &lt;NA&gt;     missing     -99</span></span>
-<span id="cb9-10"><a href="#cb9-10"></a><span class="co">#&gt; 2   2     2     Italy       Italy       2</span></span>
-<span id="cb9-11"><a href="#cb9-11"></a><span class="co">#&gt; 3   3     3   England     England       4</span></span>
-<span id="cb9-12"><a href="#cb9-12"></a><span class="co">#&gt; 4   4     3       Ita       Italy       5</span></span>
-<span id="cb9-13"><a href="#cb9-13"></a><span class="co">#&gt; 5   5     3       Eng     England       4</span></span>
-<span id="cb9-14"><a href="#cb9-14"></a><span class="co">#&gt; 6   6    NA    German     Germany       1</span></span>
-<span id="cb9-15"><a href="#cb9-15"></a><span class="co">#&gt; 7   7     1      Germ     Germany       1</span></span>
-<span id="cb9-16"><a href="#cb9-16"></a><span class="co">#&gt; 8   8     2      &lt;NA&gt;     missing       2</span></span>
-<span id="cb9-17"><a href="#cb9-17"></a><span class="co">#&gt; 9   9     3      &lt;NA&gt;     missing     -99</span></span>
-<span id="cb9-18"><a href="#cb9-18"></a><span class="co">#&gt; 10 10     3       Eng     England       4</span></span>
-<span id="cb9-19"><a href="#cb9-19"></a><span class="kw">extractMeta</span>(gads_final, <span class="st">&quot;mcvar_r&quot;</span>)</span>
-<span id="cb9-20"><a href="#cb9-20"></a><span class="co">#&gt;    varName  varLabel format display_width labeled value valLabel missings</span></span>
-<span id="cb9-21"><a href="#cb9-21"></a><span class="co">#&gt; 8  mcvar_r (recoded)   F8.2            NA     yes     1  Germany    valid</span></span>
-<span id="cb9-22"><a href="#cb9-22"></a><span class="co">#&gt; 9  mcvar_r (recoded)   F8.2            NA     yes     2   Poland    valid</span></span>
-<span id="cb9-23"><a href="#cb9-23"></a><span class="co">#&gt; 10 mcvar_r (recoded)   F8.2            NA     yes     3    other    valid</span></span>
-<span id="cb9-24"><a href="#cb9-24"></a><span class="co">#&gt; 11 mcvar_r (recoded)   F8.2            NA     yes   -99  missing     miss</span></span>
-<span id="cb9-25"><a href="#cb9-25"></a><span class="co">#&gt; 12 mcvar_r (recoded)   F8.2            NA     yes     4  England    valid</span></span>
-<span id="cb9-26"><a href="#cb9-26"></a><span class="co">#&gt; 13 mcvar_r (recoded)   F8.2            NA     yes     5    Italy    valid</span></span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>gads_final <span class="ot">&lt;-</span> <span class="fu">collapseMC_Text</span>(<span class="at">GADSdat =</span> gads_string, <span class="at">mc_var =</span> <span class="st">&quot;mcvar&quot;</span>, </span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>                              <span class="at">text_var =</span> <span class="st">&quot;stringvar_r&quot;</span>, <span class="at">mc_code4text =</span> <span class="st">&quot;other&quot;</span>, </span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>                              <span class="at">var_suffix =</span> <span class="st">&quot;_r&quot;</span>, <span class="at">label_suffix =</span> <span class="st">&quot;(recoded)&quot;</span>)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; No rows removed from meta data.</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Adding meta data for the following variables: mcvar_r</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>gads_final<span class="sc">$</span>dat</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    ID mcvar stringvar stringvar_r mcvar_r</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1   1     3      &lt;NA&gt;     missing     -99</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2   2     2     Italy       Italy       2</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3   3     3   England     England       4</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4   4     3       Ita       Italy       5</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5   5     3       Eng     England       4</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6   6    NA    German     Germany       1</span></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7   7     1      Germ     Germany       1</span></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8   8     2      &lt;NA&gt;     missing       2</span></span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 9   9     3      &lt;NA&gt;     missing     -99</span></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10 10     3       Eng     England       4</span></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a><span class="fu">extractMeta</span>(gads_final, <span class="st">&quot;mcvar_r&quot;</span>)</span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    varName  varLabel format display_width labeled value valLabel missings</span></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8  mcvar_r (recoded)   F8.2            NA     yes     1  Germany    valid</span></span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 9  mcvar_r (recoded)   F8.2            NA     yes     2   Poland    valid</span></span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10 mcvar_r (recoded)   F8.2            NA     yes     3    other    valid</span></span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 11 mcvar_r (recoded)   F8.2            NA     yes   -99  missing     miss</span></span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 12 mcvar_r (recoded)   F8.2            NA     yes     4  England    valid</span></span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 13 mcvar_r (recoded)   F8.2            NA     yes     5    Italy    valid</span></span></code></pre></div>
 <p><code>checkMissings()</code> is a function for automatically setting missing values in a <code>GADSdat</code>. If new values should receive missing codes, <code>checkMissings()</code> would be necessary. However, in our example no new values representing missings have been added, therefore the function does not change the <code>GADSdat</code>.</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a>gads_final &lt;-<span class="st"> </span><span class="kw">checkMissings</span>(<span class="dt">GADSdat =</span> gads_final, <span class="dt">missingLabel =</span> <span class="st">&quot;missing&quot;</span>, </span>
-<span id="cb10-2"><a href="#cb10-2"></a>                            <span class="dt">addMissingCode =</span> <span class="ot">TRUE</span>, <span class="dt">addMissingLabel =</span> <span class="ot">FALSE</span>)</span>
-<span id="cb10-3"><a href="#cb10-3"></a><span class="kw">extractMeta</span>(gads_final, <span class="st">&quot;mcvar_r&quot;</span>)</span>
-<span id="cb10-4"><a href="#cb10-4"></a><span class="co">#&gt;    varName  varLabel format display_width labeled value valLabel missings</span></span>
-<span id="cb10-5"><a href="#cb10-5"></a><span class="co">#&gt; 8  mcvar_r (recoded)   F8.2            NA     yes     1  Germany    valid</span></span>
-<span id="cb10-6"><a href="#cb10-6"></a><span class="co">#&gt; 9  mcvar_r (recoded)   F8.2            NA     yes     2   Poland    valid</span></span>
-<span id="cb10-7"><a href="#cb10-7"></a><span class="co">#&gt; 10 mcvar_r (recoded)   F8.2            NA     yes     3    other    valid</span></span>
-<span id="cb10-8"><a href="#cb10-8"></a><span class="co">#&gt; 11 mcvar_r (recoded)   F8.2            NA     yes   -99  missing     miss</span></span>
-<span id="cb10-9"><a href="#cb10-9"></a><span class="co">#&gt; 12 mcvar_r (recoded)   F8.2            NA     yes     4  England    valid</span></span>
-<span id="cb10-10"><a href="#cb10-10"></a><span class="co">#&gt; 13 mcvar_r (recoded)   F8.2            NA     yes     5    Italy    valid</span></span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>gads_final <span class="ot">&lt;-</span> <span class="fu">checkMissings</span>(<span class="at">GADSdat =</span> gads_final, <span class="at">missingLabel =</span> <span class="st">&quot;missing&quot;</span>, </span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>                            <span class="at">addMissingCode =</span> <span class="cn">TRUE</span>, <span class="at">addMissingLabel =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="fu">extractMeta</span>(gads_final, <span class="st">&quot;mcvar_r&quot;</span>)</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    varName  varLabel format display_width labeled value valLabel missings</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8  mcvar_r (recoded)   F8.2            NA     yes     1  Germany    valid</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 9  mcvar_r (recoded)   F8.2            NA     yes     2   Poland    valid</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10 mcvar_r (recoded)   F8.2            NA     yes     3    other    valid</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 11 mcvar_r (recoded)   F8.2            NA     yes   -99  missing     miss</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 12 mcvar_r (recoded)   F8.2            NA     yes     4  England    valid</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 13 mcvar_r (recoded)   F8.2            NA     yes     5    Italy    valid</span></span></code></pre></div>
 </div>
 <div id="remove-variables-from-gadsdat" class="section level2">
 <h2>Remove variables from <code>GADSdat</code></h2>
 <p>In a last step you can remove intermediate or superfluous variables from the <code>GADSdat</code> by using the function <code>removeVars()</code>.</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a>gads_final &lt;-<span class="st"> </span><span class="kw">removeVars</span>(<span class="dt">GADSdat =</span> gads_final, <span class="dt">vars =</span> <span class="kw">c</span>(<span class="st">&quot;mcvar&quot;</span>, <span class="st">&quot;stringvar_r&quot;</span>))</span>
-<span id="cb11-2"><a href="#cb11-2"></a><span class="co">#&gt; Removing the following rows from meta data: mcvar, stringvar_r</span></span>
-<span id="cb11-3"><a href="#cb11-3"></a><span class="co">#&gt; No rows added to meta data.</span></span>
-<span id="cb11-4"><a href="#cb11-4"></a>gads_final<span class="op">$</span>dat</span>
-<span id="cb11-5"><a href="#cb11-5"></a><span class="co">#&gt;    ID stringvar mcvar_r</span></span>
-<span id="cb11-6"><a href="#cb11-6"></a><span class="co">#&gt; 1   1      &lt;NA&gt;     -99</span></span>
-<span id="cb11-7"><a href="#cb11-7"></a><span class="co">#&gt; 2   2     Italy       2</span></span>
-<span id="cb11-8"><a href="#cb11-8"></a><span class="co">#&gt; 3   3   England       4</span></span>
-<span id="cb11-9"><a href="#cb11-9"></a><span class="co">#&gt; 4   4       Ita       5</span></span>
-<span id="cb11-10"><a href="#cb11-10"></a><span class="co">#&gt; 5   5       Eng       4</span></span>
-<span id="cb11-11"><a href="#cb11-11"></a><span class="co">#&gt; 6   6    German       1</span></span>
-<span id="cb11-12"><a href="#cb11-12"></a><span class="co">#&gt; 7   7      Germ       1</span></span>
-<span id="cb11-13"><a href="#cb11-13"></a><span class="co">#&gt; 8   8      &lt;NA&gt;       2</span></span>
-<span id="cb11-14"><a href="#cb11-14"></a><span class="co">#&gt; 9   9      &lt;NA&gt;     -99</span></span>
-<span id="cb11-15"><a href="#cb11-15"></a><span class="co">#&gt; 10 10       Eng       4</span></span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>gads_final <span class="ot">&lt;-</span> <span class="fu">removeVars</span>(<span class="at">GADSdat =</span> gads_final, <span class="at">vars =</span> <span class="fu">c</span>(<span class="st">&quot;mcvar&quot;</span>, <span class="st">&quot;stringvar_r&quot;</span>))</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Removing the following rows from meta data: mcvar, stringvar_r</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; No rows added to meta data.</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>gads_final<span class="sc">$</span>dat</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    ID stringvar mcvar_r</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1   1      &lt;NA&gt;     -99</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2   2     Italy       2</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3   3   England       4</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4   4       Ita       5</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5   5       Eng       4</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6   6    German       1</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7   7      Germ       1</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8   8      &lt;NA&gt;       2</span></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 9   9      &lt;NA&gt;     -99</span></span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10 10       Eng       4</span></span></code></pre></div>
 </div>
 <div id="missing-value-codes" class="section level2">
 <h2>Missing value codes</h2>
 <p>In some scenarios, there might be conceptual differences between missing codes in the data (e.g. invalid responses, item not administered, omission). These conceptual differences might require different integration of the two variables (numerical &amp; labeled, character) depending on the type of missing. In this section, we illustrate how <code>collapseMC_Text()</code> behaves depending on how missings are defined in the data.</p>
 <p>To illustrate the described behavior, we have included an additional <code>SPSS</code> data set in the package with a forced choice variable pair including all possible value and missing combinations. The possible values in the string variable are <code>new valid</code>, indicating an arbitrary valid entry, <code>NA</code> indicating for example an omission and <code>special missing</code>, indicating for example an invalid entry.</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a>data_path_miss &lt;-<span class="st"> </span><span class="kw">system.file</span>(<span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;forcedChoice_missings.sav&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;eatGADS&quot;</span>)</span>
-<span id="cb12-2"><a href="#cb12-2"></a>gads_miss &lt;-<span class="st"> </span><span class="kw">import_spss</span>(data_path_miss)</span>
-<span id="cb12-3"><a href="#cb12-3"></a>gads_miss &lt;-<span class="st"> </span><span class="kw">recodeString2NA</span>(gads_miss, <span class="dt">string =</span> <span class="st">&quot;&quot;</span>)</span>
-<span id="cb12-4"><a href="#cb12-4"></a><span class="co">#&gt; Recodes in variable ID: 0</span></span>
-<span id="cb12-5"><a href="#cb12-5"></a><span class="co">#&gt; Recodes in variable mc: 0</span></span>
-<span id="cb12-6"><a href="#cb12-6"></a><span class="co">#&gt; Recodes in variable string: 4</span></span>
-<span id="cb12-7"><a href="#cb12-7"></a></span>
-<span id="cb12-8"><a href="#cb12-8"></a><span class="co"># Show example data set</span></span>
-<span id="cb12-9"><a href="#cb12-9"></a>gads_miss</span>
-<span id="cb12-10"><a href="#cb12-10"></a><span class="co">#&gt; $dat</span></span>
-<span id="cb12-11"><a href="#cb12-11"></a><span class="co">#&gt;    ID  mc          string</span></span>
-<span id="cb12-12"><a href="#cb12-12"></a><span class="co">#&gt; 1   1   2       new valid</span></span>
-<span id="cb12-13"><a href="#cb12-13"></a><span class="co">#&gt; 2   2   1       new valid</span></span>
-<span id="cb12-14"><a href="#cb12-14"></a><span class="co">#&gt; 3   3 -99       new valid</span></span>
-<span id="cb12-15"><a href="#cb12-15"></a><span class="co">#&gt; 4   4 -98       new valid</span></span>
-<span id="cb12-16"><a href="#cb12-16"></a><span class="co">#&gt; 5   5   2            &lt;NA&gt;</span></span>
-<span id="cb12-17"><a href="#cb12-17"></a><span class="co">#&gt; 6   6   1            &lt;NA&gt;</span></span>
-<span id="cb12-18"><a href="#cb12-18"></a><span class="co">#&gt; 7   7 -99            &lt;NA&gt;</span></span>
-<span id="cb12-19"><a href="#cb12-19"></a><span class="co">#&gt; 8   8 -98            &lt;NA&gt;</span></span>
-<span id="cb12-20"><a href="#cb12-20"></a><span class="co">#&gt; 9   9   2 special missing</span></span>
-<span id="cb12-21"><a href="#cb12-21"></a><span class="co">#&gt; 10 10   1 special missing</span></span>
-<span id="cb12-22"><a href="#cb12-22"></a><span class="co">#&gt; 11 11 -99 special missing</span></span>
-<span id="cb12-23"><a href="#cb12-23"></a><span class="co">#&gt; 12 12 -98 special missing</span></span>
-<span id="cb12-24"><a href="#cb12-24"></a><span class="co">#&gt; </span></span>
-<span id="cb12-25"><a href="#cb12-25"></a><span class="co">#&gt; $labels</span></span>
-<span id="cb12-26"><a href="#cb12-26"></a><span class="co">#&gt;   varName varLabel format display_width labeled value        valLabel missings</span></span>
-<span id="cb12-27"><a href="#cb12-27"></a><span class="co">#&gt; 1      ID     &lt;NA&gt;   F8.0            NA      no    NA            &lt;NA&gt;     &lt;NA&gt;</span></span>
-<span id="cb12-28"><a href="#cb12-28"></a><span class="co">#&gt; 2      mc     &lt;NA&gt;   F8.2            NA     yes     1           valid    valid</span></span>
-<span id="cb12-29"><a href="#cb12-29"></a><span class="co">#&gt; 3      mc     &lt;NA&gt;   F8.2            NA     yes     2           other    valid</span></span>
-<span id="cb12-30"><a href="#cb12-30"></a><span class="co">#&gt; 4      mc     &lt;NA&gt;   F8.2            NA     yes   -99 missing omitted     miss</span></span>
-<span id="cb12-31"><a href="#cb12-31"></a><span class="co">#&gt; 5      mc     &lt;NA&gt;   F8.2            NA     yes   -98 special missing     miss</span></span>
-<span id="cb12-32"><a href="#cb12-32"></a><span class="co">#&gt; 6  string     &lt;NA&gt;    A15            NA      no    NA            &lt;NA&gt;     &lt;NA&gt;</span></span>
-<span id="cb12-33"><a href="#cb12-33"></a><span class="co">#&gt; </span></span>
-<span id="cb12-34"><a href="#cb12-34"></a><span class="co">#&gt; attr(,&quot;class&quot;)</span></span>
-<span id="cb12-35"><a href="#cb12-35"></a><span class="co">#&gt; [1] &quot;GADSdat&quot; &quot;list&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>data_path_miss <span class="ot">&lt;-</span> <span class="fu">system.file</span>(<span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;forcedChoice_missings.sav&quot;</span>, <span class="at">package =</span> <span class="st">&quot;eatGADS&quot;</span>)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>gads_miss <span class="ot">&lt;-</span> <span class="fu">import_spss</span>(data_path_miss)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>gads_miss <span class="ot">&lt;-</span> <span class="fu">recode2NA</span>(gads_miss, <span class="at">value =</span> <span class="st">&quot;&quot;</span>)</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Recodes in variable ID: 0</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Recodes in variable mc: 0</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Recodes in variable string: 4</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Show example data set</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>gads_miss</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $dat</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    ID  mc          string</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1   1   2       new valid</span></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2   2   1       new valid</span></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3   3 -99       new valid</span></span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4   4 -98       new valid</span></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5   5   2            &lt;NA&gt;</span></span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6   6   1            &lt;NA&gt;</span></span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7   7 -99            &lt;NA&gt;</span></span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8   8 -98            &lt;NA&gt;</span></span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 9   9   2 special missing</span></span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10 10   1 special missing</span></span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 11 11 -99 special missing</span></span>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 12 12 -98 special missing</span></span>
+<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $labels</span></span>
+<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   varName varLabel format display_width labeled value        valLabel missings</span></span>
+<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1      ID     &lt;NA&gt;   F8.0            NA      no    NA            &lt;NA&gt;     &lt;NA&gt;</span></span>
+<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2      mc     &lt;NA&gt;   F8.2            NA     yes     1           valid    valid</span></span>
+<span id="cb12-29"><a href="#cb12-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3      mc     &lt;NA&gt;   F8.2            NA     yes     2           other    valid</span></span>
+<span id="cb12-30"><a href="#cb12-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4      mc     &lt;NA&gt;   F8.2            NA     yes   -99 missing omitted     miss</span></span>
+<span id="cb12-31"><a href="#cb12-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5      mc     &lt;NA&gt;   F8.2            NA     yes   -98 special missing     miss</span></span>
+<span id="cb12-32"><a href="#cb12-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6  string     &lt;NA&gt;    A15            NA      no    NA            &lt;NA&gt;     &lt;NA&gt;</span></span>
+<span id="cb12-33"><a href="#cb12-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb12-34"><a href="#cb12-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; attr(,&quot;class&quot;)</span></span>
+<span id="cb12-35"><a href="#cb12-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;GADSdat&quot; &quot;list&quot;</span></span></code></pre></div>
 <p>If both variables have valid but contradicting entries, <code>collapseMC_Text()</code> prefers information from the numerical, labeled variable (e.g. row 2). If both entries are missing, the behavior of <code>collapseMC_Text()</code> depends on the missing type in the character variable. If the missing is indicated via an explicit missing definition (<code>special missing</code> in the example), this missing code is preferred to missing codes from the numerical, labeled variable (e.g. row 11). If the missing is indicated via an actual <code>NA</code> in the character variable, the information from the numerical, labeled variable is preferred (e.g. row 7).</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a><span class="co"># summarize numerical, labeled variable and character variable</span></span>
-<span id="cb13-2"><a href="#cb13-2"></a>gads &lt;-<span class="st"> </span><span class="kw">collapseMC_Text</span>(gads_miss, <span class="st">&quot;mc&quot;</span>, <span class="st">&quot;string&quot;</span>, <span class="dt">mc_code4text =</span> <span class="st">&quot;other&quot;</span>, <span class="st">&quot;_r&quot;</span>, <span class="st">&quot;recoded&quot;</span>)</span>
-<span id="cb13-3"><a href="#cb13-3"></a><span class="co">#&gt; No rows removed from meta data.</span></span>
-<span id="cb13-4"><a href="#cb13-4"></a><span class="co">#&gt; Adding meta data for the following variables: mc_r</span></span>
-<span id="cb13-5"><a href="#cb13-5"></a>gads<span class="op">$</span>dat</span>
-<span id="cb13-6"><a href="#cb13-6"></a><span class="co">#&gt;    ID  mc          string mc_r</span></span>
-<span id="cb13-7"><a href="#cb13-7"></a><span class="co">#&gt; 1   1   2       new valid    3</span></span>
-<span id="cb13-8"><a href="#cb13-8"></a><span class="co">#&gt; 2   2   1       new valid    1</span></span>
-<span id="cb13-9"><a href="#cb13-9"></a><span class="co">#&gt; 3   3 -99       new valid    3</span></span>
-<span id="cb13-10"><a href="#cb13-10"></a><span class="co">#&gt; 4   4 -98       new valid    3</span></span>
-<span id="cb13-11"><a href="#cb13-11"></a><span class="co">#&gt; 5   5   2            &lt;NA&gt;    2</span></span>
-<span id="cb13-12"><a href="#cb13-12"></a><span class="co">#&gt; 6   6   1            &lt;NA&gt;    1</span></span>
-<span id="cb13-13"><a href="#cb13-13"></a><span class="co">#&gt; 7   7 -99            &lt;NA&gt;  -99</span></span>
-<span id="cb13-14"><a href="#cb13-14"></a><span class="co">#&gt; 8   8 -98            &lt;NA&gt;  -98</span></span>
-<span id="cb13-15"><a href="#cb13-15"></a><span class="co">#&gt; 9   9   2 special missing  -98</span></span>
-<span id="cb13-16"><a href="#cb13-16"></a><span class="co">#&gt; 10 10   1 special missing    1</span></span>
-<span id="cb13-17"><a href="#cb13-17"></a><span class="co">#&gt; 11 11 -99 special missing  -98</span></span>
-<span id="cb13-18"><a href="#cb13-18"></a><span class="co">#&gt; 12 12 -98 special missing  -98</span></span></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># summarize numerical, labeled variable and character variable</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>gads <span class="ot">&lt;-</span> <span class="fu">collapseMC_Text</span>(gads_miss, <span class="st">&quot;mc&quot;</span>, <span class="st">&quot;string&quot;</span>, <span class="at">mc_code4text =</span> <span class="st">&quot;other&quot;</span>, <span class="st">&quot;_r&quot;</span>, <span class="st">&quot;recoded&quot;</span>)</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; No rows removed from meta data.</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Adding meta data for the following variables: mc_r</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>gads<span class="sc">$</span>dat</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    ID  mc          string mc_r</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1   1   2       new valid    3</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2   2   1       new valid    1</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3   3 -99       new valid    3</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4   4 -98       new valid    3</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5   5   2            &lt;NA&gt;    2</span></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6   6   1            &lt;NA&gt;    1</span></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7   7 -99            &lt;NA&gt;  -99</span></span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8   8 -98            &lt;NA&gt;  -98</span></span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 9   9   2 special missing  -98</span></span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10 10   1 special missing    1</span></span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 11 11 -99 special missing  -98</span></span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 12 12 -98 special missing  -98</span></span></code></pre></div>
 </div>
 
 

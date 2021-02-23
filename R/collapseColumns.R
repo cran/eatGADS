@@ -16,8 +16,8 @@
 #' This simply renames the single variable specified under \code{recodeVars}.
 #'
 #'@param lookup For example a lookup table \code{data.frame} as created via \code{\link{createLookup}}.
-#'@param recodeVars Character vector of variable names which should be collapsed (currently only up to two variables are supported).
-#'@param prioritize Character vector of length 1. Which of the variables in \code{recodeVars} should be prioritized,
+#'@param recodeVars Character vector of column names which should be collapsed (currently only up to two variables are supported).
+#'@param prioritize Character vector of length 1. Which of the columns in \code{recodeVars} should be prioritized,
 #'if multiple values are available? If \code{recodeVars} is of length 1, this argument can be omitted.
 #'
 #'@return Returns a \code{data.frame} that can be used for \code{\link{applyLookup}}, with the columns:
@@ -58,8 +58,12 @@ collapseColumns <- function(lookup, recodeVars, prioritize) {
   if(length(prioritize) != 1) stop("'prioritize' must be of length 1.")
   if(!all(prioritize %in% recodeVars)) stop("All variables names in 'prioritize' need to be in 'recodeVars'.")
 
-  lookup[, "value_new"] <- ifelse(is.na(lookup[[prioritize]]),
+  #if("value_new" %in% recodeVars) browser()
+
+  lookup[, ncol(lookup) + 1] <- ifelse(is.na(lookup[[prioritize]]),
                                   yes = lookup[[recodeVars[!recodeVars %in% prioritize]]],
                                   no = lookup[[prioritize]])
-  lookup[, names(lookup)[!names(lookup) %in% recodeVars]]
+  lookup_out <- lookup[, names(lookup)[!names(lookup) %in% recodeVars]]
+  names(lookup_out)[3] <- "value_new"
+  as.data.frame(lookup_out)
 }
