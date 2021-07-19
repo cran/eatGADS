@@ -12,7 +12,7 @@
 
 <meta name="author" content="Benjamin Becker, Johanna Busse" />
 
-<meta name="date" content="2021-02-23" />
+<meta name="date" content="2021-07-19" />
 
 <title>Recoding a multiple choice item with a text field</title>
 
@@ -28,11 +28,19 @@
     </style>
 
 
-<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
 <style type="text/css" data-origin="pandoc">
 pre > code.sourceCode { white-space: pre; position: relative; }
 pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
 div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
@@ -133,7 +141,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <h1 class="title toc-ignore">Recoding a multiple choice item with a text field</h1>
 <h4 class="author">Benjamin Becker, Johanna Busse</h4>
-<h4 class="date">2021-02-23</h4>
+<h4 class="date">2021-07-19</h4>
 
 
 
@@ -151,56 +159,48 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(eatGADS)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>data_path <span class="ot">&lt;-</span> <span class="fu">system.file</span>(<span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;multipleChoice.sav&quot;</span>, <span class="at">package =</span> <span class="st">&quot;eatGADS&quot;</span>)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>gads <span class="ot">&lt;-</span> <span class="fu">import_spss</span>(data_path)</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning: Due to a bug in haven, missing codes of character variables can be lost. Checking missing codes via checkMissings is recommended. The following variables might be affected: </span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  stringvar</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Show example data set</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>gads</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $dat</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    ID mcvar1 mcother      stringvar</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1   1      1     -94         German</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2   2    -94       0            Ger</span></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3   3      0       1            Ger</span></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4   4      1     -94               </span></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5   5    -94       0  Eng, Pol, Ita</span></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6   6      0       1 Pol, Ita, Germ</span></span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7   7      1     -94       eng, ita</span></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8   8    -94       0      germ, pol</span></span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 9   9      0       1         polish</span></span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10 10      1     -94       eng, ita</span></span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 11 11    -94       0            -99</span></span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 12 12      0       1      Star Trek</span></span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $labels</span></span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     varName         varLabel format display_width labeled value</span></span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1        ID             &lt;NA&gt;   F8.0            NA      no    NA</span></span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2    mcvar1 Language: German   F8.2            NA     yes   -94</span></span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3    mcvar1 Language: German   F8.2            NA     yes     0</span></span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4    mcvar1 Language: German   F8.2            NA     yes     1</span></span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5   mcother  Language: other   F8.2            NA     yes   -94</span></span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6   mcother  Language: other   F8.2            NA     yes     0</span></span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7   mcother  Language: other   F8.2            NA     yes     1</span></span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8 stringvar   Language: text    A14            NA     yes   -99</span></span>
-<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;            valLabel missings</span></span>
-<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1              &lt;NA&gt;     &lt;NA&gt;</span></span>
-<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2           missing     miss</span></span>
-<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3                no    valid</span></span>
-<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4               yes    valid</span></span>
-<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5           missing     miss</span></span>
-<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6                no    valid</span></span>
-<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7               yes    valid</span></span>
-<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8 missing by design    valid</span></span>
-<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; attr(,&quot;class&quot;)</span></span>
-<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;GADSdat&quot; &quot;list&quot;</span></span></code></pre></div>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Show example data set</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>gads</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $dat</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    ID mcvar1 mcother      stringvar</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1   1      1     -94         German</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2   2    -94       0            Ger</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3   3      0       1            Ger</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4   4      1     -94               </span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5   5    -94       0  Eng, Pol, Ita</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6   6      0       1 Pol, Ita, Germ</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7   7      1     -94       eng, ita</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8   8    -94       0      germ, pol</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 9   9      0       1         polish</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10 10      1     -94       eng, ita</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 11 11    -94       0            -99</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 12 12      0       1      Star Trek</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $labels</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     varName         varLabel format display_width labeled value          valLabel missings</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1        ID             &lt;NA&gt;   F8.0            NA      no    NA              &lt;NA&gt;     &lt;NA&gt;</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2    mcvar1 Language: German   F8.2            NA     yes   -94           missing     miss</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3    mcvar1 Language: German   F8.2            NA     yes     0                no    valid</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4    mcvar1 Language: German   F8.2            NA     yes     1               yes    valid</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5   mcother  Language: other   F8.2            NA     yes   -94           missing     miss</span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6   mcother  Language: other   F8.2            NA     yes     0                no    valid</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7   mcother  Language: other   F8.2            NA     yes     1               yes    valid</span></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8 stringvar   Language: text    A14            NA     yes   -99 missing by design    valid</span></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; attr(,&quot;class&quot;)</span></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;GADSdat&quot; &quot;list&quot;</span></span></code></pre></div>
 <p>The variable names of the data set above are connected to the multiple choice question as indicated:</p>
 <p> </p>
 <p><img src="data:image/png;base64,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" /></p>
 <div id="preparing-the-data-set" class="section level2">
 <h2>Preparing the data set</h2>
-<p>As illustrated, data can be loaded into <code>R</code> in the <code>GADSdat</code> format via the functions <code>import_spss()</code>,<code>import_DF()</code> or <code>import_raw()</code>. Depending on the original format, omitted responses to open text fields might be stored as empty strings instead of <code>NAs</code>. In these cases, the <code>recodeString2NA()</code> function should be used to recode these values to <code>NA</code>. Per default, matching strings across all variables in the data set are recoded. Specific variables selection can be specified using the <code>recodeVars</code> argument. Note that the function only performs recodings to exact matches of a single, specific string (in our example <code>&quot;&quot;</code>).</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>gads <span class="ot">&lt;-</span> <span class="fu">recodeString2NA</span>(gads, <span class="at">string =</span> <span class="st">&quot;&quot;</span>)</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Error in recodeString2NA(gads, string = &quot;&quot;): This function is deprecated. Use recode2NA() instead.</span></span></code></pre></div>
+<p>As illustrated, data can be loaded into <code>R</code> in the <code>GADSdat</code> format via the functions <code>import_spss()</code>,<code>import_DF()</code> or <code>import_raw()</code>. Depending on the original format, omitted responses to open text fields might be stored as empty strings instead of <code>NAs</code>. In these cases, the <code>recode2NA()</code> function should be used to recode these values to <code>NA</code>. Per default, matching strings across all variables in the data set are recoded. Specific variables selection can be specified using the <code>recodeVars</code> argument. Note that the function only performs recodings to exact matches of a single, specific string (in our example <code>&quot;&quot;</code>).</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>gads <span class="ot">&lt;-</span> <span class="fu">recode2NA</span>(gads, <span class="at">value =</span> <span class="st">&quot;&quot;</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Recodes in variable ID: 0</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Recodes in variable mcvar1: 0</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Recodes in variable mcother: 0</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Recodes in variable stringvar: 1</span></span></code></pre></div>
 </div>
 <div id="creating-and-editing-a-lookup-table" class="section level2">
 <h2>Creating and editing a lookup table</h2>
@@ -211,7 +211,7 @@ You can choose which string variables in a <code>GADS</code> object you would li
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>lookup</span>
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     variable          value language language2 language3</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1  stringvar                      NA        NA        NA</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1  stringvar           &lt;NA&gt;       NA        NA        NA</span></span>
 <span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2  stringvar            -99       NA        NA        NA</span></span>
 <span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3  stringvar  Eng, Pol, Ita       NA        NA        NA</span></span>
 <span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4  stringvar            Ger       NA        NA        NA</span></span>
@@ -241,7 +241,7 @@ You can choose which string variables in a <code>GADS</code> object you would li
 <span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>lookup <span class="ot">&lt;-</span> readxl<span class="sc">::</span><span class="fu">read_xlsx</span>(<span class="st">&quot;lookup_multipleChoice.xlsx&quot;</span>)</span>
 <span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>lookup</span></code></pre></div>
 <pre><code>#&gt;     variable          value language language2 language3
-#&gt; 1  stringvar                    &lt;NA&gt;      &lt;NA&gt;      &lt;NA&gt;
+#&gt; 1  stringvar           &lt;NA&gt;     &lt;NA&gt;      &lt;NA&gt;      &lt;NA&gt;
 #&gt; 2  stringvar            -99     &lt;NA&gt;      &lt;NA&gt;      &lt;NA&gt;
 #&gt; 3  stringvar  Eng, Pol, Ita  English    Polish   Italian
 #&gt; 4  stringvar            Ger   German      &lt;NA&gt;      &lt;NA&gt;
@@ -256,31 +256,29 @@ You can choose which string variables in a <code>GADS</code> object you would li
 <h2>Apply look up to <code>GADSdat</code></h2>
 <p>You perform the actual data recoding using the <code>applyLookup_expandVar()</code> function. It applies the recodes defined in the look up table, thereby creating as many character variables as there are additional columns in the look up table. Variable names are generated automatically.</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>gads_string <span class="ot">&lt;-</span> <span class="fu">applyLookup_expandVar</span>(<span class="at">GADSdat =</span> gads, <span class="at">lookup =</span> lookup)</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning in check_lookup(lookup, GADSdat): Not all values have a recode value</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; assigned (missings in value_new).</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning in check_lookup(lookup, GADSdat): Not all values have a recode value assigned (missings in</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; value_new).</span></span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; No rows removed from meta data.</span></span>
 <span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Adding meta data for the following variables: stringvar_1</span></span>
 <span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; No rows removed from meta data.</span></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; No rows added to meta data.</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Adding meta data for the following variables: stringvar_2</span></span>
 <span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; No rows removed from meta data.</span></span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Adding meta data for the following variables: stringvar_2</span></span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; No rows removed from meta data.</span></span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Adding meta data for the following variables: stringvar_3</span></span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>gads_string<span class="sc">$</span>dat</span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    ID mcvar1 mcother      stringvar stringvar_1 stringvar_2 stringvar_3</span></span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1   1      1     -94         German      German        &lt;NA&gt;        &lt;NA&gt;</span></span>
-<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2   2    -94       0            Ger      German        &lt;NA&gt;        &lt;NA&gt;</span></span>
-<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3   3      0       1            Ger      German        &lt;NA&gt;        &lt;NA&gt;</span></span>
-<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4   4      1     -94                       &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;</span></span>
-<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5   5    -94       0  Eng, Pol, Ita     English      Polish     Italian</span></span>
-<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6   6      0       1 Pol, Ita, Germ      Polish     Italian      German</span></span>
-<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7   7      1     -94       eng, ita     English     Italian        &lt;NA&gt;</span></span>
-<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8   8    -94       0      germ, pol      German      Polish        &lt;NA&gt;</span></span>
-<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 9   9      0       1         polish      Polish        &lt;NA&gt;        &lt;NA&gt;</span></span>
-<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10 10      1     -94       eng, ita     English     Italian        &lt;NA&gt;</span></span>
-<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 11 11    -94       0            -99        &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;</span></span>
-<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 12 12      0       1      Star Trek         -96         -96         -96</span></span></code></pre></div>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Adding meta data for the following variables: stringvar_3</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>gads_string<span class="sc">$</span>dat</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    ID mcvar1 mcother      stringvar stringvar_1 stringvar_2 stringvar_3</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1   1      1     -94         German      German        &lt;NA&gt;        &lt;NA&gt;</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2   2    -94       0            Ger      German        &lt;NA&gt;        &lt;NA&gt;</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3   3      0       1            Ger      German        &lt;NA&gt;        &lt;NA&gt;</span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4   4      1     -94           &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;</span></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5   5    -94       0  Eng, Pol, Ita     English      Polish     Italian</span></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6   6      0       1 Pol, Ita, Germ      Polish     Italian      German</span></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7   7      1     -94       eng, ita     English     Italian        &lt;NA&gt;</span></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8   8    -94       0      germ, pol      German      Polish        &lt;NA&gt;</span></span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 9   9      0       1         polish      Polish        &lt;NA&gt;        &lt;NA&gt;</span></span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10 10      1     -94       eng, ita     English     Italian        &lt;NA&gt;</span></span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 11 11    -94       0            -99        &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;</span></span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 12 12      0       1      Star Trek         -96         -96         -96</span></span></code></pre></div>
 <p>In some cases you might have recoded some of the values to specific missing codes. These missing codes have to be now specified by hand as value labels that should be treated as missings. The function <code>changeValLabels()</code> is used to give specific value labels and the function <code>changeMissings()</code> attaches missing codes. The loop below performs the appropriate labeling and missing coding in a loop for all three new string variables.</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(nam <span class="cf">in</span> <span class="fu">paste0</span>(<span class="st">&quot;stringvar_&quot;</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>)) {</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  gads_string <span class="ot">&lt;-</span> <span class="fu">changeValLabels</span>(gads_string, <span class="at">varName =</span> nam, </span>
@@ -290,36 +288,21 @@ You can choose which string variables in a <code>GADS</code> object you would li
 <span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>gads_string<span class="sc">$</span>labels</span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        varName         varLabel format display_width labeled value</span></span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1           ID             &lt;NA&gt;   F8.0            NA      no    NA</span></span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2       mcvar1 Language: German   F8.2            NA     yes   -94</span></span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3       mcvar1 Language: German   F8.2            NA     yes     0</span></span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4       mcvar1 Language: German   F8.2            NA     yes     1</span></span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5      mcother  Language: other   F8.2            NA     yes   -94</span></span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6      mcother  Language: other   F8.2            NA     yes     0</span></span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7      mcother  Language: other   F8.2            NA     yes     1</span></span>
-<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8    stringvar   Language: text    A14            NA     yes   -99</span></span>
-<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 9  stringvar_1   Language: text    A14            NA     yes   -99</span></span>
-<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10 stringvar_1   Language: text    A14            NA     yes   -96</span></span>
-<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 11 stringvar_2   Language: text    A14            NA     yes   -99</span></span>
-<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 12 stringvar_2   Language: text    A14            NA     yes   -96</span></span>
-<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 13 stringvar_3   Language: text    A14            NA     yes   -99</span></span>
-<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 14 stringvar_3   Language: text    A14            NA     yes   -96</span></span>
-<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                 valLabel missings</span></span>
-<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1                   &lt;NA&gt;     &lt;NA&gt;</span></span>
-<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2                missing     miss</span></span>
-<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3                     no    valid</span></span>
-<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4                    yes    valid</span></span>
-<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5                missing     miss</span></span>
-<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6                     no    valid</span></span>
-<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7                    yes    valid</span></span>
-<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8      missing by design    valid</span></span>
-<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 9      missing by design    valid</span></span>
-<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10 Missing: Not codeable     miss</span></span>
-<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 11     missing by design    valid</span></span>
-<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 12 Missing: Not codeable     miss</span></span>
-<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 13     missing by design    valid</span></span>
-<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 14 Missing: Not codeable     miss</span></span></code></pre></div>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        varName         varLabel format display_width labeled value              valLabel missings</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1           ID             &lt;NA&gt;   F8.0            NA      no    NA                  &lt;NA&gt;     &lt;NA&gt;</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2       mcvar1 Language: German   F8.2            NA     yes   -94               missing     miss</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3       mcvar1 Language: German   F8.2            NA     yes     0                    no    valid</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4       mcvar1 Language: German   F8.2            NA     yes     1                   yes    valid</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5      mcother  Language: other   F8.2            NA     yes   -94               missing     miss</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6      mcother  Language: other   F8.2            NA     yes     0                    no    valid</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7      mcother  Language: other   F8.2            NA     yes     1                   yes    valid</span></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8    stringvar   Language: text    A14            NA     yes   -99     missing by design    valid</span></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 9  stringvar_1   Language: text    A14            NA     yes   -99     missing by design    valid</span></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10 stringvar_1   Language: text    A14            NA     yes   -96 Missing: Not codeable     miss</span></span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 11 stringvar_2   Language: text    A14            NA     yes   -99     missing by design    valid</span></span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 12 stringvar_2   Language: text    A14            NA     yes   -96 Missing: Not codeable     miss</span></span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 13 stringvar_3   Language: text    A14            NA     yes   -99     missing by design    valid</span></span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 14 stringvar_3   Language: text    A14            NA     yes   -96 Missing: Not codeable     miss</span></span></code></pre></div>
 </div>
 <div id="match-values-to-variable-labels" class="section level2">
 <h2>Match values to variable labels</h2>
@@ -350,32 +333,32 @@ You can choose which string variables in a <code>GADS</code> object you would li
 <span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Adding meta data for the following variables: mcvar1_r, mcother_r, stringvar_1_r, stringvar_2_r, stringvar_3_r</span></span>
 <span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>gads_string2<span class="sc">$</span>dat</span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    ID mcvar1 mcother      stringvar stringvar_1 stringvar_2 stringvar_3</span></span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1   1      1     -94         German      German        &lt;NA&gt;        &lt;NA&gt;</span></span>
-<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2   2    -94       0            Ger      German        &lt;NA&gt;        &lt;NA&gt;</span></span>
-<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3   3      0       1            Ger      German        &lt;NA&gt;        &lt;NA&gt;</span></span>
-<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4   4      1     -94                       &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;</span></span>
-<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5   5    -94       0  Eng, Pol, Ita     English      Polish     Italian</span></span>
-<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6   6      0       1 Pol, Ita, Germ      Polish     Italian      German</span></span>
-<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7   7      1     -94       eng, ita     English     Italian        &lt;NA&gt;</span></span>
-<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8   8    -94       0      germ, pol      German      Polish        &lt;NA&gt;</span></span>
-<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 9   9      0       1         polish      Polish        &lt;NA&gt;        &lt;NA&gt;</span></span>
-<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10 10      1     -94       eng, ita     English     Italian        &lt;NA&gt;</span></span>
-<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 11 11    -94       0            -99        &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;</span></span>
-<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 12 12      0       1      Star Trek         -96         -96         -96</span></span>
-<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    mcvar1_r mcother_r stringvar_1_r stringvar_2_r stringvar_3_r</span></span>
-<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1         1         0           -98           -98           -98</span></span>
-<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2         1         0           -98           -98           -98</span></span>
-<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3         1         0           -98           -98           -98</span></span>
-<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4         1       -94           -99           -99           -99</span></span>
-<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5       -94         1       English        Polish       Italian</span></span>
-<span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6         1         1        Polish       Italian           -99</span></span>
-<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7         1         1       English       Italian           -99</span></span>
-<span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8         1         1        Polish           -99           -99</span></span>
-<span id="cb10-35"><a href="#cb10-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 9         0         1        Polish           -99           -99</span></span>
-<span id="cb10-36"><a href="#cb10-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10        1         1       English       Italian           -99</span></span>
-<span id="cb10-37"><a href="#cb10-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 11      -94         0           -99           -99           -99</span></span>
-<span id="cb10-38"><a href="#cb10-38" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 12        0         1           -96           -96           -96</span></span></code></pre></div>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    ID mcvar1 mcother      stringvar stringvar_1 stringvar_2 stringvar_3 mcvar1_r mcother_r</span></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1   1      1     -94         German      German        &lt;NA&gt;        &lt;NA&gt;        1         0</span></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2   2    -94       0            Ger      German        &lt;NA&gt;        &lt;NA&gt;        1         0</span></span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3   3      0       1            Ger      German        &lt;NA&gt;        &lt;NA&gt;        1         0</span></span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4   4      1     -94           &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;        1       -94</span></span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5   5    -94       0  Eng, Pol, Ita     English      Polish     Italian      -94         1</span></span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6   6      0       1 Pol, Ita, Germ      Polish     Italian      German        1         1</span></span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7   7      1     -94       eng, ita     English     Italian        &lt;NA&gt;        1         1</span></span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8   8    -94       0      germ, pol      German      Polish        &lt;NA&gt;        1         1</span></span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 9   9      0       1         polish      Polish        &lt;NA&gt;        &lt;NA&gt;        0         1</span></span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10 10      1     -94       eng, ita     English     Italian        &lt;NA&gt;        1         1</span></span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 11 11    -94       0            -99        &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;      -94         0</span></span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 12 12      0       1      Star Trek         -96         -96         -96        0         1</span></span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    stringvar_1_r stringvar_2_r stringvar_3_r</span></span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1            -98           -98           -98</span></span>
+<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2            -98           -98           -98</span></span>
+<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3            -98           -98           -98</span></span>
+<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4            -99           -99           -99</span></span>
+<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5        English        Polish       Italian</span></span>
+<span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6         Polish       Italian           -99</span></span>
+<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7        English       Italian           -99</span></span>
+<span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8         Polish           -99           -99</span></span>
+<span id="cb10-35"><a href="#cb10-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 9         Polish           -99           -99</span></span>
+<span id="cb10-36"><a href="#cb10-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10       English       Italian           -99</span></span>
+<span id="cb10-37"><a href="#cb10-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 11           -99           -99           -99</span></span>
+<span id="cb10-38"><a href="#cb10-38" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 12           -96           -96           -96</span></span></code></pre></div>
 </div>
 <div id="trim-down-variables" class="section level2">
 <h2>Trim down variables</h2>
@@ -388,129 +371,112 @@ You can choose which string variables in a <code>GADS</code> object you would li
 <span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; No rows added to meta data.</span></span>
 <span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>gads_string3<span class="sc">$</span>dat</span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    ID mcvar1 mcother      stringvar stringvar_1 stringvar_2 stringvar_3</span></span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1   1      1     -94         German      German        &lt;NA&gt;        &lt;NA&gt;</span></span>
-<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2   2    -94       0            Ger      German        &lt;NA&gt;        &lt;NA&gt;</span></span>
-<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3   3      0       1            Ger      German        &lt;NA&gt;        &lt;NA&gt;</span></span>
-<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4   4      1     -94                       &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;</span></span>
-<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5   5    -94       0  Eng, Pol, Ita     English      Polish     Italian</span></span>
-<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6   6      0       1 Pol, Ita, Germ      Polish     Italian      German</span></span>
-<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7   7      1     -94       eng, ita     English     Italian        &lt;NA&gt;</span></span>
-<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8   8    -94       0      germ, pol      German      Polish        &lt;NA&gt;</span></span>
-<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 9   9      0       1         polish      Polish        &lt;NA&gt;        &lt;NA&gt;</span></span>
-<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10 10      1     -94       eng, ita     English     Italian        &lt;NA&gt;</span></span>
-<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 11 11    -94       0            -99        &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;</span></span>
-<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 12 12      0       1      Star Trek         -96         -96         -96</span></span>
-<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    mcvar1_r mcother_r stringvar_1_r stringvar_2_r</span></span>
-<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1         1         0           -98           -98</span></span>
-<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2         1         0           -98           -98</span></span>
-<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3         1         0           -98           -98</span></span>
-<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4         1       -94           -99           -99</span></span>
-<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5       -94         1           -97           -97</span></span>
-<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6         1         1        Polish       Italian</span></span>
-<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7         1         1       English       Italian</span></span>
-<span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8         1         1        Polish           -99</span></span>
-<span id="cb11-31"><a href="#cb11-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 9         0         1        Polish           -99</span></span>
-<span id="cb11-32"><a href="#cb11-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10        1         1       English       Italian</span></span>
-<span id="cb11-33"><a href="#cb11-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 11      -94         0           -99           -99</span></span>
-<span id="cb11-34"><a href="#cb11-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 12        0         1           -96           -96</span></span></code></pre></div>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    ID mcvar1 mcother      stringvar stringvar_1 stringvar_2 stringvar_3 mcvar1_r mcother_r</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1   1      1     -94         German      German        &lt;NA&gt;        &lt;NA&gt;        1         0</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2   2    -94       0            Ger      German        &lt;NA&gt;        &lt;NA&gt;        1         0</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3   3      0       1            Ger      German        &lt;NA&gt;        &lt;NA&gt;        1         0</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4   4      1     -94           &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;        1       -94</span></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5   5    -94       0  Eng, Pol, Ita     English      Polish     Italian      -94         1</span></span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6   6      0       1 Pol, Ita, Germ      Polish     Italian      German        1         1</span></span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7   7      1     -94       eng, ita     English     Italian        &lt;NA&gt;        1         1</span></span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8   8    -94       0      germ, pol      German      Polish        &lt;NA&gt;        1         1</span></span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 9   9      0       1         polish      Polish        &lt;NA&gt;        &lt;NA&gt;        0         1</span></span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10 10      1     -94       eng, ita     English     Italian        &lt;NA&gt;        1         1</span></span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 11 11    -94       0            -99        &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;      -94         0</span></span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 12 12      0       1      Star Trek         -96         -96         -96        0         1</span></span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    stringvar_1_r stringvar_2_r</span></span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1            -98           -98</span></span>
+<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2            -98           -98</span></span>
+<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3            -98           -98</span></span>
+<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4            -99           -99</span></span>
+<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5            -97           -97</span></span>
+<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6         Polish       Italian</span></span>
+<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7        English       Italian</span></span>
+<span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8         Polish           -99</span></span>
+<span id="cb11-31"><a href="#cb11-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 9         Polish           -99</span></span>
+<span id="cb11-32"><a href="#cb11-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10       English       Italian</span></span>
+<span id="cb11-33"><a href="#cb11-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 11           -99           -99</span></span>
+<span id="cb11-34"><a href="#cb11-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 12           -96           -96</span></span></code></pre></div>
 </div>
 <div id="multiple-character-variables-to-labeled-integers" class="section level2">
 <h2>Multiple character variables to labeled integers</h2>
 <p>After using <code>collapseMultiMC_Text()</code> (and <code>remove2NAchar()</code>), only new, additional values are left in the character variables. <code>multiChar2fac()</code> transforms these remaining text variables to numeric, labeled variables. All resulting labeled variables share the exact same value labels, which are sorted alphabetically.</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>gads_numeric <span class="ot">&lt;-</span> <span class="fu">multiChar2fac</span>(<span class="at">GADSdat =</span> gads_string3, <span class="at">vars =</span> <span class="fu">c</span>(<span class="st">&quot;stringvar_1_r&quot;</span>, <span class="st">&quot;stringvar_2_r&quot;</span>), </span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>                              <span class="at">var_suffix =</span> <span class="st">&quot;_r&quot;</span>, <span class="at">label_suffix =</span> <span class="st">&quot;(recoded)&quot;</span>)</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; No rows removed from meta data.</span></span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Adding meta data for the following variables: stringvar_1_r_r</span></span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; No rows removed from meta data.</span></span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Adding meta data for the following variables: stringvar_2_r_r</span></span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>gads_numeric<span class="sc">$</span>dat</span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    ID mcvar1 mcother      stringvar stringvar_1 stringvar_2 stringvar_3</span></span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1   1      1     -94         German      German        &lt;NA&gt;        &lt;NA&gt;</span></span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2   2    -94       0            Ger      German        &lt;NA&gt;        &lt;NA&gt;</span></span>
-<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3   3      0       1            Ger      German        &lt;NA&gt;        &lt;NA&gt;</span></span>
-<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4   4      1     -94                       &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;</span></span>
-<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5   5    -94       0  Eng, Pol, Ita     English      Polish     Italian</span></span>
-<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6   6      0       1 Pol, Ita, Germ      Polish     Italian      German</span></span>
-<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7   7      1     -94       eng, ita     English     Italian        &lt;NA&gt;</span></span>
-<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8   8    -94       0      germ, pol      German      Polish        &lt;NA&gt;</span></span>
-<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 9   9      0       1         polish      Polish        &lt;NA&gt;        &lt;NA&gt;</span></span>
-<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10 10      1     -94       eng, ita     English     Italian        &lt;NA&gt;</span></span>
-<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 11 11    -94       0            -99        &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;</span></span>
-<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 12 12      0       1      Star Trek         -96         -96         -96</span></span>
-<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    mcvar1_r mcother_r stringvar_1_r stringvar_2_r stringvar_1_r_r</span></span>
-<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1         1         0           -98           -98             -98</span></span>
-<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2         1         0           -98           -98             -98</span></span>
-<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3         1         0           -98           -98             -98</span></span>
-<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4         1       -94           -99           -99             -99</span></span>
-<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5       -94         1           -97           -97             -97</span></span>
-<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6         1         1        Polish       Italian               3</span></span>
-<span id="cb12-29"><a href="#cb12-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7         1         1       English       Italian               1</span></span>
-<span id="cb12-30"><a href="#cb12-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8         1         1        Polish           -99               3</span></span>
-<span id="cb12-31"><a href="#cb12-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 9         0         1        Polish           -99               3</span></span>
-<span id="cb12-32"><a href="#cb12-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10        1         1       English       Italian               1</span></span>
-<span id="cb12-33"><a href="#cb12-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 11      -94         0           -99           -99             -99</span></span>
-<span id="cb12-34"><a href="#cb12-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 12        0         1           -96           -96             -96</span></span>
-<span id="cb12-35"><a href="#cb12-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    stringvar_2_r_r</span></span>
-<span id="cb12-36"><a href="#cb12-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1              -98</span></span>
-<span id="cb12-37"><a href="#cb12-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2              -98</span></span>
-<span id="cb12-38"><a href="#cb12-38" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3              -98</span></span>
-<span id="cb12-39"><a href="#cb12-39" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4              -99</span></span>
-<span id="cb12-40"><a href="#cb12-40" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5              -97</span></span>
-<span id="cb12-41"><a href="#cb12-41" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6                2</span></span>
-<span id="cb12-42"><a href="#cb12-42" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7                2</span></span>
-<span id="cb12-43"><a href="#cb12-43" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8              -99</span></span>
-<span id="cb12-44"><a href="#cb12-44" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 9              -99</span></span>
-<span id="cb12-45"><a href="#cb12-45" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10               2</span></span>
-<span id="cb12-46"><a href="#cb12-46" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 11             -99</span></span>
-<span id="cb12-47"><a href="#cb12-47" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 12             -96</span></span>
-<span id="cb12-48"><a href="#cb12-48" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-49"><a href="#cb12-49" aria-hidden="true" tabindex="-1"></a>gads_final <span class="ot">&lt;-</span> gads_numeric</span>
-<span id="cb12-50"><a href="#cb12-50" aria-hidden="true" tabindex="-1"></a><span class="fu">extractMeta</span>(gads_final)[, <span class="fu">c</span>(<span class="st">&quot;varName&quot;</span>, <span class="st">&quot;value&quot;</span>, <span class="st">&quot;valLabel&quot;</span>, <span class="st">&quot;missings&quot;</span>)]</span>
-<span id="cb12-51"><a href="#cb12-51" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;            varName value                   valLabel missings</span></span>
-<span id="cb12-52"><a href="#cb12-52" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1               ID    NA                       &lt;NA&gt;     &lt;NA&gt;</span></span>
-<span id="cb12-53"><a href="#cb12-53" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2           mcvar1   -94                    missing     miss</span></span>
-<span id="cb12-54"><a href="#cb12-54" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3           mcvar1     0                         no    valid</span></span>
-<span id="cb12-55"><a href="#cb12-55" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4           mcvar1     1                        yes    valid</span></span>
-<span id="cb12-56"><a href="#cb12-56" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5          mcother   -94                    missing     miss</span></span>
-<span id="cb12-57"><a href="#cb12-57" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6          mcother     0                         no    valid</span></span>
-<span id="cb12-58"><a href="#cb12-58" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7          mcother     1                        yes    valid</span></span>
-<span id="cb12-59"><a href="#cb12-59" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8        stringvar   -99          missing by design    valid</span></span>
-<span id="cb12-60"><a href="#cb12-60" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 9      stringvar_1   -99          missing by design    valid</span></span>
-<span id="cb12-61"><a href="#cb12-61" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10     stringvar_1   -96      Missing: Not codeable     miss</span></span>
-<span id="cb12-62"><a href="#cb12-62" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 11     stringvar_2   -99          missing by design    valid</span></span>
-<span id="cb12-63"><a href="#cb12-63" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 12     stringvar_2   -96      Missing: Not codeable     miss</span></span>
-<span id="cb12-64"><a href="#cb12-64" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 13     stringvar_3   -99          missing by design    valid</span></span>
-<span id="cb12-65"><a href="#cb12-65" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 14     stringvar_3   -96      Missing: Not codeable     miss</span></span>
-<span id="cb12-66"><a href="#cb12-66" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 15        mcvar1_r   -94                    missing     miss</span></span>
-<span id="cb12-67"><a href="#cb12-67" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 16        mcvar1_r     0                         no    valid</span></span>
-<span id="cb12-68"><a href="#cb12-68" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 17        mcvar1_r     1                        yes    valid</span></span>
-<span id="cb12-69"><a href="#cb12-69" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 18       mcother_r   -94                    missing     miss</span></span>
-<span id="cb12-70"><a href="#cb12-70" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 19       mcother_r     0                         no    valid</span></span>
-<span id="cb12-71"><a href="#cb12-71" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 20       mcother_r     1                        yes    valid</span></span>
-<span id="cb12-72"><a href="#cb12-72" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 21   stringvar_1_r   -99      Missing: By intention     miss</span></span>
-<span id="cb12-73"><a href="#cb12-73" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 22   stringvar_1_r   -98      Missing: By intention     miss</span></span>
-<span id="cb12-74"><a href="#cb12-74" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 23   stringvar_1_r   -97 missing: excessive answers     miss</span></span>
-<span id="cb12-75"><a href="#cb12-75" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 24   stringvar_1_r   -96      Missing: Not codeable     miss</span></span>
-<span id="cb12-76"><a href="#cb12-76" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 25   stringvar_2_r   -99      Missing: By intention     miss</span></span>
-<span id="cb12-77"><a href="#cb12-77" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 26   stringvar_2_r   -98      Missing: By intention     miss</span></span>
-<span id="cb12-78"><a href="#cb12-78" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 27   stringvar_2_r   -97 missing: excessive answers     miss</span></span>
-<span id="cb12-79"><a href="#cb12-79" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 28   stringvar_2_r   -96      Missing: Not codeable     miss</span></span>
-<span id="cb12-80"><a href="#cb12-80" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 29 stringvar_1_r_r   -99      Missing: By intention     miss</span></span>
-<span id="cb12-81"><a href="#cb12-81" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 30 stringvar_1_r_r   -98      Missing: By intention     miss</span></span>
-<span id="cb12-82"><a href="#cb12-82" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 31 stringvar_1_r_r   -97 missing: excessive answers     miss</span></span>
-<span id="cb12-83"><a href="#cb12-83" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 32 stringvar_1_r_r   -96      Missing: Not codeable     miss</span></span>
-<span id="cb12-84"><a href="#cb12-84" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 33 stringvar_1_r_r     1                    English    valid</span></span>
-<span id="cb12-85"><a href="#cb12-85" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 34 stringvar_1_r_r     2                    Italian    valid</span></span>
-<span id="cb12-86"><a href="#cb12-86" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 35 stringvar_1_r_r     3                     Polish    valid</span></span>
-<span id="cb12-87"><a href="#cb12-87" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 36 stringvar_2_r_r   -99      Missing: By intention     miss</span></span>
-<span id="cb12-88"><a href="#cb12-88" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 37 stringvar_2_r_r   -98      Missing: By intention     miss</span></span>
-<span id="cb12-89"><a href="#cb12-89" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 38 stringvar_2_r_r   -97 missing: excessive answers     miss</span></span>
-<span id="cb12-90"><a href="#cb12-90" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 39 stringvar_2_r_r   -96      Missing: Not codeable     miss</span></span>
-<span id="cb12-91"><a href="#cb12-91" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 40 stringvar_2_r_r     1                    English    valid</span></span>
-<span id="cb12-92"><a href="#cb12-92" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 41 stringvar_2_r_r     2                    Italian    valid</span></span>
-<span id="cb12-93"><a href="#cb12-93" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 42 stringvar_2_r_r     3                     Polish    valid</span></span></code></pre></div>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>gads_numeric<span class="sc">$</span>dat</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    ID mcvar1 mcother      stringvar stringvar_1 stringvar_2 stringvar_3 mcvar1_r mcother_r</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1   1      1     -94         German      German        &lt;NA&gt;        &lt;NA&gt;        1         0</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2   2    -94       0            Ger      German        &lt;NA&gt;        &lt;NA&gt;        1         0</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3   3      0       1            Ger      German        &lt;NA&gt;        &lt;NA&gt;        1         0</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4   4      1     -94           &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;        1       -94</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5   5    -94       0  Eng, Pol, Ita     English      Polish     Italian      -94         1</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6   6      0       1 Pol, Ita, Germ      Polish     Italian      German        1         1</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7   7      1     -94       eng, ita     English     Italian        &lt;NA&gt;        1         1</span></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8   8    -94       0      germ, pol      German      Polish        &lt;NA&gt;        1         1</span></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 9   9      0       1         polish      Polish        &lt;NA&gt;        &lt;NA&gt;        0         1</span></span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10 10      1     -94       eng, ita     English     Italian        &lt;NA&gt;        1         1</span></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 11 11    -94       0            -99        &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;      -94         0</span></span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 12 12      0       1      Star Trek         -96         -96         -96        0         1</span></span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    stringvar_1_r stringvar_2_r stringvar_1_r_r stringvar_2_r_r</span></span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1            -98           -98             -98             -98</span></span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2            -98           -98             -98             -98</span></span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3            -98           -98             -98             -98</span></span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4            -99           -99             -99             -99</span></span>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5            -97           -97             -97             -97</span></span>
+<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6         Polish       Italian               3               2</span></span>
+<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7        English       Italian               1               2</span></span>
+<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8         Polish           -99               3             -99</span></span>
+<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 9         Polish           -99               3             -99</span></span>
+<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10       English       Italian               1               2</span></span>
+<span id="cb12-29"><a href="#cb12-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 11           -99           -99             -99             -99</span></span>
+<span id="cb12-30"><a href="#cb12-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 12           -96           -96             -96             -96</span></span>
+<span id="cb12-31"><a href="#cb12-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-32"><a href="#cb12-32" aria-hidden="true" tabindex="-1"></a>gads_final <span class="ot">&lt;-</span> gads_numeric</span>
+<span id="cb12-33"><a href="#cb12-33" aria-hidden="true" tabindex="-1"></a><span class="fu">extractMeta</span>(gads_final)[, <span class="fu">c</span>(<span class="st">&quot;varName&quot;</span>, <span class="st">&quot;value&quot;</span>, <span class="st">&quot;valLabel&quot;</span>, <span class="st">&quot;missings&quot;</span>)]</span>
+<span id="cb12-34"><a href="#cb12-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;            varName value                   valLabel missings</span></span>
+<span id="cb12-35"><a href="#cb12-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1               ID    NA                       &lt;NA&gt;     &lt;NA&gt;</span></span>
+<span id="cb12-36"><a href="#cb12-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2           mcvar1   -94                    missing     miss</span></span>
+<span id="cb12-37"><a href="#cb12-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3           mcvar1     0                         no    valid</span></span>
+<span id="cb12-38"><a href="#cb12-38" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4           mcvar1     1                        yes    valid</span></span>
+<span id="cb12-39"><a href="#cb12-39" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5          mcother   -94                    missing     miss</span></span>
+<span id="cb12-40"><a href="#cb12-40" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6          mcother     0                         no    valid</span></span>
+<span id="cb12-41"><a href="#cb12-41" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7          mcother     1                        yes    valid</span></span>
+<span id="cb12-42"><a href="#cb12-42" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8        stringvar   -99          missing by design    valid</span></span>
+<span id="cb12-43"><a href="#cb12-43" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 9      stringvar_1   -99          missing by design    valid</span></span>
+<span id="cb12-44"><a href="#cb12-44" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10     stringvar_1   -96      Missing: Not codeable     miss</span></span>
+<span id="cb12-45"><a href="#cb12-45" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 11     stringvar_2   -99          missing by design    valid</span></span>
+<span id="cb12-46"><a href="#cb12-46" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 12     stringvar_2   -96      Missing: Not codeable     miss</span></span>
+<span id="cb12-47"><a href="#cb12-47" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 13     stringvar_3   -99          missing by design    valid</span></span>
+<span id="cb12-48"><a href="#cb12-48" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 14     stringvar_3   -96      Missing: Not codeable     miss</span></span>
+<span id="cb12-49"><a href="#cb12-49" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 15        mcvar1_r   -94                    missing     miss</span></span>
+<span id="cb12-50"><a href="#cb12-50" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 16        mcvar1_r     0                         no    valid</span></span>
+<span id="cb12-51"><a href="#cb12-51" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 17        mcvar1_r     1                        yes    valid</span></span>
+<span id="cb12-52"><a href="#cb12-52" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 18       mcother_r   -94                    missing     miss</span></span>
+<span id="cb12-53"><a href="#cb12-53" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 19       mcother_r     0                         no    valid</span></span>
+<span id="cb12-54"><a href="#cb12-54" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 20       mcother_r     1                        yes    valid</span></span>
+<span id="cb12-55"><a href="#cb12-55" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 21   stringvar_1_r   -99      Missing: By intention     miss</span></span>
+<span id="cb12-56"><a href="#cb12-56" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 22   stringvar_1_r   -98      Missing: By intention     miss</span></span>
+<span id="cb12-57"><a href="#cb12-57" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 23   stringvar_1_r   -97 missing: excessive answers     miss</span></span>
+<span id="cb12-58"><a href="#cb12-58" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 24   stringvar_1_r   -96      Missing: Not codeable     miss</span></span>
+<span id="cb12-59"><a href="#cb12-59" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 25   stringvar_2_r   -99      Missing: By intention     miss</span></span>
+<span id="cb12-60"><a href="#cb12-60" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 26   stringvar_2_r   -98      Missing: By intention     miss</span></span>
+<span id="cb12-61"><a href="#cb12-61" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 27   stringvar_2_r   -97 missing: excessive answers     miss</span></span>
+<span id="cb12-62"><a href="#cb12-62" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 28   stringvar_2_r   -96      Missing: Not codeable     miss</span></span>
+<span id="cb12-63"><a href="#cb12-63" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 29 stringvar_1_r_r   -99      Missing: By intention     miss</span></span>
+<span id="cb12-64"><a href="#cb12-64" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 30 stringvar_1_r_r   -98      Missing: By intention     miss</span></span>
+<span id="cb12-65"><a href="#cb12-65" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 31 stringvar_1_r_r   -97 missing: excessive answers     miss</span></span>
+<span id="cb12-66"><a href="#cb12-66" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 32 stringvar_1_r_r   -96      Missing: Not codeable     miss</span></span>
+<span id="cb12-67"><a href="#cb12-67" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 33 stringvar_1_r_r     1                    English    valid</span></span>
+<span id="cb12-68"><a href="#cb12-68" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 34 stringvar_1_r_r     2                    Italian    valid</span></span>
+<span id="cb12-69"><a href="#cb12-69" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 35 stringvar_1_r_r     3                     Polish    valid</span></span>
+<span id="cb12-70"><a href="#cb12-70" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 36 stringvar_2_r_r   -99      Missing: By intention     miss</span></span>
+<span id="cb12-71"><a href="#cb12-71" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 37 stringvar_2_r_r   -98      Missing: By intention     miss</span></span>
+<span id="cb12-72"><a href="#cb12-72" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 38 stringvar_2_r_r   -97 missing: excessive answers     miss</span></span>
+<span id="cb12-73"><a href="#cb12-73" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 39 stringvar_2_r_r   -96      Missing: Not codeable     miss</span></span>
+<span id="cb12-74"><a href="#cb12-74" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 40 stringvar_2_r_r     1                    English    valid</span></span>
+<span id="cb12-75"><a href="#cb12-75" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 41 stringvar_2_r_r     2                    Italian    valid</span></span>
+<span id="cb12-76"><a href="#cb12-76" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 42 stringvar_2_r_r     3                     Polish    valid</span></span></code></pre></div>
 </div>
 <div id="clean-data-set" class="section level2">
 <h2>Clean data set</h2>

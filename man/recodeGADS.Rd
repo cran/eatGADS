@@ -2,14 +2,14 @@
 % Please edit documentation in R/recodeGADS.R
 \name{recodeGADS}
 \alias{recodeGADS}
-\title{Recode a labeled variable.}
+\title{Recode a variable.}
 \usage{
 recodeGADS(
   GADSdat,
   varName,
   oldValues,
   newValues,
-  existingMeta = c("stop", "value", "value_new")
+  existingMeta = c("stop", "value", "value_new", "drop")
 )
 }
 \arguments{
@@ -27,17 +27,20 @@ recodeGADS(
 Returns a \code{GADSdat}.
 }
 \description{
-Recode a labeled variable as part of a \code{GADSdat} or \code{all_GADSdat} object.
+Recode a variable as part of a \code{GADSdat} or \code{all_GADSdat} object.
 }
 \details{
 Applied to a \code{GADSdat} or \code{all_GADSdat} object, this function is a wrapper of \code{\link{getChangeMeta}}
-and \code{\link{applyChangeMeta}}.
+and \code{\link{applyChangeMeta}}. Beyond that, unlabeled variables and values are recoded as well.
 \code{oldValues} and \code{newValues} are matched by ordering in the function call.
 
 If changes are performed on value levels, recoding into
 existing values can occur. In these cases, \code{existingMeta} determines how the resulting meta data conflicts are handled,
 either raising an error if any occur (\code{"stop"}), keeping the original meta data for the value (\code{"value"}) or using the meta
 data in the \code{changeTable} or, if incomplete, from the recoded value (\code{"value_new"}).
+
+Furthermore, one might recode multiple old values in the same new value. This is currently only possible with
+\code{existingMeta = "drop"}, which drops all related meta data on value level.
 
 Missing values (\code{NA}) are supported in \code{oldValues} but not in \code{newValues}. For recoding values to
 \code{NA} see \code{\link{recode2NA}} instead.

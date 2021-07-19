@@ -10,6 +10,10 @@
 #' either raising an error if any occur (\code{"stop"}), keeping the original meta data for the value (\code{"value"}) or using the meta
 #' data in the \code{changeTable} or, if incomplete, from the recoded value (\code{"value_new"}).
 #'
+#' Furthermore, one might recode multiple old values in the same new value. This is currently only possible with
+#' \code{existingMeta = "drop"}, which drops all related meta data on value level.
+#'
+#'
 #'@param changeTable Change table as provided by \code{\link{getChangeMeta}}.
 #'@param GADSdat \code{GADSdat} object imported via \code{eatGADS}.
 #'@param existingMeta If values are recoded, which meta data should be used (see details)?
@@ -59,28 +63,31 @@ applyChangeMeta.varChanges <- function(changeTable, GADSdat, ...) {
 
   out_GADSdat <- new_GADSdat(dat = dat, labels = labels)
   check_GADSdat(out_GADSdat)
+  check_GADSdat_varLevel_meta(out_GADSdat)
   out_GADSdat
 }
 
 #'@rdname applyChangeMeta
 #'@export
-applyChangeMeta.valChanges <- function(changeTable, GADSdat, existingMeta = c("stop", "value", "value_new"), ...) {
+applyChangeMeta.valChanges <- function(changeTable, GADSdat, existingMeta = c("stop", "value", "value_new", "drop"), ...) {
   check_GADSdat(GADSdat)
-  check_valChanges(changeTable)
+  changeTable <- check_valChanges(changeTable)
   existingMeta <- match.arg(existingMeta)
   # check_changeTable(GADSdat, changeTable) ### removed; substitute with checks that work around new value labels...
+  test <- compare_and_order(namesGADS(GADSdat), name1 = "the 'GADSdat' but in the 'changeTable'",
+                            set2 = unique(changeTable$varName), name2 = "the 'changeTable' but in the 'GADSdat'", FUN = stop)
+  # tbd: check for variable-value combination!
+
   dat <- GADSdat$dat
   labels <- GADSdat$labels
   # 01) values in data
   dat <- recode_dat(dat = dat, changeTable = changeTable)
   # 02) valueLabels, missings and values in labels
-  labels <- recode_labels(labels = labels, changeTable = changeTable, existingMeta = existingMeta)
-
-  # 03) if variable was unlabeled before, set to labeled
-  labels2 <- update_labeled_col(labels)
+  labels2 <- recode_labels(labels = labels, changeTable = changeTable, existingMeta = existingMeta)
 
   out_GADSdat <- new_GADSdat(dat = dat, labels = labels2)
   check_GADSdat(out_GADSdat)
+  #check_GADSdat_varLevel_meta(out_GADSdat)
   out_GADSdat
 }
 
@@ -112,6 +119,9 @@ applyChangeMeta.list <- function(changeTable, GADSdat, ...) {
 
 # check change Table, also in relation to GADSdat object
 check_changeTable <- function(GADSdat, changeTable) {
+  test <- compare_and_order(namesGADS(GADSdat), name1 = "the 'GADSdat' but in the 'changeTable'",
+                    set2 = unique(changeTable$varName), name2 = "the 'changeTable' but in the 'GADSdat'", FUN = stop)
+
   newVars <- grep("_new", names(changeTable), value = TRUE)
   oldVars <- setdiff(names(changeTable), newVars)
   oldDat <- unique(GADSdat$labels[, oldVars])
@@ -122,7 +132,10 @@ check_changeTable <- function(GADSdat, changeTable) {
   #if(length(namesGADS(GADSdat)) > 50) browser()
 
   for(i in names(oldDat)) {
-    if(length(which(oldDat[i] != newDat[i]))) stop("GADSdat and changeTable are not compatible in column '", i, "'. Columns without '_new' should not be changed in the changeTable.", call. = FALSE)
+    unequal_rows <- which(oldDat[i] != newDat[i])
+    if(length(unequal_rows)) stop("GADSdat and changeTable are not compatible in column '", i, "' and row(s) ",
+                                  paste(unequal_rows, collapse = ", "),
+                                  ". Columns without '_new' should not be changed in the changeTable.", call. = FALSE)
   }
 
   return()
@@ -145,8 +158,6 @@ recode_dat <- function(dat, changeTable) {
 }
 
 recode_labels <- function(labels, changeTable, existingMeta) {
-  labels <- expand_labels(labels, new_varName_vec = changeTable$varName)
-
   changeTable <- changeTable[order(match(changeTable$varName, unique(labels$varName))), ]
   simple_change_vars <- c("valLabel_new", "missings_new", "value_new")
   simpleChanges <- changeTable[, c("varName", "value", simple_change_vars), drop = FALSE]
@@ -156,8 +167,16 @@ recode_labels <- function(labels, changeTable, existingMeta) {
                                      is.na(simpleChanges$value_new)), ]
   if(nrow(simpleChanges) == 0) return(labels)
 
-  labels_list <- split(labels, factor(labels$varName, levels = unique(labels$varName)))
-  labels <- do.call(rbind, lapply(labels_list, function(single_labels) {
+  # split labels and merge & sort later
+  vars_with_changes <- unique(simpleChanges$varName)
+  varName_in_simpleChanges <- labels$varName %in% vars_with_changes
+  untouched_labels <- labels[!varName_in_simpleChanges, ]
+  modify_labels <- labels[varName_in_simpleChanges, ]
+  #browser()
+  modify_labels <- expand_labels(modify_labels, new_varName_vec = changeTable$varName[changeTable$varName %in% vars_with_changes])
+
+  modify_labels_list <- split(modify_labels, factor(modify_labels$varName, levels = unique(modify_labels$varName)))
+  modify_labels_list2 <- lapply(modify_labels_list, function(single_labels) {
     var_name <- unique(single_labels$varName)
     if(!var_name %in% simpleChanges$varName) return(single_labels)
 
@@ -170,6 +189,26 @@ recode_labels <- function(labels, changeTable, existingMeta) {
     existing_value_vec <- existing_value_vec & !single_simpleChanges$value_new %in% values_to_be_recoded
     remove_rows <- numeric()
 
+    # meta data conflicts only with new values
+    recode_values <- single_simpleChanges$value_new[!is.na(single_simpleChanges$value_new)]
+    only_new_recode_values <- recode_values[!recode_values %in% single_simpleChanges[existing_value_vec, "value_new"]]
+    dup_recode_values <- unique(only_new_recode_values[duplicated(only_new_recode_values)])
+    dup_recode_values <- dup_recode_values[!dup_recode_values %in% single_simpleChanges[existing_value_vec, "value"]]
+    new_dup_value_vec <- !is.na(single_simpleChanges$value_new) & single_simpleChanges$value_new %in% dup_recode_values
+
+    if(length(dup_recode_values) > 0 && !any(existing_value_vec)){
+      if(!identical(existingMeta, "drop")) {
+        all_values <- single_simpleChanges[existing_value_vec, "value_new"]
+        stop("Duplicated values in 'value_new' causing conflicting meta data in variable ", var_name, ": ",
+             paste(dup_recode_values, collapse = ", "), ". Use 'existingMeta' = 'drop' to drop all related meta data.")
+      }
+      # drop behavior
+      remove_value_meta <- single_simpleChanges[new_dup_value_vec, "value"]
+      drop_meta_rows <- which(single_labels$value %in% remove_value_meta)
+      single_labels[drop_meta_rows, c("valLabel", "missings")] <- NA
+    }
+
+    # meta data conflicts with old values (and optionally new values)
     if(any(existing_value_vec)){
       if(identical(existingMeta, "stop")) {
         all_values <- single_simpleChanges[existing_value_vec, "value_new"]
@@ -195,6 +234,14 @@ recode_labels <- function(labels, changeTable, existingMeta) {
                                                                            yes = single_labels[remove_rows, "missings"],
                                                                            no = single_simpleChanges[existing_value_vec, "missings_new"])
       }
+      if(identical(existingMeta, "drop")) {
+        #browser()
+        # remove meta data of value which is being recoded
+        remove_value_meta <- single_simpleChanges[existing_value_vec, "value_new"]
+        remove_value_meta <- unique(c(remove_value_meta, single_simpleChanges[existing_value_vec, "value"]))
+        drop_meta_rows <- which(single_labels$value %in% remove_value_meta)
+        single_labels[drop_meta_rows, c("valLabel", "missings")] <- NA
+      }
     }
 
     ## Actual recoding: loop over rows and column names, overwrite if not NA
@@ -211,20 +258,24 @@ recode_labels <- function(labels, changeTable, existingMeta) {
     }
 
   if(length(remove_rows) > 0) single_labels <- single_labels[-remove_rows, ]
-    sort_value_labels(single_labels)
-  }))
+    # unique rows necessary because of multiple recodes into the same value
+    unique(sort_value_labels(single_labels))
+  })
+  modify_labels <- do.call(rbind, modify_labels_list2)
+  labels_new <- data.table::as.data.table(rbind(untouched_labels, modify_labels))
+  labels_new <- as.data.frame(labels_new[order(match(labels_new$varName, unique(labels$varName))), ])
 
   # fix labeled column
   # important: this should change a variable to "labeled" to export it later properly to spss
-  labels[, "labeled"] <- ifelse(!is.na(labels[, "value"]), yes = "yes", no = labels[, "labeled"])
-  # unique rows necessary because of multiple recodes into the same value
-  labels <- unique(labels)
-  rownames(labels) <- NULL
-  labels
+  labels_new[, "labeled"] <- ifelse(!is.na(labels_new[, "value"]), yes = "yes", no = labels_new[, "labeled"])
+  rownames(labels_new) <- NULL
+  labels_new
 }
 
 # if value labels are added, this function adds the necessary rows in the labels df, that are later filled with new values & labels
 expand_labels <- function(labels, new_varName_vec) {
+  if(nrow(labels) == length(new_varName_vec)) return(labels)
+
   old_order <- unique(labels$varName)
   new_row_list <- by(labels, labels$varName, function(labels_sub) {
     i <- unique(labels_sub$varName)
@@ -244,6 +295,7 @@ expand_labels <- function(labels, new_varName_vec) {
 
 
 # updates the labeled column in the meta data according to the value column
+# currently not in use, was to strict (problems when some values were NA (originally strings) in labels, some not)
 update_labeled_col <- function(labels) {
   labels$labeled <- ifelse(is.na(labels$value), yes = "no", no = "yes")
   labels

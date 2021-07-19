@@ -10,7 +10,7 @@
 
 ## Overview
 
-`eatGADS` (educational assessment tools: GADS) is the data management and data handling tool used by the Institute for Educational Quality Improvement  in Germany (`IQB`). It uses [SQLlite3](https://www.sqlite.org/index.html) as a back end and is especially suited for importing data stored as `SPSS` files. [eatDB](https://github.com/beckerbenj/eatDB) is used for data base creating and use, [haven](https://github.com/tidyverse/haven) is used for importing SPSS files.
+`eatGADS` (educational assessment tools: GADS) is the data management and data handling tool used by the Institute for Educational Quality Improvement  in Germany (`IQB`). It uses [SQLite3](https://www.sqlite.org/index.html) as a back end and is especially suited for importing data stored as `SPSS` files. [eatDB](https://github.com/beckerbenj/eatDB) is used for data base creating and use, [haven](https://github.com/tidyverse/haven) is used for importing SPSS files.
 
 ## Installation
 
@@ -19,7 +19,7 @@
 install.packages("eatGADS")
 
 # Install development version from GitHub via
-remotes::install_github("beckerbenj/eatGADS")
+remotes::install_github("beckerbenj/eatGADS", build_vignettes = TRUE, dependencies = TRUE)
 ```
 
 ## Vignettes

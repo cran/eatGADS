@@ -9,12 +9,11 @@
 #'
 #'@param GADSdat A \code{GADSdat} object.
 #'@param vars Character vector with the variable names to which \code{checkValLabels()} should be applied.
-#'@param valueRange [optional] Numeric vector of length 2: In which range should numeric values be checked? If specified, only numeric values
-#'are returned and strings are omitted.
+#'@param valueRange [optional] Numeric vector of length 2: In which range should numeric values be checked?
+#'If specified, only numeric values are returned and strings are omitted.
+#'@param output Should the output structured as a \code{"list"} or a \code{"data.frame"}?
 #'
-#'@return Returns a list of length 2. Each contains a list of the length of \code{vars}.
-#'\item{labels with no values}{Value labels with no occurrence in the data}
-#'\item{not labeled values}{Values in the data with no value labels}
+#'@return Returns a list of length \code{vars} or a \code{data.frame}.
 #'
 #'@examples
 #'# Check a categorical and a metric variable
@@ -29,14 +28,15 @@
 #'
 #' @describeIn checkEmptyValLabels check for superfluous value labels
 #'@export
-checkEmptyValLabels <- function(GADSdat, vars = namesGADS(GADSdat), valueRange = NULL) {
+checkEmptyValLabels <- function(GADSdat, vars = namesGADS(GADSdat), valueRange = NULL, output = c("list", "data.frame")) {
   UseMethod("checkEmptyValLabels")
 }
 
 #'@export
-checkEmptyValLabels.GADSdat <- function(GADSdat, vars = namesGADS(GADSdat), valueRange = NULL) {
+checkEmptyValLabels.GADSdat <- function(GADSdat, vars = namesGADS(GADSdat), valueRange = NULL, output = c("list", "data.frame")) {
   check_GADSdat(GADSdat)
   check_vars_in_GADSdat(GADSdat, vars = vars)
+  output <- match.arg(output)
 
   label_no_values <- vector("list", length = length(vars))
   names(label_no_values) <- vars
@@ -46,6 +46,7 @@ checkEmptyValLabels.GADSdat <- function(GADSdat, vars = namesGADS(GADSdat), valu
     i_real_values <- unique(GADSdat$dat[, i])[!is.na(unique(GADSdat$dat[, i]))]
     empty_values <- setdiff(i_labeled_values, i_real_values)
     label_no_values[[i]] <- i_meta[i_meta$value %in% empty_values, c("value", "valLabel", "missings")]
+    label_no_values[[i]] <- label_no_values[[i]][order(label_no_values[[i]][, "value"]), ]
   }
 
   if(!is.null(valueRange)) {
@@ -56,7 +57,11 @@ checkEmptyValLabels.GADSdat <- function(GADSdat, vars = namesGADS(GADSdat), valu
     })
 
   }
-  label_no_values
+
+  if(identical(output, "data.frame")) {
+    out <- eatTools::do_call_rbind_withName(label_no_values, colName = "variable")
+  } else out <- lapply(label_no_values, function(x) if(nrow(x) == 0) NULL else x)
+  out
 }
 
 #' @describeIn checkEmptyValLabels check for missing value labels
@@ -81,7 +86,7 @@ checkMissingValLabels.GADSdat <- function(GADSdat, vars = namesGADS(GADSdat), va
     if(length(missing_values) > 0) {
       not_labeled[[i]] <- list()
       not_labeled[[i]]$varLabel <- i_meta[1, "varLabel"]
-      not_labeled[[i]]$missing_labels <- missing_values
+      not_labeled[[i]]$missing_labels <- sort(missing_values)
     }
   }
 

@@ -88,7 +88,7 @@ collapseMultiMC_Text.GADSdat <- function(GADSdat, mc_vars, text_vars, mc_var_4te
     values_in_row <- values_in_row[!values_in_row %in% miss_codes]
     dups_in_row <- duplicated(values_in_row[values_in_row != ""])
     #if(mc_var_4text == "Pfluhl_k") browser()
-    if(any(dups_in_row)) stop("Duplicate values in row ", r, ".")
+    if(any(dups_in_row)) stop("Duplicate values in 'text_vars' in row ", r, ".")
   }
 
   # create new variables
@@ -172,17 +172,17 @@ remove_values <- function(dat, vars = names(dat), values) {
 
 # "refill" text variables (move up values) (own function)
 left_fill <- function(dat, vars = names(dat)) {
-  for(var in vars[-1]) {
-    var_left <- names(dat)[which(names(dat) == var) - 1]
-    var_left_ori <- dat[, var_left]
-    dat[, var_left] <- ifelse(is.na(dat[[var_left]]) & !is.na(dat[[var]]), yes = dat[[var]], no = dat[[var_left]])
-    dat[, var] <- ifelse(is.na(var_left_ori) & !is.na(dat[[var]]), yes = NA, no = dat[[var]])
+  len_vars <- length(vars)
+  for(i in seq(nrow(dat))) {
+    #browser()
+    entries <- na_omit(dat[i, vars])
+    dat[i, vars] <- c(entries, rep(NA, len_vars - length(entries)))
   }
   dat
 }
 
 drop_empty <- function(dat, vars = names(dat), miss_codes) {
-  for(nam in names(dat)) {
+  for(nam in vars) {
     if(all(is.na(dat[[nam]]) | dat[[nam]] %in% miss_codes)) {
       warning("In the new variable ", nam, " all values are missing, therefore the variable is dropped. If this behaviour is not desired, contact the package author.")
       dat[[nam]] <- NULL

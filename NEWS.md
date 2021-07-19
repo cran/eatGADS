@@ -1,3 +1,35 @@
+
+# eatGADS 0.17.0
+
+* `inspectDifferences()` now checks whether variable is of the same type in both `GADSdats`
+* `subImputations()` for substituting imputations with original, not imputed values
+* `applyChangeMeta()` now returns a more informative error if the variable sets in the `GADSdat` and the `changeTable` differ
+* `applyChangeMeta()` tries to convert `value` columns in `changeTable` to numeric before throwing an error
+* `dummies2char()` for recoding a set of dummy variables to a set of left filled character variables
+* `fac2dummies()` and `fac2dummies_complex()` for recoding a labeled factor variable to multiple labeled dummy variables
+* `equalGADS()` for comparing the complete structure and content of two `GADSdat` objects
+* `inspectDifferences()` for comparing specific variables
+* `reuseMeta()` now allows only transferring value labels for values coded as missing
+* `checkEmptyValLabels()` and `checkMissingValLabels()` provide cleaner output
+* `write_spss2()` for writing `.sav` files via a text file and a `SPSS` syntax
+* `import_spss()` and `write_spss()` now deal correctly with missing codes for character variables
+* `recodeGADS()` allows recoding of unlabeled variables and values
+* `import_spss()` now takes an `encoding` argument to work around faulty defaults
+
+
+# Internal
+* better performance of `applyChangeMeta()` on value level
+* bug fix `write_save()` (all columns are forced to be `double` when imported instead of `integer`)
+* bug fix `fac2dummies_complex()` (value labels of dummy variables are tagged as `valid`)
+* bug fixes `recodeGADS()`
+* bug fix `removeValLabels()` (when a single value label was removed)
+* bug fixes `collapseMultiMC_Text()` (`left_fill()` and `drop_empty()`)
+* bug fix `remove2NAchar()` (with partially labeled variables)
+* bug fix `multiChar2fac()` (with partially labeled variables)
+* bug fix `applyLookup_expandVar()` (removed unnecessary messages)
+* warnings removed for `import_spss()` (`haven` patch for labeled character variables)
+
+
 # eatGADS 0.16.0
 
 * `checkEmptyValLabels()` and `checkMissingValLabels()` for comparing values in the data and value labels
@@ -14,7 +46,7 @@
 * changing value labels inside of `recodeGADS()` via `newValueLabels` deprecated (use `changeValLabels()`instead)
 * `applyChangeMeta()` now works with `data.frames` (for compatibility with `excel` import and export)
 * `import_spss()` now supports variables of type `datetime` 
-* `import_stata()` and `write_stata()` for exporting and importing Stata files
+* `import_stata()` and `write_stata()` for exporting and importing `Stata` files
 
 ## Internal
 * `check_GADSdat()` now checks for duplicate value rows
