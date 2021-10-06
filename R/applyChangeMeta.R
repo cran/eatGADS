@@ -37,7 +37,7 @@ applyChangeMeta <- function(changeTable, GADSdat, ...) {
 #'@export
 applyChangeMeta.varChanges <- function(changeTable, GADSdat, ...) {
   check_GADSdat(GADSdat)
-  check_varChanges(changeTable)
+  changeTable <- check_varChanges(changeTable)
   check_changeTable(GADSdat, changeTable)
   check_format_vector(changeTable$format_new)
 
@@ -129,11 +129,12 @@ check_changeTable <- function(GADSdat, changeTable) {
   class(newDat) <- "data.frame"
 
   row.names(oldDat) <- row.names(newDat) <- NULL
-  #if(length(namesGADS(GADSdat)) > 50) browser()
 
   for(i in names(oldDat)) {
-    unequal_rows <- which(oldDat[i] != newDat[i])
-    if(length(unequal_rows)) stop("GADSdat and changeTable are not compatible in column '", i, "' and row(s) ",
+    unequal_rows <- which(oldDat[[i]] != newDat[[i]] |
+                            (is.na(oldDat[[i]]) & !is.na(newDat[[i]])) |
+                            (!is.na(oldDat[[i]]) & is.na(newDat[[i]])))
+    if(length(unequal_rows) > 0) stop("GADSdat and changeTable are not compatible in column '", i, "' and row(s) ",
                                   paste(unequal_rows, collapse = ", "),
                                   ". Columns without '_new' should not be changed in the changeTable.", call. = FALSE)
   }
@@ -259,6 +260,8 @@ recode_labels <- function(labels, changeTable, existingMeta) {
 
   if(length(remove_rows) > 0) single_labels <- single_labels[-remove_rows, ]
     # unique rows necessary because of multiple recodes into the same value
+    single_labels[, "missings"] <- ifelse(!is.na(single_labels$value) & is.na(single_labels$missings),
+                                       yes = "valid", no = single_labels$missings)
     unique(sort_value_labels(single_labels))
   })
   modify_labels <- do.call(rbind, modify_labels_list2)
@@ -268,6 +271,7 @@ recode_labels <- function(labels, changeTable, existingMeta) {
   # fix labeled column
   # important: this should change a variable to "labeled" to export it later properly to spss
   labels_new[, "labeled"] <- ifelse(!is.na(labels_new[, "value"]), yes = "yes", no = labels_new[, "labeled"])
+
   rownames(labels_new) <- NULL
   labels_new
 }
@@ -284,7 +288,8 @@ expand_labels <- function(labels, new_varName_vec) {
       #browser()
       new_sub_label_rows <- (nrow(labels_sub) + 1):(nrow(labels_sub) + no_rows_2add)
       labels_sub[new_sub_label_rows, ] <- labels_sub[1, ]
-      labels_sub[new_sub_label_rows, c("value", "valLabel", "missings")] <- NA
+      labels_sub[new_sub_label_rows, c("value", "valLabel")] <- NA
+      labels_sub[new_sub_label_rows, "missings"] <- "valid"
       return(labels_sub[new_sub_label_rows, ])
     }
   NULL

@@ -7,252 +7,179 @@
 #' This function is based on \code{eatPreps} \code{writeSpss} function and is currently under development.
 #'
 #'@param GADSdat A \code{GADSdat} object.
-#'@param filePath Path of \code{.txt} file to write.
-#'@param syntaxPath Path of \code{.sps} file to write.
-#'@param dec Decimal delimiter for your SPSS version.
-#'@param changeMeta Meta data information will be changed automatically according to features of the data.
-#'@param fileEncoding Data file encoding for SPSS. Default is "UTF-8".
+#'@param txtPath Path of \code{.txt} file to write, including file name and ending \code{.txt}. No default.
+#'@param spsPath Path of \code{.sps} file to write, including file name and ending \code{.sps}. Default Path is \code{txtPath}.
+#'@param savPath Path of \code{.sav} file to write, including file name and ending \code{.sav}. Default Path is \code{spsPath}.
+#'@param dec Decimal delimiter for your SPSS version. Other values for \code{dec} than \code{","} or \code{"."} are not implemented yet.
+#'@param fileEncoding Data file encoding for SPSS. Default is \code{"UTF-8"}.
+#'@param chkFormat Whether format checks via \code{checkFormat} should be performed.
+#'@param ... Arguments to pass to \code{checkFormat} in particular \code{changeFormat=FALSE} if needed.
 #'
 #'@return Writes a \code{txt} and an \code{sav} file to disc, returns nothing.
 #'
 #'@examples
 #'
 #'# write to spss
-#'tmp_sps <- tempfile(fileext = ".sps")
 #'tmp_txt <- tempfile(fileext = ".txt")
-#'write_spss2(pisa, filePath = tmp_txt, syntaxPath = tmp_sps)
+#'write_spss2(pisa, txtPath = tmp_txt)
 #'
 #'@export
-write_spss2 <- function(GADSdat, filePath, syntaxPath, dec = ".", changeMeta=FALSE, fileEncoding = "UTF-8") {
+write_spss2 <- function(GADSdat, txtPath, spsPath = NULL, savPath = NULL, dec = ".", fileEncoding = "UTF-8", chkFormat=TRUE, ...) {
   UseMethod("write_spss2")
 }
 
 #'@export
-write_spss2.GADSdat <- function(GADSdat, filePath, syntaxPath, dec =".", changeMeta=FALSE, fileEncoding = "UTF-8") {
+write_spss2.GADSdat <- function(GADSdat, txtPath, spsPath = NULL, savPath = NULL, dec =".", fileEncoding = "UTF-8", chkFormat=TRUE, ...) {
+
+  if(is.null(spsPath)) spsPath <- gsub(".txt$", ".sps", txtPath)
+  if(is.null(savPath)) savPath <- gsub(".sps$", ".sav", spsPath)
 
   ## Checks
   check_GADSdat(GADSdat)
   check_GADSdat_varLevel_meta(GADSdat)
+  checkz <- check4SPSS(GADSdat)
 
-  ## additional Column for SPSS, which is sometimes inadvertently shifts cases that end with NAs
-  # write data
-  axxx <- any(is.na(GADSdat$dat))
-  GADSdat <- writeData(GADSdat=GADSdat, filePath=filePath, dec=dec, fileEncoding=fileEncoding)
+  if(length(checkz$varNames_special) > 0) stop("Please remove special characters in variable names: ", paste(checkz$varNames_special, collapse=" "))
+  if(length(checkz$varNames_length) > 0) stop("Please shorten variable names to < 64 byte: ", paste(checkz$varNames_length, collapse=" "))
+  if(length(checkz$varLabels) > 0) stop("Please shorten variable labels to < 256 byte: ", paste(checkz$varLabels, collapse=" "))
+  if(length(checkz$valLabels) > 0) stop("Please shorten value labels to < 120 byte: ", paste(names(checkz$valLabels), collapse=" "))
+  if(length(checkz$missings) > 0) message("Too many missing values for character variables: ", paste(checkz$missings, collapse= " "),". SPSS allows only three missing values for character variables. I will take the first 3.")
 
-  ## checkMissings
-  GADSdat$labels <- checkMissings2(GADSdat$labels, changeMeta)
+  # GADSdat <- checkMissings(GADSdat)
+  if(isTRUE(chkFormat)) GADSdat <- checkFormat(GADSdat, ...)
 
-  ## create input for sub-functions
-  r1 <- createInputWriteFunctions(GADSdat)
+  ## write data
+  GADSdat <- writeData(GADSdat=GADSdat, txtPath=txtPath, dec=dec, fileEncoding=fileEncoding)
+
+  ## meta info partitioning
+  r1 <- list()
+  r1$labels <- GADSdat$labels
+  stopifnot(identical(unique(r1$labels$varName),names(GADSdat$dat)))
+  r1$varInfo <- unique(r1$labels[, c("varName", "varLabel", "format")])
+  r1$valInfo <- unique(r1$labels[which(!is.na(r1$labels$value)), c("varName", "value", "valLabel", "missings")])
+  r1$misInfo <- unique(r1$labels[which(!is.na(r1$labels$value) & r1$labels$missings == "miss"), c("varName", "value", "valLabel", "missings")])
+  r1$chv <- sapply(GADSdat$dat, is.character)
 
   ## write header
-  writeHeader(r1=r1, filePath=filePath, syntaxPath=syntaxPath, changeMeta=changeMeta)
+  writeHeader(r1=r1, txtPath=txtPath, spsPath=spsPath, fileEncoding=fileEncoding, dec=dec)
 
   ## write variable labels
-  writeVaLab(r1=r1, syntaxPath=syntaxPath)
+  writeVaLab(r1=r1, spsPath=spsPath)
 
   ## write missing codes
-  writeMisCode(r1=r1, syntaxPath=syntaxPath)
+  writeMisCode(r1=r1, spsPath=spsPath)
 
-  ## delete additional variable
-  cat("\nEXECUTE.\n", file = syntaxPath, append = TRUE)
-  if(isTRUE(axxx)) {
-    cat("DELETE VARIABLES xxxtgw.\nEXECUTE.\n", file = syntaxPath, append = TRUE)
-  }
+  ## execute
+  cat("\nEXECUTE.\n", file = spsPath, append = TRUE)
+
+  # Save
+  cat("\nSAVE OUTFILE = ", autoQuote(savPath), ".", file = spsPath, append = TRUE)
+
 }
 
 autoQuote <- function (x){
   paste("\"", x, "\"", sep = "")
 }
 
-readMultisep <- function(file,sep) {
-  lines <- readLines(file)
-  datf <- data.frame(do.call(rbind,strsplit(lines, sep, fixed = TRUE)), stringsAsFactors=FALSE)
-  datf <- data.frame(lapply(datf,utils::type.convert,as.is=TRUE), stringsAsFactors=FALSE)
-  return(datf)
-}
 
-checkMissings2 <- function(labels, changeMeta){
+writeData <- function(GADSdat, txtPath, dec, fileEncoding) {
 
-  if(isTRUE(any(labels$missings[grep("missing", labels$valLabel)] == "valid"))) {
-    message("Info: Some values are labelled \'missing\' but are not declared as missing.")
-    if(isTRUE(changeMeta)) {
-      message("Declaration will be changed, because changeMeta=TRUE.")
-      labels$missings[grep("missing", labels$valLabel)] <- "miss"
-    }
+  # remove text qualifier in string
+  chv1 <- which(sapply(GADSdat$dat, is.character))
+  if(length(chv1) > 0) {
+    chv2 <- sapply(GADSdat$dat[chv1], function(ij) any(grepl("\"",ij)))
+    GADSdat$dat[,chv1] <- apply(GADSdat$dat[,chv1],2,function(pq) gsub("\"", "'", pq))
+    message("In character variable(s) ", paste(names(chv2)[chv2], collapse=", "), " quotation marks (\") had to be replaced with inverted commas (').")
   }
-
-  if(isTRUE(any(labels$missings[!grepl("missing", labels$valLabel)] == "miss"))) {
-    message("Info: Some missings are labelled without the keyword \'missing\' in their label.")
-    if(isTRUE(changeMeta)) {
-      message("Declaration will be changed, because changeMeta=TRUE.")
-      labels$missings[!grepl("missing", labels$valLabel)] <- "valid"
-    }
-  }
-
-  return(labels)
-}
-
-createInputWriteFunctions <- function(GADSdat) {
-  r1 <- list()
-
-  r1$labels <- GADSdat$labels
-
-  stopifnot(identical(unique(r1$labels$varName),names(GADSdat$dat)))
-
-  r1$varInfo <- unique(r1$labels[, c("varName", "varLabel", "format")])
-  r1$valInfo <- unique(r1$labels[!is.na(r1$labels$value), c("varName", "value", "valLabel", "missings")])
-  r1$misInfo <- unique(r1$labels[!is.na(r1$labels$value) & r1$labels$missings == "miss", c("varName", "value", "valLabel", "missings")])
-
-  r1$varnames <- gsub("[^[:alnum:]_\\$@#]", "\\.", colnames(GADSdat$dat))
-  r1$dl.varnames <- r1$varnames
-
-  r1$chv <- sapply(GADSdat$dat, is.character)
-
-  r1$lengths <- sapply(names(GADSdat$dat), function(ll) { if(isTRUE(is.numeric(GADSdat$dat[,ll]) & all(is.numeric(utils::type.convert(r1$labels$value[r1$labels$varName==ll],as.is=TRUE))|is.na(r1$labels$value[r1$labels$varName==ll])))) {
-    max(nchar(as.character(round(abs(as.numeric(stats::na.omit(c(GADSdat$dat[,ll],r1$labels$value[r1$labels$varName==ll])))), digits=0))))
-  } else {
-    if(max(nchar(c(GADSdat$dat[,ll],r1$labels$value[r1$labels$varName==ll]))) > 53) {
-      max(nchar(c(GADSdat$dat[,ll],r1$labels$value[r1$labels$varName==ll]))) + round(max(nchar(c(GADSdat$dat[,ll],r1$labels$value[r1$labels$varName==ll])))/8,0)
-    } else {
-      max(nchar(c(GADSdat$dat[,ll],r1$labels$value[r1$labels$varName==ll])))
-    }
-  }
-  })
-
-  r1$decimals <- sapply(names(GADSdat$dat), function(ll) { if(isTRUE(is.numeric(GADSdat$dat[,ll]) & all(is.numeric(utils::type.convert(r1$labels$value[r1$labels$varName==ll],as.is=TRUE))|is.na(r1$labels$value[r1$labels$varName==ll])))) {
-    max(nchar(as.character(stats::na.omit(abs(c(GADSdat$dat[,ll],utils::type.convert(r1$labels$value[r1$labels$varName==ll],as.is=TRUE)))))))
-  } else {
-    if(max(nchar(c(GADSdat$dat[,ll],r1$labels$value[r1$labels$varName==ll]))) > 53) {
-      max(nchar(c(GADSdat$dat[,ll],r1$labels$value[r1$labels$varName==ll]))) + round(max(nchar(c(GADSdat$dat[,ll],r1$labels$value[r1$labels$varName==ll])))/8,0)
-    } else {
-      max(nchar(c(GADSdat$dat[,ll],r1$labels$value[r1$labels$varName==ll])))
-    }
-  }
-  })
-
-  r1$varsWithDecimals <-  names(which(r1$lengths != r1$decimals))
-
-  r1$decimals2 <- sapply(r1$varsWithDecimals, function(ll) {if(isTRUE(is.numeric(GADSdat$dat[,ll]) & all(is.numeric(utils::type.convert(r1$labels$value[r1$labels$varName==ll],as.is=TRUE))|is.na(r1$labels$value[r1$labels$varName==ll])))) {
-    ast <- max(nchar(stats::na.omit(unlist(lapply(strsplit(as.character(stats::na.omit(abs(c(GADSdat$dat[,ll],utils::type.convert(r1$labels$value[r1$labels$varName==ll],as.is=TRUE))))),"\\."), function(b) b[2])))))
-    if(isTRUE(ast > 16)) {
-      message(paste0("Variable ", ll, " has more decimals than SPSS allows (", ast, ") and will be rounded to 16 decimal places."))
-      ast <- 16
-      GADSdat$dat[,ll] <- round(GADSdat$dat[,ll],16)
-    }
-  } else {
-    ast <- max(nchar(stats::na.omit(unlist(lapply(strsplit(stats::na.omit(c(GADSdat$dat[,ll],r1$labels$value[r1$labels$varName==ll])),"\\."), function(b) b[2])))))
-  }
-    return(ast)
-  })
-
-  if (any(r1$chv)) {
-    r1$lengths2 <- paste("(", ifelse(r1$chv, "A", "F"), r1$lengths, ")", sep = "")
-  }  else {
-    r1$lengths2 <- paste ( "(F", r1$lengths, ")", sep = "")
-  }
-
-  if(!is.null(r1$varsWithDecimals)){
-    r1$lengths2[which(r1$dl.varnames %in% r1$varsWithDecimals)] <-sapply(seq(along=r1$lengths2[which(r1$dl.varnames %in% r1$varsWithDecimals)]), function(i) {
-      x <- paste0(r1$decimals[r1$varsWithDecimals][i], ".", r1$decimals2[r1$varsWithDecimals][i],")")
-      gsub("[0-9]+)$", x, r1$lengths2[which(r1$dl.varnames %in% r1$varsWithDecimals)][i])
-    })
-  }
-  r1$dl.varnames <- paste(r1$dl.varnames, r1$lengths2)
-  return(r1)
-}
-
-writeData <- function(GADSdat, filePath, dec, fileEncoding) {
-  if(any(is.na(GADSdat$dat))) {
-    GADSdat$dat <- cbind(GADSdat$dat,data.frame(xxxtgw=rep(1,nrow(GADSdat$dat))))
-    GADSdat$labels <- rbind(GADSdat$labels, data.frame(varName="xxxtgw",varLabel=NA,format=NA,display_width=NaN,labeled="no",value=NaN,valLabel=NA,missings=NA,stringsAsFactors = FALSE))
-  }
-
   ## write txt
-  utils::write.table(GADSdat$dat, file = filePath, row.names = FALSE, col.names = FALSE,
-                     sep = "]&;", dec = dec, quote = FALSE, na = "", eol = "\n", fileEncoding = fileEncoding)
+  utils::write.table(GADSdat$dat, file = txtPath, row.names = FALSE, col.names = FALSE,
+                     sep = ";", dec = dec, quote = TRUE, na = "", eol = "\n", fileEncoding = fileEncoding)
 
   return(GADSdat)
 }
 
-writeHeader <- function(r1, filePath, syntaxPath, changeMeta) {
-  if(isTRUE(changeMeta)) {
-    freefield <- " free (']&;')\n"
-    cat("DATA LIST FILE=", autoQuote(filePath), freefield, file = syntaxPath)
-    cat(" /", r1$dl.varnames, ".\n\n", file = syntaxPath, append = TRUE,
-        fill = 60, labels = " ")
+
+
+writeHeader <- function(r1, txtPath, spsPath, fileEncoding, dec) {
+  if(dec==",") {
+    decstr <- "COMMA"
   } else {
-    if(any(!is.na(r1$labels$format))) {
-      ninfo <- unique(r1$labels$varName[!is.na(r1$labels$format)])
-      fmneu <- unlist(sapply(r1$dl.varnames, function(xx) {
-        if((aj <- strsplit(xx, " \\(")[[1]][1]) %in% ninfo) {
-          aa <- paste0(aj, " (", stats::na.omit(r1$labels$format[r1$labels$varName==aj])[1], ")")
-          return(aa)
-        }
-      }))
-    for(ll in r1$dl.varnames) {
-      if(any(names(fmneu) %in% ll)) {
-        r1$dl.varnames[r1$dl.varnames==ll] <- fmneu[which(names(fmneu) %in% ll)]
-      }
+    if(dec==".") {
+      decstr <- "DOT"
+    } else {
+     stop("Other values for dec than COMMA oder DOT are not implemented yet.")
     }
-    }
-    freefield <- " free (']&;')\n"
-    cat("DATA LIST FILE=", autoQuote(filePath), freefield, file = syntaxPath)
-    cat(" /", r1$dl.varnames, ".\n\n", file = syntaxPath, append = TRUE,
-        fill = 60, labels = " ")
   }
+  txtPath <- gsub("^[a-z]",toupper(substr(txtPath,1,1)),txtPath)
+  partI <- paste0("* Encoding: ", fileEncoding, ".\n\nPRESERVE.\n SET DECIMAL ", decstr, ".\n\nGET DATA  /TYPE=TXT\n  /FILE=", autoQuote(txtPath), "\n  /DELCASE=LINE\n  /DELIMITERS=\";\"\n  /QUALIFIER=\'\"\'\n  /ARRANGEMENT=DELIMITED\n  /FIRSTCASE=1\n  /DATATYPEMIN PERCENTAGE=95.0\n  /VARIABLES=")
+  cat(partI, file = spsPath)
+  labs1 <- r1$labels[!duplicated(r1$labels$varName),]
+  labs1$format <- gsub("\\.0$", "", labs1$format)
+  if(any(is.na(labs1$format))) warning("Format statement still contains 'NA' values, SPSS syntax will probably not work. Consider changeFormat=TRUE.")
+  dl.varnames <- paste0(labs1$varName, " ", labs1$format, "\n")
+  cat("\n ",dl.varnames, "  /MAP.\nRESTORE.\n\nCACHE.\nEXECUTE.\nDATASET NAME DataSet1 WINDOW=FRONT.\n\n", file = spsPath, append = TRUE, sep="")
 }
 
-writeVaLab <- function(r1, syntaxPath) {
+
+writeHeaderOld <- function(r1, txtPath, spsPath) {
+    # This function is deprecated, because SPSS sometimes in large data sets in SPSS some cases were slipping out of place
+    freefield <- " free (';')\n"
+    cat("DATA LIST FILE=", autoQuote(txtPath), freefield, file = spsPath)
+    labs1 <- r1$labels[!duplicated(r1$labels$varName),]
+    dl.varnames <- paste0(labs1$varName, " (", labs1$format, ")")
+    cat(" /", dl.varnames, ".\n\n", file = spsPath, append = TRUE,
+        fill = 60, labels = " ")
+}
+
+writeVaLab <- function(r1, spsPath) {
   r1$varInfo$varLabel[is.na(r1$varInfo$varLabel)] <- ""
-  cat("VARIABLE LABELS\n", file = syntaxPath, append = TRUE)
+  cat("VARIABLE LABELS\n", file = spsPath, append = TRUE)
   cat(" ", paste(r1$varInfo$varName, autoQuote(r1$varInfo$varLabel), "\n"), ".\n",
-      file = syntaxPath, append = TRUE)
+      file = spsPath, append = TRUE)
 
   # write value labels
   if (nrow(r1$valInfo) > 0) {
-
-    cat("\nVALUE LABELS\n", file = syntaxPath, append = TRUE)
+    cat("\nVALUE LABELS\n", file = spsPath, append = TRUE)
     for (v in unique(r1$valInfo$varName)) {
-      cat(" /", v, "\n", file = syntaxPath, append = TRUE)
+      cat(" /", v, "\n", file = spsPath, append = TRUE)
       cat(paste("  ", r1$valInfo[r1$valInfo$varName==v,]$value, autoQuote(r1$valInfo[r1$valInfo$varName==v,]$valLabel),"\n",  sep = " "),
-          file = syntaxPath, append = TRUE)
+          file = spsPath, append = TRUE)
     }
-    cat(" .\n", file = syntaxPath, append = TRUE)
+    cat(" .\n", file = spsPath, append = TRUE)
   }
 }
 
-writeMisCode <- function(r1, syntaxPath) {
+writeMisCode <- function(r1, spsPath) {
 
-  if (nrow(r1$misInfo) > 0) {
+  if(nrow(r1$misInfo) > 0) {
 
-    cat("\nMISSING VALUES\n", file = syntaxPath, append = TRUE)
+    cat("\nMISSING VALUES\n", file = spsPath, append = TRUE)
 
     for (v in unique(r1$misInfo$varName)) {
       if(length(r1$misInfo$value[r1$misInfo$varName==v]) > 3) {
         if(isTRUE(r1$chv[v])) {
-          message(paste0("Too many missing values for character variable \'", v,"\'. SPSS allows only three missing values for character variables. I will take the first 3."))
+         # message(paste0("Too many missing values for character variable \'", v,"\'. SPSS allows only three missing values for character variables. I will take the first 3."))
           span <- paste(r1$misInfo$value[r1$misInfo$varName==v][1:3],collapse="\', \'")
           cat(paste0(v, " ('",  span, "')\n",  sep = " "),
-              file = syntaxPath, append = TRUE)
+              file = spsPath, append = TRUE)
         } else {
           span <- paste(min(as.numeric(r1$misInfo$value[r1$misInfo$varName==v])), "THRU", max(as.numeric(r1$misInfo$value[r1$misInfo$varName==v])))
           cat(paste0(v, " (",  span, ")\n",  sep = " "),
-              file = syntaxPath, append = TRUE)
+              file = spsPath, append = TRUE)
         }
       } else {
         if(isTRUE(r1$chv[v])) {
           span <- paste(r1$misInfo$value[r1$misInfo$varName==v],collapse="\',\'")
           cat(paste0(v, " ('",  span, "')\n",  sep = " "),
-              file = syntaxPath, append = TRUE)
+              file = spsPath, append = TRUE)
         } else {
           span <- paste(r1$misInfo$value[r1$misInfo$varName==v],collapse=",")
           cat(paste0(v, " (",  span, ")\n",  sep = " "),
-              file = syntaxPath, append = TRUE)
+              file = spsPath, append = TRUE)
         }
       }
     }
-    cat(".\n", file = syntaxPath, append = TRUE)
+    cat(".\n", file = spsPath, append = TRUE)
 
   }
 }

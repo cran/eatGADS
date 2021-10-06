@@ -14,8 +14,17 @@ test_that("Extract variable level meta change table", {
   out <- c(names(df1$labels)[1:4], paste0(names(df1$labels)[1:4], "_new"))
   expect_equal(names(getChangeMeta(df1)), out)
   expect_equal(dim(getChangeMeta(df1)), c(2, 8))
-  names(changes_var)[8] <- "lala_new"
-  expect_error(check_varChanges(changes_var), "Irregular column names in changeTable.")
+})
+
+test_that("check_varChanges", {
+  changes_var2 <-changes_var1 <- changes_var
+  changes_var1$varName_new[1] <- "alter"
+  expect_message(out <- check_varChanges(changes_var1),
+                 "alter has been renamed to alterVar")
+  expect_equal(out[1, "varName_new"], "alterVar")
+
+  names(changes_var2)[8] <- "lala_new"
+  expect_error(check_varChanges(changes_var2), "Irregular column names in changeTable.")
 })
 
 test_that("Extract value level meta change table", {
@@ -87,7 +96,7 @@ test_that("Check changeTable different variable sets", {
 })
 
 test_that("Check changeTable function", {
-  changes_var3 <- changes_var2 <- changes_var1 <- changes_var
+  changes_var5 <- changes_var4 <- changes_var3 <- changes_var2 <- changes_var1 <- changes_var
   dfSAV2 <- dfSAV
   changes_var1[c(1, 3), "varLabel"] <- c("sth", "sth")
   changes_val1 <- changes_val
@@ -99,6 +108,15 @@ test_that("Check changeTable function", {
   expect_error(check_changeTable(dfSAV, changes_val1),
                "GADSdat and changeTable are not compatible in column 'value' and row(s) 1. Columns without '_new' should not be changed in the changeTable.",
                fixed = TRUE)
+
+  changes_var4[2:3, "format"] <- c("F10.0", "F10.3")
+  expect_error(check_changeTable(dfSAV, changes_var4),
+               "GADSdat and changeTable are not compatible in column 'format' and row(s) 2, 3. Columns without '_new' should not be changed in the changeTable.",
+               fixed = TRUE)
+  changes_var5[2:3, "format"] <- c(NA, NA)
+  expect_error(check_changeTable(dfSAV, changes_var5),
+               "GADSdat and changeTable are not compatible in column 'format' and row(s) 2, 3. Columns without '_new' should not be changed in the changeTable.",
+               fixed = TRUE)
   expect_silent(check_changeTable(dfSAV, changes_var))
   expect_silent(check_changeTable(dfSAV, changes_val))
   expect_silent(check_changeTable(df1, getChangeMeta(df1, "value")))
@@ -107,6 +125,6 @@ test_that("Check changeTable function", {
   dfSAV2$labels$display_width <- 0
   expect_silent(check_changeTable(dfSAV2, changes_var2))
 
-  changes_var3[, "display_width"] <- NA_character_
-  expect_silent(check_changeTable(dfSAV2, changes_var3))
+  #changes_var3[, "display_width"] <- NA_character_
+  #expect_silent(check_changeTable(dfSAV2, changes_var3))
 })

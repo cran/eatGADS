@@ -6,25 +6,31 @@
 \usage{
 write_spss2(
   GADSdat,
-  filePath,
-  syntaxPath,
+  txtPath,
+  spsPath = NULL,
+  savPath = NULL,
   dec = ".",
-  changeMeta = FALSE,
-  fileEncoding = "UTF-8"
+  fileEncoding = "UTF-8",
+  chkFormat = TRUE,
+  ...
 )
 }
 \arguments{
 \item{GADSdat}{A \code{GADSdat} object.}
 
-\item{filePath}{Path of \code{.txt} file to write.}
+\item{txtPath}{Path of \code{.txt} file to write, including file name and ending \code{.txt}. No default.}
 
-\item{syntaxPath}{Path of \code{.sps} file to write.}
+\item{spsPath}{Path of \code{.sps} file to write, including file name and ending \code{.sps}. Default Path is \code{txtPath}.}
 
-\item{dec}{Decimal delimiter for your SPSS version.}
+\item{savPath}{Path of \code{.sav} file to write, including file name and ending \code{.sav}. Default Path is \code{spsPath}.}
 
-\item{changeMeta}{Meta data information will be changed automatically according to features of the data.}
+\item{dec}{Decimal delimiter for your SPSS version. Other values for \code{dec} than \code{","} or \code{"."} are not implemented yet.}
 
-\item{fileEncoding}{Data file encoding for SPSS. Default is "UTF-8".}
+\item{fileEncoding}{Data file encoding for SPSS. Default is \code{"UTF-8"}.}
+
+\item{chkFormat}{Whether format checks via \code{checkFormat} should be performed.}
+
+\item{...}{Arguments to pass to \code{checkFormat} in particular \code{changeFormat=FALSE} if needed.}
 }
 \value{
 Writes a \code{txt} and an \code{sav} file to disc, returns nothing.
@@ -38,8 +44,7 @@ This function is based on \code{eatPreps} \code{writeSpss} function and is curre
 \examples{
 
 # write to spss
-tmp_sps <- tempfile(fileext = ".sps")
 tmp_txt <- tempfile(fileext = ".txt")
-write_spss2(pisa, filePath = tmp_txt, syntaxPath = tmp_sps)
+write_spss2(pisa, txtPath = tmp_txt)
 
 }

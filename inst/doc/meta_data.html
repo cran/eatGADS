@@ -12,7 +12,7 @@
 
 <meta name="author" content="Marlen Holtmann, Johanna Busse, Benjamin Becker" />
 
-<meta name="date" content="2021-07-19" />
+<meta name="date" content="2021-10-06" />
 
 <title>Modifying Meta Data</title>
 
@@ -141,7 +141,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <h1 class="title toc-ignore">Modifying Meta Data</h1>
 <h4 class="author">Marlen Holtmann, Johanna Busse, Benjamin Becker</h4>
-<h4 class="date">2021-07-19</h4>
+<h4 class="date">2021-10-06</h4>
 
 
 
@@ -241,8 +241,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 38 hisei_new Parental occupational status (highest)  F10.2            NA     yes   -99    miss2</span></span>
 <span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 39 hisei_new Parental occupational status (highest)  F10.2            NA     yes   -94    miss1</span></span>
 <span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    missings</span></span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 38     &lt;NA&gt;</span></span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 39     &lt;NA&gt;</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 38    valid</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 39    valid</span></span>
 <span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Changing value labels</span></span>
 <span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>gads_labeled <span class="ot">&lt;-</span> <span class="fu">changeValLabels</span>(<span class="at">GADSdat =</span> gads_labeled, <span class="at">varName =</span> <span class="st">&quot;hisei_new&quot;</span>, </span>
@@ -254,8 +254,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 38 hisei_new Parental occupational status (highest)  F10.2            NA     yes   -99</span></span>
 <span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 39 hisei_new Parental occupational status (highest)  F10.2            NA     yes   -94</span></span>
 <span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                     valLabel missings</span></span>
-<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 38 missing: Not administered     &lt;NA&gt;</span></span>
-<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 39 missing: Question omitted     &lt;NA&gt;</span></span></code></pre></div>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 38 missing: Not administered    valid</span></span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 39 missing: Question omitted    valid</span></span></code></pre></div>
 <p>Value labels can also be deleted using the <code>removeValLabels()</code> function.</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Removing value labels</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">extractMeta</span>(gads_labeled, <span class="st">&quot;schtype&quot;</span>)</span>
@@ -282,8 +282,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 38 hisei_new Parental occupational status (highest)  F10.2            NA     yes   -99</span></span>
 <span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 39 hisei_new Parental occupational status (highest)  F10.2            NA     yes   -94</span></span>
 <span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                     valLabel missings</span></span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 38 missing: Not administered     &lt;NA&gt;</span></span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 39 missing: Question omitted     &lt;NA&gt;</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 38 missing: Not administered    valid</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 39 missing: Question omitted    valid</span></span>
 <span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>gads_labeled <span class="ot">&lt;-</span> <span class="fu">changeMissings</span>(<span class="at">GADSdat =</span> gads_labeled, <span class="at">varName =</span> <span class="st">&quot;hisei_new&quot;</span>, </span>
 <span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>                               <span class="at">value =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">94</span>, <span class="sc">-</span><span class="dv">99</span>), <span class="at">missings =</span> <span class="fu">c</span>(<span class="st">&quot;miss&quot;</span>, <span class="st">&quot;miss&quot;</span>))</span>
 <span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="fu">extractMeta</span>(gads_labeled, <span class="st">&quot;hisei_new&quot;</span>)</span>

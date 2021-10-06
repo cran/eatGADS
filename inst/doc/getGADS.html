@@ -12,7 +12,7 @@
 
 <meta name="author" content="Benjamin Becker" />
 
-<meta name="date" content="2021-07-19" />
+<meta name="date" content="2021-10-06" />
 
 <title>getGADS: Using a relational eatGADS data base</title>
 
@@ -141,7 +141,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <h1 class="title toc-ignore"><code>getGADS</code>: Using a relational eatGADS data base</h1>
 <h4 class="author">Benjamin Becker</h4>
-<h4 class="date">2021-07-19</h4>
+<h4 class="date">2021-10-06</h4>
 
 
 
@@ -150,7 +150,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(eatGADS)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>db_path <span class="ot">&lt;-</span> <span class="fu">system.file</span>(<span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;pisa.db&quot;</span>, <span class="at">package =</span> <span class="st">&quot;eatGADS&quot;</span>)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>db_path</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;C:/Users/beckerbz/AppData/Local/Temp/RtmpwR26qt/Rinst2ee85bd31a94/eatGADS/extdata/pisa.db&quot;</span></span></code></pre></div>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;C:/Users/beckerbz/AppData/Local/Temp/RtmpMZIJta/Rinst520351267e3/eatGADS/extdata/pisa.db&quot;</span></span></code></pre></div>
 <div id="why" class="section level2">
 <h2>Why?</h2>
 <p>Relational data bases created by <code>eatGADS</code> provide an alternative way of storing hierarchically structured data (e.g. from educational large-scale assessments). Compared to conventional approaches (one big or multiple <code>.sav</code>/<code>.Rdata</code> files) this yields the following advantages:</p>
@@ -283,7 +283,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="selecting-different-hierarchy-levels" class="section level2">
 <h2>Selecting different hierarchy levels</h2>
-<p>An important feature of <code>eatGADS</code> relational data bases are that data sets are automatically returned on the correct hierarchy level. For an overview of different data structures, see <a href="https://www.jstatsoft.org/article/view/v059i10">“Tidy Data”</a> or <a href="https://www.theanalysisfactor.com/wide-and-long-data/">this article explaining long and wide format using repeated measures</a>. In educational large-scale assessments, data usually contain multiple imputations or plausible values. Packages that enable us analyzing these types of data (like <a href="https://github.com/weirichs/eatRep"><code>eatRep</code></a>) often require these data in the long format.</p>
+<p>An important feature of <code>eatGADS</code> relational data bases are that data sets are automatically returned on the correct hierarchy level. For an overview of different data structures, see <a href="https://doi.org/10.18637/jss.v059.i10">“Tidy Data”</a> or <a href="https://www.theanalysisfactor.com/wide-and-long-data/">this article explaining long and wide format using repeated measures</a>. In educational large-scale assessments, data usually contain multiple imputations or plausible values. Packages that enable us analyzing these types of data (like <a href="https://github.com/weirichs/eatRep"><code>eatRep</code></a>) often require these data in the long format.</p>
 <p>The function <code>getGADS()</code> extracts data automatically in the appropriate structure, depending on our variable selection. If we select only variables from the student level, the data returned is on the student level. Each student is represented in a single row.</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>gads1 <span class="ot">&lt;-</span> <span class="fu">getGADS</span>(db_path, <span class="at">vSelect =</span> <span class="fu">c</span>(<span class="st">&quot;schtype&quot;</span>, <span class="st">&quot;g8g9&quot;</span>))</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>dat1 <span class="ot">&lt;-</span> <span class="fu">extractData</span>(gads1)</span>
