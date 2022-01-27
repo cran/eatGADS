@@ -149,7 +149,7 @@ test_that("ExtractData with some variables labels applied to (convertVariables a
   # Missing labels (but no variables in the data that show the 'no-conversion'!)
   out <- suppressWarnings(extractData(testM, convertVariables = c("VAR2", "VAR3")))
   expect_equal(out$VAR1, c(1, NA, NA, 2))
-  expect_error(extractData(testM, convertVariables = c()))
+  expect_warning(extractData(testM, convertVariables = c()))
 
   # Two variables with value labels without missings
   label_df <- data.frame(a = c("one", "two"),
@@ -164,8 +164,9 @@ test_that("ExtractData with some variables labels applied to (convertVariables a
 })
 
 test_that("Extract data trend GADS", {
-  # trend_gads <- getTrendGADS(filePath1 = "C:/Benjamin_Becker/02_Repositories/packages/eatGADS/tests/testthat/helper_dataBase.db", filePath2 = "C:/Benjamin_Becker/02_Repositories/packages/eatGADS/tests/testthat/helper_dataBase_uniqueVar.db", years = c(2012, 2018), fast = FALSE)
-  trend_gads <- suppressWarnings(getTrendGADS(filePath1 = "helper_dataBase.db", filePath2 = "helper_dataBase_uniqueVar.db", years = c(2012, 2018), fast = FALSE))
+  # trend_gads <- getTrendGADS(filePaths = c("tests/testthat/helper_dataBase.db", "tests/testthat/helper_dataBase_uniqueVar.db"), years = c(2012, 2018), fast = FALSE)
+  trend_gads <- suppressWarnings(getTrendGADS(filePaths = c("helper_dataBase.db", "helper_dataBase_uniqueVar.db"),
+                                              years = c(2012, 2018), fast = FALSE, verbose = FALSE))
   out <- extractData(trend_gads)
   expect_equal(dim(out), c(6, 5))
   expect_equal(names(out), c("ID1", "V1", "V2", "V3", "year"))
@@ -177,50 +178,28 @@ test_that("Extract data trend GADS", {
 })
 
 
-### with linking errors
-test_that("Extract.trend_GADSdat with linking errors", {
-  # out <- getTrendGADS(filePath1 = "C:/Benjamin_Becker/02_Repositories/packages/eatGADS/tests/testthat/helper_comp.db", filePath2 = "C:/Benjamin_Becker/02_Repositories/packages/eatGADS/tests/testthat/helper_comp2.db", years = c(2012, 2018), lePath = "C:/Benjamin_Becker/02_Repositories/packages/eatGADS/tests/testthat/helper_le.db", fast = FALSE, vSelect = c("ID", "level", "PV"))
-  out <- getTrendGADS(filePath1 = "helper_comp.db", filePath2 = "helper_comp2.db", years = c(2012, 2018), lePath = "helper_le.db", fast = control_caching, vSelect = c("ID", "PV"))
-  dat <- extractData(out)
-  expect_equal(dim(dat), c(8, 5))
-  expect_equal(dat$LE_PV, c(rep(0.3, 4), rep(0.2, 4)))
+test_that("Extract data trend GADS 3 MPs", {
+  fp1 <- system.file("extdata", "trend_gads_2020.db", package = "eatGADS")
+  fp2 <- system.file("extdata", "trend_gads_2015.db", package = "eatGADS")
+  fp3 <- system.file("extdata", "trend_gads_2010.db", package = "eatGADS")
+  s <- capture_output(gads_3mp <- getTrendGADS(filePaths = c(fp1, fp2, fp3), years = c(2020, 2015, 2010), fast = FALSE, verbose = FALSE))
 
-  ## more variables
-  out2 <- getTrendGADS(filePath1 = "helper_comp.db", filePath2 = "helper_comp2.db", years = c(2012, 2018), lePath = "helper_le.db", fast = control_caching, vSelect = c("ID", "level", "PV"))
-  dat2 <- extractData(out2)
-  expect_equal(dim(dat2), c(8, 7))
-  expect_equal(dat2[dat2$level == 4 & dat2$dim == "A", "LE_level"], c(0.2, 0.2))
-  expect_equal(dat2[dat2$level == 5 & dat2$dim == "B", "LE_level"], c(0.9, 0.9))
-  expect_equal(dat2[dat2$level == "1a" & dat2$dim == "A", "LE_level"], c(0.01, 0.01))
-  expect_equal(dat2[dat2$level == "1b" & dat2$dim == "B", "LE_level"], c(0.4, 0.4))
-
-
-  ## vSelect is null
-  out3 <- getTrendGADS(filePath1 = "helper_comp.db", filePath2 = "helper_comp2.db", years = c(2012, 2018), lePath = "helper_le.db", fast = control_caching)
-  dat <- extractData(out3)
-  expect_equal(dim(dat2), c(8, 7))
-  expect_equal(names(dat2), c("ID", "dim", "PV", "level", "LE_PV", "LE_level", "year"))
-
-
+  out <- extractData(gads_3mp)
+  expect_equal(dim(out), c(180, 10))
+  expect_equal(names(out), c("idstud", "gender", "dimension", "imp", "score", "traitLevel", "failMin", "passReg", "passOpt", "year"))
+  expect_equal(out$year, c(rep(2020, 60), rep(2015, 60), rep(2010, 60)))
 })
 
 
-## Archiv
-les <- import_DF(data.frame(ID1 = 1:2, le = c(1.1, 0.9), comp = 1:2))
-les2 <- import_DF(data.frame(ID1 = c(1, 2, 1), le = c(1.1, 0.9, 1.3), comp = 1:3))
-les3 <- import_DF(data.frame(ID1 = c(1, 2, 1), le = c(1.1, 0.9, 1.3), V2 = c(4, NA, 8)))
+### with linking errors
+test_that("with linking errors present", {
+  # out <- getTrendGADSOld(filePath1 = "tests/testthat/helper_comp.db", filePath2 = "tests/testthat/helper_comp2.db", years = c(2012, 2018), lePath = "tests/testthat/helper_le.db", fast = FALSE, vSelect = c("ID", "PV"))
+  out <- getTrendGADSOld(filePath1 = "helper_comp.db", filePath2 = "helper_comp2.db", years = c(2012, 2018),
+                         lePath = "helper_le.db", fast = control_caching, vSelect = c("ID", "PV"))
+  expect_error(dat <- extractData(out),
+               "Linking errors are no longer supported by extractData. Use extractDataOld() instead.", fixed = TRUE)
+})
 
-#expect_error(merge_LEs(gads_trend = gads_trend, les = les2, le_keys = c("ID1", "comp")))
-
-#out_single <- merge_LEs(gads_trend = gads_trend, les = les, le_keys = "ID1")
-#expect_equal(out_single$dat$le, c(rep(1.1, 4), rep(0.9, 2)))
-#expect_equal(out_single$labels$data_table[9:10],  rep("LEs", 2))
-
-# expect_error(merge_LEs(gads_trend = gads_trend, les = les3, le_keys = c("ID1"))) ### desired, but difficult to realize
-
-#out_double <- merge_LEs(gads_trend = gads_trend, les = les3, le_keys = c("ID1", "V2"))
-#expect_equal(out_single$dat$le, c(rep(1.1, 4), rep(0.9, 2)))
-#expect_equal(out_single$labels$data_table[9:10],  rep("LEs", 2))
 
 
 

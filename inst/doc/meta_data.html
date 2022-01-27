@@ -12,7 +12,7 @@
 
 <meta name="author" content="Marlen Holtmann, Johanna Busse, Benjamin Becker" />
 
-<meta name="date" content="2021-10-06" />
+<meta name="date" content="2022-01-27" />
 
 <title>Modifying Meta Data</title>
 
@@ -141,7 +141,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <h1 class="title toc-ignore">Modifying Meta Data</h1>
 <h4 class="author">Marlen Holtmann, Johanna Busse, Benjamin Becker</h4>
-<h4 class="date">2021-10-06</h4>
+<h4 class="date">2022-01-27</h4>
 
 
 
@@ -311,7 +311,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="reusing-meta-data" class="section level4">
 <h4>Reusing meta data</h4>
-<p>Sometimes one variable already contains the meta data which should be added to another variable. <code>reuseMeta()</code> allows us to copy meta data from one variable other another variable, even across different data sets. The function allows us to transfer the complete meta data, only value labels or a specific selection of value labels (only valid values or missing codes). In the example below we transfer only the missing codes from one variable to another.</p>
+<p>Sometimes one variable already contains the meta data which should be added to another variable. <code>reuseMeta()</code> can copy meta data from one variable (<code>other_varName</code>) to another variable (<code>varName</code>), even across different data sets. The function allows us to transfer the complete meta data, only value labels or a specific selection of value labels (only valid values or missing codes). In the example below we transfer only the missing codes from variable <code>hisei_new</code> to variable <code>age</code>.</p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">extractMeta</span>(gads_labeled, <span class="st">&quot;age&quot;</span>)</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    varName             varLabel format display_width labeled value valLabel missings</span></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 18     age Age of student at T1   F8.2            NA      no    NA     &lt;NA&gt;     &lt;NA&gt;</span></span>
@@ -415,7 +415,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>We start by extracting this change table via the <code>getChangeMeta()</code> function</p>
 <div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># variable level</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>meta_var <span class="ot">&lt;-</span> <span class="fu">getChangeMeta</span>(<span class="at">GADSdat =</span> pisa, <span class="at">level =</span> <span class="st">&quot;variable&quot;</span>)</span></code></pre></div>
-<p>While in principle one could modify the change table directly in R, it more convenient to do this in Excel. The change table can be written to <code>.xlsx</code> via the <code>eatAnalysis::write_xlsx()</code> function. To perform changes, entries are made into the corresponding &quot;_new&quot;-columns.</p>
+<p>While in principle one could modify the change table directly in R, it more convenient to do this in Excel. The change table can be written to <code>.xlsx</code> via the <code>eatAnalysis::write_xlsx()</code> function. To perform changes, entries are made into the corresponding “_new”-columns.</p>
 <div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># write to excel</span></span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>eatAnalysis<span class="sc">::</span><span class="fu">write_xlsx</span>(meta_var, <span class="at">row.names =</span> <span class="cn">FALSE</span>, <span class="st">&quot;variable_changes.xlsx&quot;</span>)</span></code></pre></div>
 <p> </p>

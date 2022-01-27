@@ -50,11 +50,15 @@ dat2 <- extractData(gads2)
 dim(dat2)
 head(dat2)
 
-## ----getTrendGADS, eval=FALSE-------------------------------------------------
-#  gads_trend <- getTrendGADS(filePath1 = db_path,
-#                             filePath2 = db_path2,
-#                             lePath = le_path,
-#                             vSelect = c("idstud", "schtype"),
-#                             years = c(2012, 2013), fast = FALSE)
-#  dat_trend <- extractData(gads_trend)
+## ----trendPaths---------------------------------------------------------------
+trend_path1 <- system.file("extdata", "trend_gads_2020.db", package = "eatGADS")
+trend_path2 <- system.file("extdata", "trend_gads_2015.db", package = "eatGADS")
+trend_path3 <- system.file("extdata", "trend_gads_2010.db", package = "eatGADS")
+
+## ----getTrendGADS-------------------------------------------------------------
+gads_trend <- getTrendGADS(filePaths = c(trend_path1, trend_path2, trend_path3), 
+                           vSelect = c("idstud", "dimension", "score"), 
+                           years = c(2020, 2015, 2010), fast = FALSE)
+dat_trend <- extractData(gads_trend)
+head(dat_trend)
 
