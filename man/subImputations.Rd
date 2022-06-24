@@ -4,14 +4,16 @@
 \alias{subImputations}
 \title{Substitute imputed values.}
 \usage{
-subImputations(GADSdat, GADSdat_imp, varName, id, imp)
+subImputations(GADSdat, GADSdat_imp, varName, varName_imp = varName, id, imp)
 }
 \arguments{
 \item{GADSdat}{A \code{GADSdat} object.}
 
 \item{GADSdat_imp}{A \code{GADSdat} object.}
 
-\item{varName}{A character vector of length 1 containing the variable name.}
+\item{varName}{A character vector of length 1 containing the variable name in \code{GADSdat}.}
+
+\item{varName_imp}{A character vector of length 1 containing the variable name in \code{GADSdat_imp}.}
 
 \item{id}{A character vector of length 1 containing the unique identifier column of both \code{GADSdat}.}
 
@@ -22,6 +24,10 @@ The modified \code{GADSdat_imp}..
 }
 \description{
 Substitute imputed values in a imputed \code{GADSdat_imp} object with original, not imputed values from a \code{GADSdat}.
+}
+\details{
+There are two cases in which values are substituted: (a) there are missings in \code{varName_imp}, (b) values have been imputed
+even though there is valid information in \code{varName}.
 }
 \examples{
 # tbd

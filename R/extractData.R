@@ -2,23 +2,31 @@
 #############################################################################
 #' Extract Data
 #'
-#' Extract \code{data.frame} from a \code{GADSdat} object for analyses in \code{R}. For extracting meta data see \code{\link{extractMeta}}..
+#' Extract \code{data.frame} from a \code{GADSdat} object for analyses in \code{R}. Value labels can be
+#'  selectively applied via defining \code{convertLabels} and \code{covertVariables}.
+#'  For extracting meta data see \code{\link{extractMeta}}.
 #'
 #' A \code{GADSdat} object includes actual data (\code{GADSdat$dat}) and the corresponding meta data information
-#' (\code{GADSdat$labels}). \code{extractData} extracts the data and applies relevant meta data (missing conversion, value labels),
-#' so the data can be used for analyses in \code{R}.
+#' (\code{GADSdat$labels}). \code{extractData} extracts the data and applies relevant meta data on value level (missing conversion, value labels),
+#' so the data can be used for analyses in \code{R}. Variable labels are retained as \code{label} attributes on column level.
 #'
 #' If \code{factor} are extracted via \code{convertLabels == "factor"}, an attempt is made to preserve the underlying integers.
 #' If this is not possible, a warning is issued.
 #' As \code{SPSS} has almost no limitations regarding the underlying values of labeled
-#' integers and \code{R}'s \code{factor} format is very strict (no \code{0}, only integers increasing by \code{+ 1}), this procedure can lead to
-#' frequent problems.
+#' integers and \code{R}'s \code{factor} format is very strict (no \code{0}, only integers increasing by \code{+ 1}),
+#' this procedure can lead to frequent problems.
 #'
 #'@param GADSdat A \code{GADSdat} object.
-#'@param convertMiss Should values coded as missing values be recoded to \code{NA}?
-#'@param convertLabels If \code{"numeric"}, values remain as numerics. If \code{"factor"} or \code{"character"}, values are recoded to their labels. Corresponding variable type is applied.
-#'@param dropPartialLabels Should value labels for partially labeled variables be dropped? If \code{TRUE}, the partial labels will be dropped. If \code{FALSE}, the variable will be converted to the class specified in \code{convertLabels}.
-#'@param convertVariables Character vector of variables names, which labels should be applied to. If not specified (default), value labels are applied to all variables for which labels are available. Variable names not in the actual GADS are silently dropped.
+#'@param convertMiss Should values tagged as missing values be recoded to \code{NA}?
+#'@param convertLabels If \code{"numeric"}, values remain as numerics. If \code{"factor"} or
+#' \code{"character"}, values are recoded to their labels. Corresponding variable type is applied.
+#'@param convertVariables Character vector of variables names, which labels should be applied to.
+#' All other variables remain as numeric variables in the data.
+#'If not specified [default], value labels are applied to all variables for which labels are available.
+#' Variable names not in the actual \code{GADS} are silently dropped.
+#'@param dropPartialLabels Should value labels for partially labeled variables be dropped?
+#'If \code{TRUE}, the partial labels will be dropped. If \code{FALSE}, the variable will be converted
+#'to the class specified in \code{convertLabels}.
 #'
 #'@return Returns a data frame.
 #'
@@ -29,16 +37,23 @@
 #'# convert labeled variables to factors
 #'dat <- extractData(pisa, convertLabels = "factor")
 #'
-#'# convert only some variables to factor
+#'# convert only some variables to factor, all others remain numeric
 #'dat <- extractData(pisa, convertLabels = "factor", convertVariables = c("schtype", "ganztag"))
 #'
+#'# convert only some variables to character, all others remain numeric
+#'dat <- extractData(pisa, convertLabels = "factor", convertVariables = c("schtype", "ganztag"))
+#'# schtype is now character
+#'table(dat$schtype)
+#'# schtype remains numeric
+#'table(dat$gender)
+#'
 #'@export
-extractData <- function(GADSdat, convertMiss = TRUE, convertLabels = "character", dropPartialLabels = TRUE, convertVariables = NULL) {
+extractData <- function(GADSdat, convertMiss = TRUE, convertLabels = "character", convertVariables = NULL, dropPartialLabels = TRUE) {
   UseMethod("extractData")
 }
 
 #'@export
-extractData.GADSdat <- function(GADSdat, convertMiss = TRUE, convertLabels = "character", dropPartialLabels = TRUE, convertVariables = NULL) {
+extractData.GADSdat <- function(GADSdat, convertMiss = TRUE, convertLabels = "character", convertVariables = NULL, dropPartialLabels = TRUE) {
   check_GADSdat(GADSdat)
   if(length(convertLabels) != 1 || !convertLabels %in% c("character", "factor", "numeric")) stop("Argument convertLabels incorrectly specified.")
   dat <- GADSdat$dat
@@ -48,11 +63,13 @@ extractData.GADSdat <- function(GADSdat, convertMiss = TRUE, convertLabels = "ch
   ## labels
   dat <- labels2values(dat = dat, labels = labels, convertLabels = convertLabels, convertMiss = convertMiss,
                        dropPartialLabels = dropPartialLabels, convertVariables = convertVariables)
+  ## varLabels
+  dat <- varLabels_as_labels(dat = dat, labels = labels)
   dat
 }
 
 #'@export
-extractData.trend_GADSdat <- function(GADSdat, convertMiss = TRUE, convertLabels = "character", dropPartialLabels = TRUE, convertVariables = NULL) {
+extractData.trend_GADSdat <- function(GADSdat, convertMiss = TRUE, convertLabels = "character", convertVariables = NULL, dropPartialLabels = TRUE) {
   check_trend_GADSdat(GADSdat)
   if("LEs" %in% names(GADSdat$datList)) stop("Linking errors are no longer supported by extractData. Use extractDataOld() instead.")
 
@@ -177,5 +194,13 @@ char2fac <- function(dat, labels, vars, convertMiss) {
                                             paste(partially_labeled, collapse = ", "))
   if(length(unordered_facs) > 0) warning("For the following factor variables the underlying integers can not be preserved due to R-incompatible ordering of numeric values: ",
                                          paste(unordered_facs, collapse = ", "))
+  dat
+}
+
+varLabels_as_labels <- function(dat, labels) {
+  for(i in names(dat)) {
+    varLabel <- labels[match(i, labels$varName), "varLabel"]
+    if(!is.na(varLabel)) attr(dat[[i]], "label") <- varLabel
+  }
   dat
 }

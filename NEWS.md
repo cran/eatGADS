@@ -1,3 +1,19 @@
+# eatGADS 0.20.0
+
+* `extractData()` adds now all variable labels as a `label` attribute to the resulting `data.frame`
+* a numeric tolerance can now be specified within `equalGADS()`
+* fixed warnings for `getTrendGADS()`
+* `inspectMetaDifferences()` for inspecting meta differences between two `GADSdats` and a single variable
+* `checkUniqueness2()` for faster checking if a variable is unique within an identifier variable
+* `fixEncoding()` for fixing encoding issues caused during the import via `import_spss()` using `ASCII` or other encoding
+* `composeVar()` for combining the information of two variables in a third variable
+* `subImputations()` now works with differing `varName` and `varName_imp`
+* `fillImputations()` for efficiently filling missing values in imputed variables via not imputed variables
+* `checkFormat()` now works correctly for variables without value labels
+* `checkFormat()` now works correctly for variables with purely `NAs`
+* `import_raw()` now works correctly if variables are provided as integers
+* `reuseMeta()` now works correctly if variables occur in multiple sheets in a data base or `all_GADSdat`
+
 # eatGADS 0.19.1
 
 * fix permanent URL redirect in `README`

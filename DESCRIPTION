@@ -1,6 +1,6 @@
 Package: eatGADS
 Title: Data Management of Large Hierarchical Data
-Version: 0.19.1
+Version: 0.20.0
 Authors@R: c(
     person("Benjamin", "Becker", email = "b.becker@iqb.hu-berlin.de", role = c("aut", "cre")),
     person("Karoline", "Sachse", role = c("ctb")),
@@ -17,10 +17,10 @@ Suggests: testthat, knitr, rmarkdown, covr, tidyr (>= 1.1.0)
 RoxygenNote: 7.1.1
 VignetteBuilder: knitr
 NeedsCompilation: no
-Packaged: 2022-01-27 11:32:07 UTC; beckerbz
+Packaged: 2022-06-24 16:17:34 UTC; beckerbz
 Author: Benjamin Becker [aut, cre],
   Karoline Sachse [ctb],
   Johanna Busse [ctb]
 Maintainer: Benjamin Becker <b.becker@iqb.hu-berlin.de>
 Repository: CRAN
-Date/Publication: 2022-01-27 12:00:02 UTC
+Date/Publication: 2022-06-24 17:00:05 UTC

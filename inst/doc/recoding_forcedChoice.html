@@ -12,11 +12,23 @@
 
 <meta name="author" content="Benjamin Becker, Johanna Busse" />
 
-<meta name="date" content="2022-01-27" />
+<meta name="date" content="2022-06-24" />
 
 <title>Recoding a forced choice item with a text field</title>
 
-<script src="data:application/javascript;base64,Ly8gUGFuZG9jIDIuOSBhZGRzIGF0dHJpYnV0ZXMgb24gYm90aCBoZWFkZXIgYW5kIGRpdi4gV2UgcmVtb3ZlIHRoZSBmb3JtZXIgKHRvCi8vIGJlIGNvbXBhdGlibGUgd2l0aCB0aGUgYmVoYXZpb3Igb2YgUGFuZG9jIDwgMi44KS4KZG9jdW1lbnQuYWRkRXZlbnRMaXN0ZW5lcignRE9NQ29udGVudExvYWRlZCcsIGZ1bmN0aW9uKGUpIHsKICB2YXIgaHMgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yQWxsKCJkaXYuc2VjdGlvbltjbGFzcyo9J2xldmVsJ10gPiA6Zmlyc3QtY2hpbGQiKTsKICB2YXIgaSwgaCwgYTsKICBmb3IgKGkgPSAwOyBpIDwgaHMubGVuZ3RoOyBpKyspIHsKICAgIGggPSBoc1tpXTsKICAgIGlmICghL15oWzEtNl0kL2kudGVzdChoLnRhZ05hbWUpKSBjb250aW51ZTsgIC8vIGl0IHNob3VsZCBiZSBhIGhlYWRlciBoMS1oNgogICAgYSA9IGguYXR0cmlidXRlczsKICAgIHdoaWxlIChhLmxlbmd0aCA+IDApIGgucmVtb3ZlQXR0cmlidXRlKGFbMF0ubmFtZSk7CiAgfQp9KTsK"></script>
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -127,7 +139,187 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 
 
-<link rel="stylesheet" href="data:text/css,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" type="text/css" />
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
 
 
 
@@ -139,23 +331,43 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 
 
-<h1 class="title toc-ignore">Recoding a forced choice item with a text field</h1>
+<h1 class="title toc-ignore">Recoding a forced choice item with a text
+field</h1>
 <h4 class="author">Benjamin Becker, Johanna Busse</h4>
-<h4 class="date">2022-01-27</h4>
+<h4 class="date">2022-06-24</h4>
 
 
 
-<p>Forced choice items are multiple choice items with exclusive answer options (only one option can be chosen). If a forced choice item is administered, sometimes not all possible answers can be covered by predefined response options. In such cases, often an additional response option (e.g. “other option”, “something else”, …) is given accompanied by an open text field. An example of such a multiple choice item is asking for the birthplace of a person:</p>
+<p>Forced choice items are multiple choice items with exclusive answer
+options (only one option can be chosen). If a forced choice item is
+administered, sometimes not all possible answers can be covered by
+predefined response options. In such cases, often an additional response
+option (e.g. “other option”, “something else”, …) is given accompanied
+by an open text field. An example of such a multiple choice item is
+asking for the birthplace of a person:</p>
 <p> </p>
 <p><img src="data:image/png;base64,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" /></p>
 <p> </p>
-<p>However, in the resulting data set such an item will often be stored as two separate variables: a numeric variable with value labels (containing the existing response options) and a character variable (containing the answers in the text field). For data analysis, usually a single numerical and labeled variable is desirable. Often the following steps are required:</p>
+<p>However, in the resulting data set such an item will often be stored
+as two separate variables: a numeric variable with value labels
+(containing the existing response options) and a character variable
+(containing the answers in the text field). For data analysis, usually a
+single numerical and labeled variable is desirable. Often the following
+steps are required:</p>
 <ul>
-<li>recode the character variable manually (e.g. to eliminate spelling mistakes)</li>
-<li>transform open answers which refer to existing response options (e.g. if a test taker overlooked a response option)</li>
-<li>summarize both remaining variables into a single numerical, labeled variable</li>
+<li>recode the character variable manually (e.g. to eliminate spelling
+mistakes)</li>
+<li>transform open answers which refer to existing response options
+(e.g. if a test taker overlooked a response option)</li>
+<li>summarize both remaining variables into a single numerical, labeled
+variable</li>
 </ul>
-<p>To illustrate the steps we have implemented a small <code>SPSS</code> example data set in this package. The data set can be loaded using the <code>import_spss()</code> function. For further information on importing <code>SPSS</code> data see <a href="import_spss.html"><code>import_spss</code>: Importing data from ‘SPSS’</a>. Note that the data set is a minimal working example, containing only the required variables for this illustration.</p>
+<p>To illustrate the steps we have implemented a small <code>SPSS</code>
+example data set in this package. The data set can be loaded using the
+<code>import_spss()</code> function. For further information on
+importing <code>SPSS</code> data see <a href="import_spss.html"><code>import_spss</code>: Importing data from
+‘SPSS’</a>. Note that the data set is a minimal working example,
+containing only the required variables for this illustration.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(eatGADS)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>data_path <span class="ot">&lt;-</span> <span class="fu">system.file</span>(<span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;forcedChoice.sav&quot;</span>, <span class="at">package =</span> <span class="st">&quot;eatGADS&quot;</span>)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>gads <span class="ot">&lt;-</span> <span class="fu">import_spss</span>(data_path)</span>
@@ -186,12 +398,24 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
 <span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; attr(,&quot;class&quot;)</span></span>
 <span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;GADSdat&quot; &quot;list&quot;</span></span></code></pre></div>
-<p>The variable names of the data set above are connected to the forced choice question as indicated:</p>
+<p>The variable names of the data set above are connected to the forced
+choice question as indicated:</p>
 <p> </p>
 <p><img src="data:image/png;base64,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" /></p>
 <div id="preparing-the-data-set" class="section level2">
 <h2>Preparing the data set</h2>
-<p>As illustrated, data can be loaded into <code>R</code> in the <code>GADSdat</code> format via the functions <code>import_spss()</code>, <code>import_DF()</code> or <code>import_raw()</code>. Depending on the original format, omitted responses to open text fields might be stored as empty strings instead of <code>NAs</code>. In these cases, the <code>recode2NA()</code> function should be used to recode these values to <code>NA</code>. Per default, matching strings across all variables in the data set are recoded. Specific variables selection can be specified using the <code>recodeVars</code> argument. Note that the function only performs recodings to exact matches of a single, specific value (in our example <code>&quot;&quot;</code>).</p>
+<p>As illustrated, data can be loaded into <code>R</code> in the
+<code>GADSdat</code> format via the functions
+<code>import_spss()</code>, <code>import_DF()</code> or
+<code>import_raw()</code>. Depending on the original format, omitted
+responses to open text fields might be stored as empty strings instead
+of <code>NAs</code>. In these cases, the <code>recode2NA()</code>
+function should be used to recode these values to <code>NA</code>. Per
+default, matching strings across all variables in the data set are
+recoded. Specific variables selection can be specified using the
+<code>recodeVars</code> argument. Note that the function only performs
+recodings to exact matches of a single, specific value (in our example
+<code>&quot;&quot;</code>).</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>gads <span class="ot">&lt;-</span> <span class="fu">recode2NA</span>(gads, <span class="at">value =</span> <span class="st">&quot;&quot;</span>)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Recodes in variable ID: 0</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Recodes in variable mcvar: 0</span></span>
@@ -199,8 +423,17 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="creating-and-editing-a-lookup-table" class="section level2">
 <h2>Creating and editing a lookup table</h2>
-<p>With <code>createLookup()</code>, you can create a lookup table which allows recoding one or multiple variables.<br />
-You can choose which string variables in a <code>GADS</code> object you would like to recode by using the <code>recodeVars</code> argument. The resulting look up table is a long format <code>data.frame</code> with rows being variable x value pairings. In case you want to sort the output to make recoding easier, the argument <code>sort_by</code> can be used. Extra columns can be added to the look up table by the argument <code>addCols</code> (but can also be added later manually e.g. in Excel). The respective column names are irrelevant and just for convenience purpose.</p>
+<p>With <code>createLookup()</code>, you can create a lookup table which
+allows recoding one or multiple variables.<br />
+You can choose which string variables in a <code>GADS</code> object you
+would like to recode by using the <code>recodeVars</code> argument. The
+resulting look up table is a long format <code>data.frame</code> with
+rows being variable x value pairings. In case you want to sort the
+output to make recoding easier, the argument <code>sort_by</code> can be
+used. Extra columns can be added to the look up table by the argument
+<code>addCols</code> (but can also be added later manually e.g. in
+Excel). The respective column names are irrelevant and just for
+convenience purpose.</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>lookup <span class="ot">&lt;-</span> <span class="fu">createLookup</span>(<span class="at">GADSdat =</span> gads, <span class="at">recodeVars =</span> <span class="st">&quot;stringvar&quot;</span>, <span class="at">sort_by =</span> <span class="st">&#39;value&#39;</span>, </span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>                       <span class="at">addCols =</span> <span class="fu">c</span>(<span class="st">&quot;new&quot;</span>, <span class="st">&quot;new2&quot;</span>))</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -213,18 +446,33 @@ You can choose which string variables in a <code>GADS</code> object you would li
 <span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5 stringvar  German  NA   NA</span></span>
 <span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6 stringvar     Ita  NA   NA</span></span>
 <span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7 stringvar   Italy  NA   NA</span></span></code></pre></div>
-<p>Now you have to add the desired values for recoding. You should use (a) the existing value labels of the corresponding numerical, labeled variable and (b) consistent new values that can serve as value labels later. Spelling mistakes within the recoding will result in different values in the output!<br />
-To fill in the columns you could use <code>R</code> directly to modify the columns. Alternatively, we recommend using <code>eatAnalysis::write_xlsx()</code> to create an excel file in which you can fill in the values.</p>
+<p>Now you have to add the desired values for recoding. You should use
+(a) the existing value labels of the corresponding numerical, labeled
+variable and (b) consistent new values that can serve as value labels
+later. Spelling mistakes within the recoding will result in different
+values in the output!<br />
+To fill in the columns you could use <code>R</code> directly to modify
+the columns. Alternatively, we recommend using
+<code>eatAnalysis::write_xlsx()</code> to create an excel file in which
+you can fill in the values.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># write look up table to Excel</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>eatAnalysis<span class="sc">::</span><span class="fu">write_xlsx</span>(lookup, <span class="st">&quot;lookup_forcedChoice.xlsx&quot;</span>)</span></code></pre></div>
 <p><img src="data:image/png;base64,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" /></p>
 <p> </p>
-<p>After filling out the excel sheet the look up table might look like this:</p>
+<p>After filling out the excel sheet the look up table might look like
+this:</p>
 <p> </p>
 <p><img src="data:image/png;base64,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" /></p>
 <p> </p>
-<p>The excel file can be read back into <code>R</code> via <code>readxl::read_xlsx()</code>. Detailed information on how missing values should be recoded is provided in the last section of this vignette.</p>
-<p>If you have more than one person working on the variable or if you want to use templates, you may have 2 different possible recode values (in our example: <code>new</code> and <code>new2</code>) . You can fill in both in the lookup table and then choose which one you want to prioritize later.</p>
+<p>The excel file can be read back into <code>R</code> via
+<code>readxl::read_xlsx()</code>. Detailed information on how missing
+values should be recoded is provided in the last section of this
+vignette.</p>
+<p>If you have more than one person working on the variable or if you
+want to use templates, you may have 2 different possible recode values
+(in our example: <code>new</code> and <code>new2</code>) . You can fill
+in both in the lookup table and then choose which one you want to
+prioritize later.</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># read look up table back to R</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>lookup <span class="ot">&lt;-</span> readxl<span class="sc">::</span><span class="fu">read_xlsx</span>(<span class="st">&quot;lookup_forcedChoice.xlsx&quot;</span>)</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>lookup</span></code></pre></div>
@@ -236,7 +484,12 @@ To fill in the columns you could use <code>R</code> directly to modify the colum
 #&gt; 5 stringvar  German Germany Germany
 #&gt; 6 stringvar     Ita    &lt;NA&gt;   Italy
 #&gt; 7 stringvar   Italy   Italy   Italy</code></pre>
-<p>We use the <code>collapseColumns()</code> function to get the correct layout for the final look up table. The function merges both columns containing the new values. By using the <code>prioritize</code> argument you can decide which column will be preferred. Only if there is an <code>NA</code> in the prioritized column, the other column will be used instead.</p>
+<p>We use the <code>collapseColumns()</code> function to get the correct
+layout for the final look up table. The function merges both columns
+containing the new values. By using the <code>prioritize</code> argument
+you can decide which column will be preferred. Only if there is an
+<code>NA</code> in the prioritized column, the other column will be used
+instead.</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>lookup_formatted <span class="ot">&lt;-</span> <span class="fu">collapseColumns</span>(<span class="at">lookup =</span> lookup, <span class="at">recodeVars =</span> <span class="fu">c</span>(<span class="st">&quot;new&quot;</span>, <span class="st">&quot;new2&quot;</span>), </span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">prioritize =</span> <span class="st">&quot;new&quot;</span>)</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>lookup_formatted</span>
@@ -251,7 +504,12 @@ To fill in the columns you could use <code>R</code> directly to modify the colum
 </div>
 <div id="apply-look-up-to-gadsdat" class="section level2">
 <h2>Apply look up to <code>GADSdat</code></h2>
-<p>You perform the actual data recoding using the <code>applyLookup()</code> function. It applies the recodes defined in the look up table. This means that if the look up table was created for multiple variables, <code>applyLookup()</code> performs recoding for all of these variables simultaneously. If you define a <code>suffix</code>, the old variable(s) will not be overwritten.</p>
+<p>You perform the actual data recoding using the
+<code>applyLookup()</code> function. It applies the recodes defined in
+the look up table. This means that if the look up table was created for
+multiple variables, <code>applyLookup()</code> performs recoding for all
+of these variables simultaneously. If you define a <code>suffix</code>,
+the old variable(s) will not be overwritten.</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>gads_string <span class="ot">&lt;-</span> <span class="fu">applyLookup</span>(<span class="at">GADSdat =</span> gads, <span class="at">lookup =</span> lookup_formatted, <span class="at">suffix =</span> <span class="st">&quot;_r&quot;</span>)</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; No rows removed from meta data.</span></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Adding meta data for the following variables: stringvar_r</span></span>
@@ -271,8 +529,25 @@ To fill in the columns you could use <code>R</code> directly to modify the colum
 </div>
 <div id="integrate-character-and-numeric-variable" class="section level2">
 <h2>Integrate character and numeric variable</h2>
-<p>The next step is to integrate the string variable into the integer via the <code>collapseMC_Text()</code> function. With <code>mc_var</code> and <code>text_var</code> we specify the variables used for recoding. With the <code>mc_code4text</code> argument we specify the value label of <code>mc_var</code> which indicates that <code>text_var</code> contains valid information (in our example <code>&quot;other&quot;</code>). If the <code>mc_var</code> is missing, <code>text_var</code> is also utilized (e.g. row 6). If there is a valid value in <code>mc_var</code> other than the code for <code>mc_code4text</code>, information in <code>text_var</code> is ignored (e.g. row 2). New value labels are created for entries in <code>text_var</code> without corresponding value labels. The new value labels are ordered alphabetically and inserted after the already existing ones. Additional information on how missings are treated by the function can be found in the last section of the vignette.</p>
-<p>Note that in contrast to <code>createLookup()</code>, <code>collapseColumns()</code> and <code>applyLookup()</code> this function only works on a single forced choice variable pair. Integrating multiple variable pairs has to be performed in separate steps.</p>
+<p>The next step is to integrate the string variable into the integer
+via the <code>collapseMC_Text()</code> function. With
+<code>mc_var</code> and <code>text_var</code> we specify the variables
+used for recoding. With the <code>mc_code4text</code> argument we
+specify the value label of <code>mc_var</code> which indicates that
+<code>text_var</code> contains valid information (in our example
+<code>&quot;other&quot;</code>). If the <code>mc_var</code> is missing,
+<code>text_var</code> is also utilized (e.g. row 6). If there is a valid
+value in <code>mc_var</code> other than the code for
+<code>mc_code4text</code>, information in <code>text_var</code> is
+ignored (e.g. row 2). New value labels are created for entries in
+<code>text_var</code> without corresponding value labels. The new value
+labels are ordered alphabetically and inserted after the already
+existing ones. Additional information on how missings are treated by the
+function can be found in the last section of the vignette.</p>
+<p>Note that in contrast to <code>createLookup()</code>,
+<code>collapseColumns()</code> and <code>applyLookup()</code> this
+function only works on a single forced choice variable pair. Integrating
+multiple variable pairs has to be performed in separate steps.</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>gads_final <span class="ot">&lt;-</span> <span class="fu">collapseMC_Text</span>(<span class="at">GADSdat =</span> gads_string, <span class="at">mc_var =</span> <span class="st">&quot;mcvar&quot;</span>, </span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>                              <span class="at">text_var =</span> <span class="st">&quot;stringvar_r&quot;</span>, <span class="at">mc_code4text =</span> <span class="st">&quot;other&quot;</span>, </span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>                              <span class="at">var_suffix =</span> <span class="st">&quot;_r&quot;</span>, <span class="at">label_suffix =</span> <span class="st">&quot;(recoded)&quot;</span>)</span>
@@ -299,7 +574,11 @@ To fill in the columns you could use <code>R</code> directly to modify the colum
 <span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 11 mcvar_r (recoded)   F8.2            NA     yes   -99  missing     miss</span></span>
 <span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 12 mcvar_r (recoded)   F8.2            NA     yes     4  England    valid</span></span>
 <span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 13 mcvar_r (recoded)   F8.2            NA     yes     5    Italy    valid</span></span></code></pre></div>
-<p><code>checkMissings()</code> is a function for automatically setting missing values in a <code>GADSdat</code>. If new values should receive missing codes, <code>checkMissings()</code> would be necessary. However, in our example no new values representing missings have been added, therefore the function does not change the <code>GADSdat</code>.</p>
+<p><code>checkMissings()</code> is a function for automatically setting
+missing values in a <code>GADSdat</code>. If new values should receive
+missing codes, <code>checkMissings()</code> would be necessary. However,
+in our example no new values representing missings have been added,
+therefore the function does not change the <code>GADSdat</code>.</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>gads_final <span class="ot">&lt;-</span> <span class="fu">checkMissings</span>(<span class="at">GADSdat =</span> gads_final, <span class="at">missingLabel =</span> <span class="st">&quot;missing&quot;</span>, </span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>                            <span class="at">addMissingCode =</span> <span class="cn">TRUE</span>, <span class="at">addMissingLabel =</span> <span class="cn">FALSE</span>)</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="fu">extractMeta</span>(gads_final, <span class="st">&quot;mcvar_r&quot;</span>)</span>
@@ -313,7 +592,9 @@ To fill in the columns you could use <code>R</code> directly to modify the colum
 </div>
 <div id="remove-variables-from-gadsdat" class="section level2">
 <h2>Remove variables from <code>GADSdat</code></h2>
-<p>In a last step you can remove intermediate or superfluous variables from the <code>GADSdat</code> by using the function <code>removeVars()</code>.</p>
+<p>In a last step you can remove intermediate or superfluous variables
+from the <code>GADSdat</code> by using the function
+<code>removeVars()</code>.</p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>gads_final <span class="ot">&lt;-</span> <span class="fu">removeVars</span>(<span class="at">GADSdat =</span> gads_final, <span class="at">vars =</span> <span class="fu">c</span>(<span class="st">&quot;mcvar&quot;</span>, <span class="st">&quot;stringvar_r&quot;</span>))</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Removing the following rows from meta data: mcvar, stringvar_r</span></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; No rows added to meta data.</span></span>
@@ -332,8 +613,20 @@ To fill in the columns you could use <code>R</code> directly to modify the colum
 </div>
 <div id="missing-value-codes" class="section level2">
 <h2>Missing value codes</h2>
-<p>In some scenarios, there might be conceptual differences between missing codes in the data (e.g. invalid responses, item not administered, omission). These conceptual differences might require different integration of the two variables (numerical &amp; labeled, character) depending on the type of missing. In this section, we illustrate how <code>collapseMC_Text()</code> behaves depending on how missings are defined in the data.</p>
-<p>To illustrate the described behavior, we have included an additional <code>SPSS</code> data set in the package with a forced choice variable pair including all possible value and missing combinations. The possible values in the string variable are <code>new valid</code>, indicating an arbitrary valid entry, <code>NA</code> indicating for example an omission and <code>special missing</code>, indicating for example an invalid entry.</p>
+<p>In some scenarios, there might be conceptual differences between
+missing codes in the data (e.g. invalid responses, item not
+administered, omission). These conceptual differences might require
+different integration of the two variables (numerical &amp; labeled,
+character) depending on the type of missing. In this section, we
+illustrate how <code>collapseMC_Text()</code> behaves depending on how
+missings are defined in the data.</p>
+<p>To illustrate the described behavior, we have included an additional
+<code>SPSS</code> data set in the package with a forced choice variable
+pair including all possible value and missing combinations. The possible
+values in the string variable are <code>new valid</code>, indicating an
+arbitrary valid entry, <code>NA</code> indicating for example an
+omission and <code>special missing</code>, indicating for example an
+invalid entry.</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>data_path_miss <span class="ot">&lt;-</span> <span class="fu">system.file</span>(<span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;forcedChoice_missings.sav&quot;</span>, <span class="at">package =</span> <span class="st">&quot;eatGADS&quot;</span>)</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>gads_miss <span class="ot">&lt;-</span> <span class="fu">import_spss</span>(data_path_miss)</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>gads_miss <span class="ot">&lt;-</span> <span class="fu">recode2NA</span>(gads_miss, <span class="at">value =</span> <span class="st">&quot;&quot;</span>)</span>
@@ -369,7 +662,16 @@ To fill in the columns you could use <code>R</code> directly to modify the colum
 <span id="cb12-33"><a href="#cb12-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
 <span id="cb12-34"><a href="#cb12-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; attr(,&quot;class&quot;)</span></span>
 <span id="cb12-35"><a href="#cb12-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;GADSdat&quot; &quot;list&quot;</span></span></code></pre></div>
-<p>If both variables have valid but contradicting entries, <code>collapseMC_Text()</code> prefers information from the numerical, labeled variable (e.g. row 2). If both entries are missing, the behavior of <code>collapseMC_Text()</code> depends on the missing type in the character variable. If the missing is indicated via an explicit missing definition (<code>special missing</code> in the example), this missing code is preferred to missing codes from the numerical, labeled variable (e.g. row 11). If the missing is indicated via an actual <code>NA</code> in the character variable, the information from the numerical, labeled variable is preferred (e.g. row 7).</p>
+<p>If both variables have valid but contradicting entries,
+<code>collapseMC_Text()</code> prefers information from the numerical,
+labeled variable (e.g. row 2). If both entries are missing, the behavior
+of <code>collapseMC_Text()</code> depends on the missing type in the
+character variable. If the missing is indicated via an explicit missing
+definition (<code>special missing</code> in the example), this missing
+code is preferred to missing codes from the numerical, labeled variable
+(e.g. row 11). If the missing is indicated via an actual <code>NA</code>
+in the character variable, the information from the numerical, labeled
+variable is preferred (e.g. row 7).</p>
 <div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># summarize numerical, labeled variable and character variable</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>gads <span class="ot">&lt;-</span> <span class="fu">collapseMC_Text</span>(gads_miss, <span class="st">&quot;mc&quot;</span>, <span class="st">&quot;string&quot;</span>, <span class="at">mc_code4text =</span> <span class="st">&quot;other&quot;</span>, <span class="st">&quot;_r&quot;</span>, <span class="st">&quot;recoded&quot;</span>)</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; No rows removed from meta data.</span></span>

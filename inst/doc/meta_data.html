@@ -12,11 +12,23 @@
 
 <meta name="author" content="Marlen Holtmann, Johanna Busse, Benjamin Becker" />
 
-<meta name="date" content="2022-01-27" />
+<meta name="date" content="2022-06-24" />
 
 <title>Modifying Meta Data</title>
 
-<script src="data:application/javascript;base64,Ly8gUGFuZG9jIDIuOSBhZGRzIGF0dHJpYnV0ZXMgb24gYm90aCBoZWFkZXIgYW5kIGRpdi4gV2UgcmVtb3ZlIHRoZSBmb3JtZXIgKHRvCi8vIGJlIGNvbXBhdGlibGUgd2l0aCB0aGUgYmVoYXZpb3Igb2YgUGFuZG9jIDwgMi44KS4KZG9jdW1lbnQuYWRkRXZlbnRMaXN0ZW5lcignRE9NQ29udGVudExvYWRlZCcsIGZ1bmN0aW9uKGUpIHsKICB2YXIgaHMgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yQWxsKCJkaXYuc2VjdGlvbltjbGFzcyo9J2xldmVsJ10gPiA6Zmlyc3QtY2hpbGQiKTsKICB2YXIgaSwgaCwgYTsKICBmb3IgKGkgPSAwOyBpIDwgaHMubGVuZ3RoOyBpKyspIHsKICAgIGggPSBoc1tpXTsKICAgIGlmICghL15oWzEtNl0kL2kudGVzdChoLnRhZ05hbWUpKSBjb250aW51ZTsgIC8vIGl0IHNob3VsZCBiZSBhIGhlYWRlciBoMS1oNgogICAgYSA9IGguYXR0cmlidXRlczsKICAgIHdoaWxlIChhLmxlbmd0aCA+IDApIGgucmVtb3ZlQXR0cmlidXRlKGFbMF0ubmFtZSk7CiAgfQp9KTsK"></script>
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -127,7 +139,187 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 
 
-<link rel="stylesheet" href="data:text/css,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" type="text/css" />
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
 
 
 
@@ -141,32 +333,54 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <h1 class="title toc-ignore">Modifying Meta Data</h1>
 <h4 class="author">Marlen Holtmann, Johanna Busse, Benjamin Becker</h4>
-<h4 class="date">2022-01-27</h4>
+<h4 class="date">2022-06-24</h4>
 
 
 
-<p><code>eatGADS</code> allows importing data from <code>SPSS</code> files basically without any loss of meta data. Meta data are stored in a <code>GADSdat</code> object with the following structure:</p>
+<p><code>eatGADS</code> allows importing data from <code>SPSS</code>
+files basically without any loss of meta data. Meta data are stored in a
+<code>GADSdat</code> object with the following structure:</p>
 <pre><code>#&gt;    varName varLabel format display_width labeled value valLabel missings
 #&gt; 17  gender   Gender   F8.0            NA     yes     1   Female    valid
 #&gt; 18  gender   Gender   F8.0            NA     yes     2     Male    valid</code></pre>
 <ul>
-<li><code>varLabel</code>: a variable label; describing, what a variable in the data represents</li>
+<li><code>varLabel</code>: a variable label; describing, what a variable
+in the data represents</li>
 <li><code>format</code>: the <code>SPSS</code> format of a variable</li>
-<li><code>display_width</code>: the display width of a variable in the <code>SPSS</code> format</li>
-<li><code>labeled</code>: does the variable contain value labels or missing codes?</li>
+<li><code>display_width</code>: the display width of a variable in the
+<code>SPSS</code> format</li>
+<li><code>labeled</code>: does the variable contain value labels or
+missing codes?</li>
 </ul>
 <p>On value level, additional meta data can be stored, namely:</p>
 <ul>
-<li><code>valLabel</code>: value labels; labels describing, what a certain value on a certain variable represents</li>
-<li><code>missings</code>: missing codes indicating whether a certain value represents a valid (<code>&quot;valid&quot;</code>) or a missing (<code>&quot;miss&quot;</code>) value</li>
+<li><code>valLabel</code>: value labels; labels describing, what a
+certain value on a certain variable represents</li>
+<li><code>missings</code>: missing codes indicating whether a certain
+value represents a valid (<code>&quot;valid&quot;</code>) or a missing
+(<code>&quot;miss&quot;</code>) value</li>
 </ul>
-<p>These meta data provide an overview of the actual data and are essential to their understanding, comparable to a codebook. Most importantly, it also allows other researchers to understand the data without much effort and ensures transparency. In this vignette we will illustrate how in <code>eatGADS</code> meta data can be accessed and how it can be modified. We also discuss some recode and data modification functions that lead to automatic meta data changes.</p>
-<p>For illustrative purposes we use a small example data set from the campus files of the German PISA Plus assessment (called <code>pisa</code>). The complete campus files and the original data set can be accessed <a href="https://www.iqb.hu-berlin.de/fdz/Datenzugang/CF-Antrag/AntragsformularCF">here</a> and <a href="https://www.iqb.hu-berlin.de/fdz/Datenzugang/SUF-Antrag">here</a>.</p>
+<p>These meta data provide an overview of the actual data and are
+essential to their understanding, comparable to a codebook. Most
+importantly, it also allows other researchers to understand the data
+without much effort and ensures transparency. In this vignette we will
+illustrate how in <code>eatGADS</code> meta data can be accessed and how
+it can be modified. We also discuss some recode and data modification
+functions that lead to automatic meta data changes.</p>
+<p>For illustrative purposes we use a small example data set from the
+campus files of the German PISA Plus assessment (called
+<code>pisa</code>). The complete campus files and the original data set
+can be accessed <a href="https://www.iqb.hu-berlin.de/fdz/Datenzugang/CF-Antrag/AntragsformularCF">here</a>
+and <a href="https://www.iqb.hu-berlin.de/fdz/Datenzugang/SUF-Antrag">here</a>.</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(eatGADS)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>gads <span class="ot">&lt;-</span> pisa</span></code></pre></div>
 <div id="meta-data-structure" class="section level2">
 <h2>Meta data structure</h2>
-<p>With the function <code>extractMeta()</code> you can inspect the existing metadata of one, several or all variables in a <code>GADSdat</code> object. We will use this function frequently throughout the vignette to check whether changes to meta data have been successful.</p>
+<p>With the function <code>extractMeta()</code> you can inspect the
+existing metadata of one, several or all variables in a
+<code>GADSdat</code> object. We will use this function frequently
+throughout the vignette to check whether changes to meta data have been
+successful.</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">extractMeta</span>(gads, <span class="at">vars =</span> <span class="fu">c</span>(<span class="st">&quot;hisei&quot;</span>, <span class="st">&quot;schtype&quot;</span>))</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    varName                             varLabel format display_width labeled value</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5  schtype                         School track   F8.0            NA     yes     1</span></span>
@@ -183,7 +397,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h2>Modifying meta data</h2>
 <div id="variable-names-labels-and-spss-format" class="section level4">
 <h4>Variable names, labels, and SPSS format</h4>
-<p>Changes to meta data on variable level are straightforward. Variable names can be changed with the <code>changeVarNames()</code> function. The old variable names are overwritten.</p>
+<p>Changes to meta data on variable level are straightforward. Variable
+names can be changed with the <code>changeVarNames()</code> function.
+The old variable names are overwritten.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Changing variable names</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">extractMeta</span>(gads, <span class="at">vars =</span> <span class="st">&quot;hisei&quot;</span>)</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    varName                             varLabel format display_width labeled value valLabel</span></span>
@@ -196,7 +412,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 39 hisei_new Highest parental occupational status   F8.2            NA      no    NA     &lt;NA&gt;</span></span>
 <span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    missings</span></span>
 <span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 39     &lt;NA&gt;</span></span></code></pre></div>
-<p>Variable labels can be adjusted analogously via the <code>changeVarLabels()</code> function.</p>
+<p>Variable labels can be adjusted analogously via the
+<code>changeVarLabels()</code> function.</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Changing variable labels </span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">extractMeta</span>(gads_labeled, <span class="at">vars =</span> <span class="st">&quot;hisei_new&quot;</span>)</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      varName                             varLabel format display_width labeled value valLabel</span></span>
@@ -210,7 +427,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 39 hisei_new Parental occupational status (highest)   F8.2            NA      no    NA     &lt;NA&gt;</span></span>
 <span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    missings</span></span>
 <span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 39     &lt;NA&gt;</span></span></code></pre></div>
-<p>The same applies for the <code>SPSS</code> format of a variable using the <code>changeSPSSformat()</code> function.</p>
+<p>The same applies for the <code>SPSS</code> format of a variable using
+the <code>changeSPSSformat()</code> function.</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Changing SPSS format</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">extractMeta</span>(gads_labeled, <span class="st">&quot;hisei_new&quot;</span>)</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      varName                               varLabel format display_width labeled value valLabel</span></span>
@@ -227,7 +445,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="value-labels" class="section level4">
 <h4>Value labels</h4>
-<p>Changes to meta data on value level follow the same principle. With the <code>changeValLabels()</code> function, value labels can be added or modified. Note that value labels and missing codes should be given to numeric values, even if a variable is a character variable.</p>
+<p>Changes to meta data on value level follow the same principle. With
+the <code>changeValLabels()</code> function, value labels can be added
+or modified. Note that value labels and missing codes should be given to
+numeric values, even if a variable is a character variable.</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Adding value labels</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">extractMeta</span>(gads_labeled, <span class="st">&quot;hisei_new&quot;</span>)</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      varName                               varLabel format display_width labeled value valLabel</span></span>
@@ -256,7 +477,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                     valLabel missings</span></span>
 <span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 38 missing: Not administered    valid</span></span>
 <span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 39 missing: Question omitted    valid</span></span></code></pre></div>
-<p>Value labels can also be deleted using the <code>removeValLabels()</code> function.</p>
+<p>Value labels can also be deleted using the
+<code>removeValLabels()</code> function.</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Removing value labels</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">extractMeta</span>(gads_labeled, <span class="st">&quot;schtype&quot;</span>)</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   varName     varLabel format display_width labeled value                                  valLabel</span></span>
@@ -275,7 +497,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="missings" class="section level4">
 <h4>Missings</h4>
-<p>Missing codes can be modified using the <code>changeMissings()</code> function. Valid entries for <code>missings</code> are <code>&quot;miss&quot;</code> and <code>&quot;valid&quot;</code>.</p>
+<p>Missing codes can be modified using the <code>changeMissings()</code>
+function. Valid entries for <code>missings</code> are
+<code>&quot;miss&quot;</code> and <code>&quot;valid&quot;</code>.</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Defining missings</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">extractMeta</span>(gads_labeled, <span class="st">&quot;hisei_new&quot;</span>)</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      varName                               varLabel format display_width labeled value</span></span>
@@ -293,7 +517,16 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                     valLabel missings</span></span>
 <span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 36 missing: Not administered     miss</span></span>
 <span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 37 missing: Question omitted     miss</span></span></code></pre></div>
-<p>Usually an alignment of value labels and missing codes is desirable. For example, in our variable <code>hisei_new</code> the value <code>-94</code> has received a missing code and the value label <code>&quot;missing: Questions omitted&quot;</code>. To make these alignments easier, the <code>checkMissings()</code> function exists. It allows searching for regular expressions in the value labels and comparing missing codes and vice versa. Per default, missing codes are automatically adjusted (<code>addMissingCode = TRUE</code>) and value label mismatches just reported (<code>addMissingLabel = FALSE</code>).</p>
+<p>Usually an alignment of value labels and missing codes is desirable.
+For example, in our variable <code>hisei_new</code> the value
+<code>-94</code> has received a missing code and the value label
+<code>&quot;missing: Questions omitted&quot;</code>. To make these alignments
+easier, the <code>checkMissings()</code> function exists. It allows
+searching for regular expressions in the value labels and comparing
+missing codes and vice versa. Per default, missing codes are
+automatically adjusted (<code>addMissingCode = TRUE</code>) and value
+label mismatches just reported
+(<code>addMissingLabel = FALSE</code>).</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Creating a new value label for a missing value but leaving the missing code as valid</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>gads_labeled <span class="ot">&lt;-</span> <span class="fu">changeValLabels</span>(<span class="at">GADSdat =</span> gads_labeled, <span class="at">varName =</span> <span class="st">&quot;gender&quot;</span>, </span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>                                <span class="at">value =</span> <span class="sc">-</span><span class="dv">94</span>, <span class="at">valLabel =</span> <span class="st">&quot;missing: Question omitted&quot;</span>)</span>
@@ -311,7 +544,14 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="reusing-meta-data" class="section level4">
 <h4>Reusing meta data</h4>
-<p>Sometimes one variable already contains the meta data which should be added to another variable. <code>reuseMeta()</code> can copy meta data from one variable (<code>other_varName</code>) to another variable (<code>varName</code>), even across different data sets. The function allows us to transfer the complete meta data, only value labels or a specific selection of value labels (only valid values or missing codes). In the example below we transfer only the missing codes from variable <code>hisei_new</code> to variable <code>age</code>.</p>
+<p>Sometimes one variable already contains the meta data which should be
+added to another variable. <code>reuseMeta()</code> can copy meta data
+from one variable (<code>other_varName</code>) to another variable
+(<code>varName</code>), even across different data sets. The function
+allows us to transfer the complete meta data, only value labels or a
+specific selection of value labels (only valid values or missing codes).
+In the example below we transfer only the missing codes from variable
+<code>hisei_new</code> to variable <code>age</code>.</p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">extractMeta</span>(gads_labeled, <span class="st">&quot;age&quot;</span>)</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    varName             varLabel format display_width labeled value valLabel missings</span></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 18     age Age of student at T1   F8.2            NA      no    NA     &lt;NA&gt;     &lt;NA&gt;</span></span>
@@ -329,10 +569,18 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="modifying-data-and-meta-data" class="section level2">
 <h2>Modifying data and meta data</h2>
-<p>Note that in <code>eatGADS</code> meta data is stored together with the actual data set. Therefore, changes to the actual data set imply changes to the meta data. If a variable is removed from the data set, its meta data is no longer needed. If a new variable is created, new meta data needs to be created. If a variable is recoded, the meta data entries need to be recoded accordingly.</p>
+<p>Note that in <code>eatGADS</code> meta data is stored together with
+the actual data set. Therefore, changes to the actual data set imply
+changes to the meta data. If a variable is removed from the data set,
+its meta data is no longer needed. If a new variable is created, new
+meta data needs to be created. If a variable is recoded, the meta data
+entries need to be recoded accordingly.</p>
 <div id="selecting-variables" class="section level4">
 <h4>Selecting variables</h4>
-<p>If a certain subset of variables in the <code>GADSdat</code> is needed, individual variables can either be extracted (<code>extractVars()</code>) or removed (<code>removeVars()</code>) from the data set.</p>
+<p>If a certain subset of variables in the <code>GADSdat</code> is
+needed, individual variables can either be extracted
+(<code>extractVars()</code>) or removed (<code>removeVars()</code>) from
+the data set.</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Selecting variables</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>gads_motint <span class="ot">&lt;-</span> <span class="fu">extractVars</span>(gads_labeled, </span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>                           <span class="at">vars =</span> <span class="fu">c</span>(<span class="st">&quot;int_a&quot;</span>, <span class="st">&quot;int_b&quot;</span>, <span class="st">&quot;int_c&quot;</span>, <span class="st">&quot;int_d&quot;</span>, <span class="st">&quot;instmot_a&quot;</span>))</span>
@@ -349,7 +597,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="recoding-values" class="section level4">
 <h4>Recoding values</h4>
-<p>The function <code>recodeGADS()</code> allows the recoding of a variable.</p>
+<p>The function <code>recodeGADS()</code> allows the recoding of a
+variable.</p>
 <div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Original data and meta data</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>gads_labeled<span class="sc">$</span>dat<span class="sc">$</span>gender[<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>]</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [1] 1 1 2 2 1 1 2 2 1 1</span></span>
@@ -371,7 +620,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 15  gender   Gender   F8.0            NA     yes   -94 missing: Question omitted     miss</span></span>
 <span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 16  gender   Gender   F8.0            NA     yes    10                    Female    valid</span></span>
 <span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 17  gender   Gender   F8.0            NA     yes    20                      Male    valid</span></span></code></pre></div>
-<p>Moreover, the variable allows recoding of values that were not assigned value labels or even <code>NA</code> values.</p>
+<p>Moreover, the variable allows recoding of values that were not
+assigned value labels or even <code>NA</code> values.</p>
 <div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Recoding of NA values </span></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>gads_labeled<span class="sc">$</span>dat<span class="sc">$</span>int_a[<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>]</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [1]  2  2  3  2  1  2 NA NA NA NA</span></span>
@@ -379,7 +629,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>                           <span class="at">oldValues =</span> <span class="cn">NA</span>, <span class="at">newValues =</span> <span class="sc">-</span><span class="dv">94</span>)</span>
 <span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>gads_labeled<span class="sc">$</span>dat<span class="sc">$</span>int_a[<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>]</span>
 <span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [1]   2   2   3   2   1   2 -94 -94 -94 -94</span></span></code></pre></div>
-<p>For recoding specific values into <code>NA</code> values, the function <code>recode2NA()</code> exists. It allows recoding a specific value across multiple variables (while <code>recodeGADS()</code> allows recoding multiple values for a single variable). Existing value labels for the specified values are deleted. For each variable it is reported how many cases have been recoded.</p>
+<p>For recoding specific values into <code>NA</code> values, the
+function <code>recode2NA()</code> exists. It allows recoding a specific
+value across multiple variables (while <code>recodeGADS()</code> allows
+recoding multiple values for a single variable). Existing value labels
+for the specified values are deleted. For each variable it is reported
+how many cases have been recoded.</p>
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Recoding of values as Missing/NA</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>gads_labeled<span class="sc">$</span>dat<span class="sc">$</span>schtype[<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>]</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [1] 2 3 1 3 2 3 1 3 2 1</span></span>
@@ -392,7 +647,14 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="adding-variables" class="section level4">
 <h4>Adding variables</h4>
-<p>Adding variables to a <code>GADSdat</code> object is unfortunately not straight forward and requires some understanding of the underlying object structure. A <code>GADSdat</code> object is basically a list with two entries, the data (<code>dat</code> ) and the meta data (<code>labels</code>). For adding variables we need to extract the <code>dat</code> object and add the new variables to it. Afterwards, we need to update the meta data using the <code>updateMeta()</code> function.</p>
+<p>Adding variables to a <code>GADSdat</code> object is unfortunately
+not straight forward and requires some understanding of the underlying
+object structure. A <code>GADSdat</code> object is basically a list with
+two entries, the data (<code>dat</code> ) and the meta data
+(<code>labels</code>). For adding variables we need to extract the
+<code>dat</code> object and add the new variables to it. Afterwards, we
+need to update the meta data using the <code>updateMeta()</code>
+function.</p>
 <div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract the data</span></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>newDat <span class="ot">&lt;-</span> gads_labeled<span class="sc">$</span>dat</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Adding a variable</span></span>
@@ -409,22 +671,35 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="changing-meta-data-and-data-via-an-excel-sheet" class="section level2">
 <h2>Changing meta data (and data) via an Excel sheet</h2>
-<p>So far, the introduced functions work well for modifying the meta data of small data sets or for individual variables. However, frequently we are interested in modifying the meta data of a larger number of variables simultaneously. For this purpose <code>eatGADS</code> provides a workflow that works well with Excel spreadsheets. Thereby changes to meta data are divided into two levels: the variable and the value level.</p>
+<p>So far, the introduced functions work well for modifying the meta
+data of small data sets or for individual variables. However, frequently
+we are interested in modifying the meta data of a larger number of
+variables simultaneously. For this purpose <code>eatGADS</code> provides
+a workflow that works well with Excel spreadsheets. Thereby changes to
+meta data are divided into two levels: the variable and the value
+level.</p>
 <div id="variable-level" class="section level4">
 <h4>Variable level</h4>
-<p>We start by extracting this change table via the <code>getChangeMeta()</code> function</p>
+<p>We start by extracting this change table via the
+<code>getChangeMeta()</code> function</p>
 <div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># variable level</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>meta_var <span class="ot">&lt;-</span> <span class="fu">getChangeMeta</span>(<span class="at">GADSdat =</span> pisa, <span class="at">level =</span> <span class="st">&quot;variable&quot;</span>)</span></code></pre></div>
-<p>While in principle one could modify the change table directly in R, it more convenient to do this in Excel. The change table can be written to <code>.xlsx</code> via the <code>eatAnalysis::write_xlsx()</code> function. To perform changes, entries are made into the corresponding “_new”-columns.</p>
+<p>While in principle one could modify the change table directly in R,
+it more convenient to do this in Excel. The change table can be written
+to <code>.xlsx</code> via the <code>eatAnalysis::write_xlsx()</code>
+function. To perform changes, entries are made into the corresponding
+“_new”-columns.</p>
 <div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># write to excel</span></span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>eatAnalysis<span class="sc">::</span><span class="fu">write_xlsx</span>(meta_var, <span class="at">row.names =</span> <span class="cn">FALSE</span>, <span class="st">&quot;variable_changes.xlsx&quot;</span>)</span></code></pre></div>
 <p> </p>
 <p><img src="data:image/png;base64,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" /></p>
 <p> </p>
-<p>The excel file can be read back into <code>R</code> via <code>readxl::read_xlsx()</code>.</p>
+<p>The excel file can be read back into <code>R</code> via
+<code>readxl::read_xlsx()</code>.</p>
 <div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># write to excel</span></span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>meta_var_changed <span class="ot">&lt;-</span> readxl<span class="sc">::</span><span class="fu">read_excel</span>(<span class="st">&quot;variable_changes.xlsx&quot;</span>, <span class="at">col_types =</span> <span class="fu">rep</span>(<span class="st">&quot;text&quot;</span>, <span class="dv">8</span>))</span></code></pre></div>
-<p>The <code>applyChangeMeta()</code> function applies the meta data changes to the <code>GADSdat</code> object.</p>
+<p>The <code>applyChangeMeta()</code> function applies the meta data
+changes to the <code>GADSdat</code> object.</p>
 <div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>gads2 <span class="ot">&lt;-</span> <span class="fu">applyChangeMeta</span>(meta_var_changed, <span class="at">GADSdat =</span> pisa)</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="fu">extractMeta</span>(gads2, <span class="at">vars =</span> <span class="fu">c</span>(<span class="st">&quot;idstud&quot;</span>, <span class="st">&quot;idschool&quot;</span>, <span class="st">&quot;schoolType&quot;</span>))</span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      varName                    varLabel format display_width labeled value</span></span>
@@ -442,7 +717,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="value-level" class="section level4">
 <h4>Value level</h4>
-<p>At value level, information on value, value labels or missings can be changed. The general workflow is identical</p>
+<p>At value level, information on value, value labels or missings can be
+changed. The general workflow is identical</p>
 <div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># value level</span></span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>meta_val <span class="ot">&lt;-</span> <span class="fu">getChangeMeta</span>(<span class="at">GADSdat =</span> pisa, <span class="at">level =</span> <span class="st">&quot;value&quot;</span>)</span></code></pre></div>
 <div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># write to excel</span></span>

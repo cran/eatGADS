@@ -26,3 +26,57 @@ test_that("Correct flagging and output", {
   row.names(comp) <- NULL
   expect_equal(out, comp)
 })
+
+test_that("Correct flagging and output for data.frames", {
+  out <- checkUniqueness(df3$dat, varName = "V1", idVar = "ID1")
+  comp <- df3$dat[c(1, 3), ]
+  row.names(comp) <- NULL
+  expect_equal(out, comp)
+})
+
+
+
+l <- 100000
+long_df <- data.table::data.table(id = sort(rep(1:l, 15)),
+                         v1 = sort(rep(1:l, 15)),
+                         imp = rep(1:15, l))
+#checkUniqueness2(as.data.frame(long_df), varName = "v1", idVar = "id", impVar = "imp")
+#checkUniqueness3(as.data.frame(long_df), varName = "v1", idVar = "id", impVar = "imp")
+
+l <- 100000
+long_df_false <- data.table::data.table(id = sort(rep(1:l, 15)),
+                                  v1 = sort(rep(1:l, 15)),
+                                  imp = rep(1:15, l))
+long_df_false[nrow(long_df_false), "v1"] <- 999
+
+l <- 100000
+long_df_err <- data.table::data.table(id = sort(rep(1:l, 1)),
+                                  v1 = sort(rep(1:l, 1)),
+                                  imp = rep(1, l))
+
+test_that("fast Version: errors", {
+  expect_message(out <- checkUniqueness2(long_df_err, varName = "v1", idVar = "id", impVar = "imp"),
+               "'idVar' is unique per row in 'GADSdat' and checking for uniqueness is obsolete.")
+  expect_true(out)
+})
+
+test_that("fast Version: fast enough", {
+  out <- checkUniqueness2(long_df, varName = "v1", idVar = "id", impVar = "imp")
+  expect_true(out)
+})
+
+test_that("fast Version: Correct flagging and output", {
+  long_df2 <- long_df
+  long_df2[1, "v1"] <- 100
+  out <- checkUniqueness2(long_df2, varName = "v1", idVar = "id", impVar = "imp")
+  expect_false(out)
+
+  out <- checkUniqueness2(long_df_false, varName = "v1", idVar = "id", impVar = "imp")
+  expect_false(out)
+})
+
+test_that("fast Version: GADSdat", {
+  long_gads <- import_DF(long_df)
+  out <- checkUniqueness2(long_gads, varName = "v1", idVar = "id", impVar = "imp")
+  expect_true(out)
+})
