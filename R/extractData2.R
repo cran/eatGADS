@@ -1,0 +1,145 @@
+#### extractData
+#############################################################################
+#' Extract Data 2
+#'
+#' Extract \code{data.frame} from a \code{GADSdat} object for analyses in \code{R}. Per default, missing codes are applied but
+#' value labels are dropped. Alternatively, value labels can be selectively applied via
+#' \code{labels2character}, \code{labels2factor}, and \code{labels2ordered}.
+#' For extracting meta data see \code{\link{extractMeta}}.
+#'
+#' A \code{GADSdat} object includes actual data (\code{GADSdat$dat}) and the corresponding meta data information
+#' (\code{GADSdat$labels}). \code{extractData2} extracts the data and applies relevant meta data on value level
+#' (missing conversion, value labels),
+#' so the data can be used for analyses in \code{R}. Variable labels are retained as \code{label} attributes on column level.
+#'
+#' If \code{factor} are extracted via \code{labels2factor} or \code{labels2ordered}, an attempt is made to preserve the underlying integers.
+#' If this is not possible, a warning is issued.
+#' As \code{SPSS} has almost no limitations regarding the underlying values of labeled
+#' integers and \code{R}'s \code{factor} format is very strict (no \code{0}, only integers increasing by \code{+ 1}),
+#' this procedure can lead to frequent problems.
+#'
+#'@param GADSdat A \code{GADSdat} object.
+#'@param convertMiss Should values tagged as missing values be recoded to \code{NA}?
+#'@param labels2character For which variables should values be recoded to their labels? The resulting variables
+#'are of type \code{character}.
+#'@param labels2factor For which variables should values be recoded to their labels? The resulting variables
+#'are of type \code{factor}.
+#'@param labels2ordered For which variables should values be recoded to their labels? The resulting variables
+#'are of type \code{ordered}.
+#'@param dropPartialLabels Should value labels for partially labeled variables be dropped?
+#'If \code{TRUE}, the partial labels will be dropped. If \code{FALSE}, the variable will be converted
+#'to the class specified in \code{convertLabels}.
+#'
+#'@return Returns a data frame.
+#'
+#'@examples
+#'# Extract Data for Analysis
+#'dat <- extractData2(pisa)
+#'
+#'# convert only some variables to character, all others remain numeric
+#'dat <- extractData2(pisa, labels2character = c("schtype", "ganztag"))
+#'
+#'# convert only some variables to factor, all others remain numeric
+#'dat <- extractData2(pisa, labels2factor = c("schtype", "ganztag"))
+#'
+#'# convert all labeled variables to factors
+#'dat <- extractData2(pisa, labels2factor = namesGADS(pisa))
+#'
+#'# convert somme variables to factor, some to character
+#'dat <- extractData2(pisa, labels2character = c("schtype", "ganztag"),
+#'                           labels2factor = c("migration"))
+#'
+#'@export
+extractData2 <- function(GADSdat, convertMiss = TRUE, labels2character = NULL, labels2factor = NULL,
+                         labels2ordered = NULL, dropPartialLabels = TRUE) {
+  UseMethod("extractData2")
+}
+
+#'@export
+extractData2.GADSdat <- function(GADSdat, convertMiss = TRUE, labels2character = NULL, labels2factor = NULL,
+                                 labels2ordered = NULL, dropPartialLabels = TRUE) {
+  check_GADSdat(GADSdat)
+  # input validation
+  if(!is.null(labels2character)) check_vars_in_GADSdat(GADSdat, labels2character)
+  if(!is.null(labels2factor)) check_vars_in_GADSdat(GADSdat, labels2factor)
+  #browser()
+  if(!is.null(labels2character) && !is.null(labels2factor)) {
+    dups <- c(labels2character, labels2factor)[duplicated(c(labels2character, labels2factor))]
+    if(length(dups) > 0) stop("The following variables are both in 'labels2character' and 'labels2factor': ",
+                              paste(dups, collapse = ", "))
+  }
+  if(!is.null(labels2character) && !is.null(labels2ordered)) {
+    dups <- c(labels2character, labels2ordered)[duplicated(c(labels2character, labels2ordered))]
+    if(length(dups) > 0) stop("The following variables are both in 'labels2character' and 'labels2ordered': ",
+                              paste(dups, collapse = ", "))
+  }
+  if(!is.null(labels2ordered) && !is.null(labels2factor)) {
+    dups <- c(labels2ordered, labels2factor)[duplicated(c(labels2ordered, labels2factor))]
+    if(length(dups) > 0) stop("The following variables are both in 'labels2ordered' and 'labels2factor': ",
+                              paste(dups, collapse = ", "))
+  }
+
+  dat <- GADSdat$dat
+  labels <- GADSdat$labels
+  ## missings
+  if(identical(convertMiss, TRUE)) dat <- miss2NA(GADSdat)
+  ## labels
+  dat <- labels2values2(dat = dat, labels = labels, convertMiss = convertMiss, dropPartialLabels = dropPartialLabels,
+                       labels2character = labels2character, labels2factor = labels2factor, labels2ordered = labels2ordered)
+  ## varLabels
+  dat <- varLabels_as_labels(dat = dat, labels = labels)
+  dat
+}
+
+#'@export
+extractData2.trend_GADSdat <- function(GADSdat, convertMiss = TRUE, labels2character = namesGADS(GADSdat), labels2factor = NULL,
+                                       labels2ordered = NULL, dropPartialLabels = TRUE) {
+  stop("extractData2 has not been implemented for 'trend_GADSdat' objects.")
+}
+
+
+# converts labels to values
+labels2values2 <- function(dat, labels, convertMiss, dropPartialLabels, labels2character, labels2factor, labels2ordered) {
+  if(is.null(labels2character) && is.null(labels2factor)) return(dat)
+  # Which variables should their value labels be applied to?
+  convertVariables <- c(labels2character, labels2factor, labels2ordered)
+  stopifnot(is.character(convertVariables) && length(convertVariables) > 0)
+
+  change_labels <- labels[labels[, "varName"] %in% convertVariables, ]    # careful, from here use only change_labels!
+  # check value labels, remove incomplete labels from insertion to protect variables
+  if(identical(dropPartialLabels, TRUE)) {
+    drop_labels <- unlist(lapply(unique(labels$varName), check_labels, dat = dat, labels = labels,
+                                 convertMiss = convertMiss))
+    change_labels <- change_labels[!change_labels$varName %in% drop_labels, ]
+  }
+  # convert labels into values
+  changed_variables <- character(0)
+  # early return, if no values are to be recoded
+  if(nrow(change_labels) == 0) return(dat)
+  # recode values
+  for(i in seq(nrow(change_labels))) {
+    curRow <- change_labels[i, , drop = FALSE]
+    #browser()
+    if(!is.na(curRow$valLabel)) {
+      ## preserve numeric type of variable if possible (although not sure whether this could realistically be the case...)
+      curRow$valLabel <- suppressWarnings(eatTools::asNumericIfPossible(curRow$valLabel, force.string = FALSE))
+      # so far fastest: maybe car? mh...
+      dat[which(dat[, curRow$varName] == curRow$value), curRow$varName] <- curRow$valLabel
+      # dat[, curRow$varName] <- ifelse(dat[, curRow$varName] == curRow$value, curRow$valLabel, dat[, curRow$varName])
+      changed_variables <- unique(c(curRow$varName, changed_variables))
+    }
+  }
+
+  # convert characters to factor if specified (keep ordering if possible)
+  #if(!is.null(labels2ordered)) browser()
+  changed_variables_labels2factor <- intersect(labels2factor, changed_variables)
+  changed_variables <- setdiff(changed_variables, changed_variables_labels2factor)
+  if(length(changed_variables_labels2factor) > 0) {
+    dat <- char2fac(dat = dat, labels = labels, vars = changed_variables_labels2factor, convertMiss = convertMiss, ordered = FALSE)
+  }
+  changed_variables_labels2ordered <- intersect(labels2ordered, changed_variables)
+  if(length(changed_variables_labels2ordered) > 0) {
+    dat <- char2fac(dat = dat, labels = labels, vars = changed_variables_labels2ordered, convertMiss = convertMiss, ordered = TRUE)
+  }
+  dat
+}

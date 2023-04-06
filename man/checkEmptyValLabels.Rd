@@ -12,7 +12,13 @@ checkEmptyValLabels(
   output = c("list", "data.frame")
 )
 
-checkMissingValLabels(GADSdat, vars = namesGADS(GADSdat), valueRange = NULL)
+checkMissingValLabels(
+  GADSdat,
+  vars = namesGADS(GADSdat),
+  classes = c("integer"),
+  valueRange = NULL,
+  output = c("list", "data.frame")
+)
 }
 \arguments{
 \item{GADSdat}{A \code{GADSdat} object.}
@@ -23,6 +29,8 @@ checkMissingValLabels(GADSdat, vars = namesGADS(GADSdat), valueRange = NULL)
 If specified, only numeric values are returned and strings are omitted.}
 
 \item{output}{Should the output be structured as a \code{"list"} or a \code{"data.frame"}?}
+
+\item{classes}{Character vector with the classes to which \code{checkMissingLabels()} should be applied. Valid options are \code{"integer"}, \code{"double"}, and \code{"character"}.}
 }
 \value{
 Returns a list of length \code{vars} or a \code{data.frame}.
@@ -36,11 +44,11 @@ Check value labels for (a) value labels with no occurrence in the data (\code{ch
 }
 \section{Functions}{
 \itemize{
-\item \code{checkEmptyValLabels}: check for superfluous value labels
+\item \code{checkEmptyValLabels()}: check for superfluous value labels
 
-\item \code{checkMissingValLabels}: check for missing value labels
+\item \code{checkMissingValLabels()}: check for missing value labels
+
 }}
-
 \examples{
 # Check a categorical and a metric variable
 checkMissingValLabels(pisa, vars = c("g8g9", "age"))

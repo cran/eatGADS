@@ -35,15 +35,15 @@ changeValLabels.GADSdat <- function(GADSdat, varName, value, valLabel) {
   checkValLabelInput(varName = varName, value = value, valLabel = valLabel, labels = GADSdat$labels)
   changeTable <- getChangeMeta(GADSdat, level = "value")
 
-  #if(identical(varName, "text1")) browser()
-
   existing_values <- value[value %in% changeTable[changeTable$varName == varName, "value"]]
   existing_valLabels <- valLabel[value %in% changeTable[changeTable$varName == varName, "value"]]
   new_values <- value[!value %in% changeTable[changeTable$varName == varName, "value"]]
   new_valLabels <- valLabel[!value %in% changeTable[changeTable$varName == varName, "value"]]
 
+  # edit change table
   for(i in seq_along(existing_values)) {
-    changeTable[changeTable$varName == varName & changeTable$value == value[i], "valLabel_new"] <- existing_valLabels[i]
+    changeTable[changeTable$varName == varName & changeTable$value == existing_values[i],
+                "valLabel_new"] <- existing_valLabels[i]
   }
   for(i in seq_along(new_values)) {
     change_row <- changeTable[changeTable$varName == varName, ][1, ]
@@ -67,7 +67,8 @@ changeValLabels.all_GADSdat <- function(GADSdat, varName, value, valLabel) {
 }
 
 checkValLabelInput <- function(varName, value, valLabel, labels) {
-  if(!is.character(varName) || !length(varName) == 1) stop("varName is not a character vector of length 1.")
+  check_single_varName(varName)
+  if(!is.character(varName) || !length(varName) == 1) stop("'varName' is not a character vector of length 1.")
   if(!varName %in% labels$varName) stop("varName is not a variable name in the GADSdat.")
   if(length(value) != length(valLabel)) stop("value and valLabel are not of identical length.", call. = FALSE)
   return()
