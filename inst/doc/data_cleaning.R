@@ -4,37 +4,54 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 
-## ----meta raw, echo = FALSE-----------------------------------------------------------------------
+## ----setup2, echo = FALSE-------------------------------------------------------------------------
 options(width = 100)
 library(eatGADS)
 gads <- pisa
-extractMeta(gads, vars = c("gender"))
+
+## ----GADSdat, echo = TRUE-------------------------------------------------------------------------
+class(pisa)
+names(pisa)
 
 ## ----setup, eval = FALSE--------------------------------------------------------------------------
 #  library(eatGADS)
 #  gads <- pisa
 
+## ----data raw, echo = TRUE------------------------------------------------------------------------
+pisa$dat[1:5, 1:5]
+
+## ----meta raw, echo = FALSE-----------------------------------------------------------------------
+extractMeta(gads, vars = c("gender"))
+
 ## ----overview-------------------------------------------------------------------------------------
 extractMeta(gads, vars = c("hisei", "schtype"))
 
 ## ----names----------------------------------------------------------------------------------------
-# Changing variable names
+# inspect original meta data
 extractMeta(gads, vars = "hisei")
+
+# Change variable name
 gads_labeled <- changeVarNames(GADSdat = gads, oldNames = "hisei", newNames = "hisei_new")
+
+# inspect modified meta data
 extractMeta(gads_labeled, vars = "hisei_new")
 
 ## ----varlabels------------------------------------------------------------------------------------
-# Changing variable labels 
 extractMeta(gads_labeled, vars = "hisei_new")
+
+# Change variable label 
 gads_labeled <- changeVarLabels(GADSdat = gads_labeled, varName = "hisei_new", 
                                 varLabel = "Parental occupational status (highest)")
+
 extractMeta(gads_labeled, vars = "hisei_new")
 
 ## ----format---------------------------------------------------------------------------------------
-# Changing SPSS format
 extractMeta(gads_labeled, "hisei_new")
+
+# Change SPSS format
 gads_labeled <- changeSPSSformat(GADSdat = gads_labeled, varName = "hisei_new", 
                                  format = "F10.2")
+
 extractMeta(gads_labeled, "hisei_new")
 
 ## ----vallabels------------------------------------------------------------------------------------
@@ -73,8 +90,11 @@ gads_labeled <- changeValLabels(GADSdat = gads_labeled, varName = "gender",
 gads_labeled <- changeMissings(GADSdat = gads_labeled, varName = "gender", 
                                 value = -99, missings = "miss")
 
-# Checking value label and missing code allignment
-gads_labeled <- checkMissings(gads_labeled, missingLabel = "missing") 
+# Checking value label and missing code alignment
+gads_labeled2 <- checkMissings(gads_labeled, missingLabel = "missing") 
+
+# Checking missing tags for a certain value range
+gads_labeled <- checkMissingsByValues(gads_labeled, missingValues = -50:-99) 
 
 ## ----reuse----------------------------------------------------------------------------------------
 extractMeta(gads_labeled, "age")
@@ -91,6 +111,26 @@ namesGADS(gads_motint)
 
 gads_int <- removeVars(gads_motint, vars = "instmot_a") 
 namesGADS(gads_int)
+
+## ----clone variable-------------------------------------------------------------------------------
+# Clone the variable "sameteach"
+gads_labeled <- cloneVariable(gads_labeled, varName = "sameteach", new_varName = "sameteach2")
+
+## ----add variables--------------------------------------------------------------------------------
+# Extract the data
+newDat <- gads_labeled$dat
+# Adding a variable
+newDat$classsize_kat <- ifelse(newDat$classsize > 15, 
+                                         yes = "big", no = "small") 
+# Updating meta data
+gads_labeled2 <- updateMeta(gads_labeled, newDat = newDat)
+extractMeta(gads_labeled2, "classsize_kat")
+
+## ----empty----------------------------------------------------------------------------------------
+# Empty a variable completely
+gads_labeled <- emptyTheseVariables(gads_labeled, vars = "idschool")
+# Resulting frequency table
+table(gads_labeled$dat$idschool, useNA = "ifany")
 
 ## ----recoding-------------------------------------------------------------------------------------
 # Original data and meta data
@@ -117,15 +157,45 @@ gads_labeled <- recode2NA(gads_labeled, recodeVars = c("hisei_new", "schtype"),
                           value = "3")
 gads_labeled$dat$schtype[1:10]
 
-## ----add variables--------------------------------------------------------------------------------
-# Extract the data
-newDat <- gads_labeled$dat
-# Adding a variable
-newDat$classsize_kat <- ifelse(newDat$classsize > 15, 
-                                         yes = "big", no = "small") 
-# Updating meta data
-gads_labeled2 <- updateMeta(gads_labeled, newDat = newDat)
-extractMeta(gads_labeled2, "classsize_kat")
+## ----multiChar2fac--------------------------------------------------------------------------------
+# Example data set
+test_df <- data.frame(id = 1:5, varChar = c("german", "English", 
+                                            "english", "POLISH", "polish"),
+                        stringsAsFactors = FALSE)
+test_gads <- import_DF(test_df)
+
+# Recoding a character variable to numeric
+test_gads2 <- multiChar2fac(test_gads, vars = "varChar", var_suffix = "_new")
+extractMeta(test_gads2, "varChar_new")
+
+## ----multiChar2fac convertCase--------------------------------------------------------------------
+# Recoding a character variable to numeric while simplying case
+test_gads2 <- multiChar2fac(test_gads, vars = "varChar", var_suffix = "_new",
+                            convertCase = "upperFirst")
+extractMeta(test_gads2, "varChar_new")
+
+## ----autorecode-----------------------------------------------------------------------------------
+id_df <- data.frame(id = c(1101, 1102, 1103, 1104, 1105), 
+                    varChar = c("german", "English", "english", "POLISH", "polish"),
+                        stringsAsFactors = FALSE)
+id_gads <- import_DF(id_df)
+
+# Recoding a character variable to numeric
+id_gads2 <- autoRecode(id_gads, var = "id", var_suffix = "_new")
+id_gads2$dat[, c("id", "id_new")]
+
+## ----relocate-------------------------------------------------------------------------------------
+namesGADS(gads_labeled)[1:5]
+
+# Relocate a single variable within a the data set
+gads_labeled <- relocateVariable(GADSdat = gads_labeled, var = "idschool",
+                           after = "schtype")
+namesGADS(gads_labeled)[1:5]
+
+# Relocate a single variable to the beginning of the data set
+gads_labeled <- relocateVariable(GADSdat = gads_labeled, var = "idschool",
+                           after = NULL)
+namesGADS(gads_labeled)[1:5]
 
 ## ----getChangeMeta--------------------------------------------------------------------------------
 # variable level

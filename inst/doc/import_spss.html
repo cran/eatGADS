@@ -12,7 +12,7 @@
 
 <meta name="author" content="Benjamin Becker" />
 
-<meta name="date" content="2023-04-06" />
+<meta name="date" content="2023-08-25" />
 
 <title>import_spss: Importing data from ‘SPSS’</title>
 
@@ -341,7 +341,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <h1 class="title toc-ignore"><code>import_spss</code>: Importing data
 from ‘SPSS’</h1>
 <h4 class="author">Benjamin Becker</h4>
-<h4 class="date">2023-04-06</h4>
+<h4 class="date">2023-08-25</h4>
 
 
 
@@ -358,67 +358,63 @@ accessed <a href="https://www.iqb.hu-berlin.de/fdz/Datenzugang/CF-Antrag/Antrags
 and <a href="https://www.iqb.hu-berlin.de/fdz/Datenzugang/SUF-Antrag">here</a>.</p>
 <div id="importing" class="section level2">
 <h2>Importing</h2>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(eatGADS)</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(eatGADS)</span></code></pre></div>
 <p>We can import an <code>.sav</code> data set via the
 <code>import_spss()</code> function. Checks on variable names (for data
 base compatibility) are performed automatically. Changes to the variable
 names are reported to the console. This behavior can be suppressed by
 setting <code>checkVarNames = FALSE</code>.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>sav_path <span class="ot">&lt;-</span> <span class="fu">system.file</span>(<span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;pisa.zsav&quot;</span>, <span class="at">package =</span> <span class="st">&quot;eatGADS&quot;</span>)</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>gads_obj <span class="ot">&lt;-</span> <span class="fu">import_spss</span>(sav_path)</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>sav_path <span class="ot">&lt;-</span> <span class="fu">system.file</span>(<span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;pisa.zsav&quot;</span>, <span class="at">package =</span> <span class="st">&quot;eatGADS&quot;</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>gads_obj <span class="ot">&lt;-</span> <span class="fu">import_spss</span>(sav_path)</span></code></pre></div>
 </div>
 <div id="gadsdat-objects" class="section level2">
 <h2><code>GADSdat</code> objects</h2>
 <p>The resulting object is of the class <code>GADSdat</code>. It is
 basically a named list containing the actual data (<code>dat</code>) and
 the meta data (<code>labels</code>).</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(gads_obj)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;GADSdat&quot; &quot;list&quot;</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(gads_obj)</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;dat&quot;    &quot;labels&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">class</span>(gads_obj)</span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="co">#&gt; [1] &quot;GADSdat&quot; &quot;list&quot;</span></span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a><span class="fu">names</span>(gads_obj)</span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a><span class="co">#&gt; [1] &quot;dat&quot;    &quot;labels&quot;</span></span></code></pre></div>
 <p>The names of the variables in a <code>GADSdat</code> object can be
 accessed via the <code>namesGADS()</code> function. The meta data of
 variables can be accessed via the <code>extractMeta()</code>
 function.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">namesGADS</span>(gads_obj)</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   [1] &quot;idstud&quot;       &quot;idschool&quot;     &quot;idclass&quot;      &quot;schtype&quot;      &quot;sameteach&quot;   </span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   [6] &quot;g8g9&quot;         &quot;ganztag&quot;      &quot;classsize&quot;    &quot;repeated&quot;     &quot;gender&quot;      </span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [11] &quot;age&quot;          &quot;language&quot;     &quot;migration&quot;    &quot;hisced&quot;       &quot;hisei&quot;       </span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [16] &quot;homepos&quot;      &quot;books&quot;        &quot;pared&quot;        &quot;computer_age&quot; &quot;internet_age&quot;</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [21] &quot;int_use_a&quot;    &quot;int_use_b&quot;    &quot;truancy_a&quot;    &quot;truancy_b&quot;    &quot;truancy_c&quot;   </span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [26] &quot;int_a&quot;        &quot;int_b&quot;        &quot;int_c&quot;        &quot;int_d&quot;        &quot;instmot_a&quot;   </span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [31] &quot;instmot_b&quot;    &quot;instmot_c&quot;    &quot;instmot_d&quot;    &quot;norms_a&quot;      &quot;norms_b&quot;     </span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [36] &quot;norms_c&quot;      &quot;norms_d&quot;      &quot;norms_e&quot;      &quot;norms_f&quot;      &quot;anxiety_a&quot;   </span></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [41] &quot;anxiety_b&quot;    &quot;anxiety_c&quot;    &quot;anxiety_d&quot;    &quot;anxiety_e&quot;    &quot;selfcon_a&quot;   </span></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [46] &quot;selfcon_b&quot;    &quot;selfcon_c&quot;    &quot;selfcon_d&quot;    &quot;selfcon_e&quot;    &quot;worketh_a&quot;   </span></span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [51] &quot;worketh_b&quot;    &quot;worketh_c&quot;    &quot;worketh_d&quot;    &quot;worketh_e&quot;    &quot;worketh_f&quot;   </span></span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [56] &quot;worketh_g&quot;    &quot;worketh_h&quot;    &quot;worketh_i&quot;    &quot;intent_a&quot;     &quot;intent_b&quot;    </span></span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [61] &quot;intent_c&quot;     &quot;intent_d&quot;     &quot;intent_e&quot;     &quot;behav_a&quot;      &quot;behav_b&quot;     </span></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [66] &quot;behav_c&quot;      &quot;behav_d&quot;      &quot;behav_e&quot;      &quot;behav_f&quot;      &quot;behav_g&quot;     </span></span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [71] &quot;behav_h&quot;      &quot;teach_a&quot;      &quot;teach_b&quot;      &quot;teach_c&quot;      &quot;teach_d&quot;     </span></span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [76] &quot;teach_e&quot;      &quot;cognact_a&quot;    &quot;cognact_b&quot;    &quot;cognact_c&quot;    &quot;cognact_d&quot;   </span></span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [81] &quot;cognact_e&quot;    &quot;cognact_f&quot;    &quot;cognact_g&quot;    &quot;cognact_h&quot;    &quot;cognact_i&quot;   </span></span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [86] &quot;discpline_a&quot;  &quot;discpline_b&quot;  &quot;discpline_c&quot;  &quot;discpline_d&quot;  &quot;discpline_e&quot; </span></span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [91] &quot;relation_a&quot;   &quot;relation_b&quot;   &quot;relation_c&quot;   &quot;relation_d&quot;   &quot;relation_e&quot;  </span></span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [96] &quot;belong_a&quot;     &quot;belong_b&quot;     &quot;belong_c&quot;     &quot;belong_d&quot;     &quot;belong_e&quot;    </span></span>
-<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [101] &quot;belong_f&quot;     &quot;belong_g&quot;     &quot;belong_h&quot;     &quot;belong_i&quot;     &quot;attitud_a&quot;   </span></span>
-<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [106] &quot;attitud_b&quot;    &quot;attitud_c&quot;    &quot;attitud_d&quot;    &quot;attitud_e&quot;    &quot;attitud_f&quot;   </span></span>
-<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [111] &quot;attitud_g&quot;    &quot;attitud_h&quot;    &quot;grade_de&quot;     &quot;grade_ma&quot;     &quot;grade_bio&quot;   </span></span>
-<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [116] &quot;grade_che&quot;    &quot;grade_phy&quot;    &quot;grade_sci&quot;    &quot;ma_pv1&quot;       &quot;ma_pv2&quot;      </span></span>
-<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [121] &quot;ma_pv3&quot;       &quot;ma_pv4&quot;       &quot;ma_pv5&quot;       &quot;rea_pv1&quot;      &quot;rea_pv2&quot;     </span></span>
-<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [126] &quot;rea_pv3&quot;      &quot;rea_pv4&quot;      &quot;rea_pv5&quot;      &quot;sci_pv1&quot;      &quot;sci_pv2&quot;     </span></span>
-<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [131] &quot;sci_pv3&quot;      &quot;sci_pv4&quot;      &quot;sci_pv5&quot;</span></span>
-<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a><span class="fu">extractMeta</span>(gads_obj, <span class="at">vars =</span> <span class="fu">c</span>(<span class="st">&quot;schtype&quot;</span>, <span class="st">&quot;idschool&quot;</span>))</span>
-<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    varName     varLabel format display_width labeled value</span></span>
-<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 idschool    School-ID   F8.0            NA      no    NA</span></span>
-<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4  schtype School track   F8.0            NA     yes     1</span></span>
-<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5  schtype School track   F8.0            NA     yes     2</span></span>
-<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6  schtype School track   F8.0            NA     yes     3</span></span>
-<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                                    valLabel missings</span></span>
-<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2                                      &lt;NA&gt;     &lt;NA&gt;</span></span>
-<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4                Gymnasium (academic track)    valid</span></span>
-<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5                                Realschule    valid</span></span>
-<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6 schools with several courses of education    valid</span></span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">namesGADS</span>(gads_obj)</span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="co">#&gt;   [1] &quot;idstud&quot;       &quot;idschool&quot;     &quot;idclass&quot;      &quot;schtype&quot;      &quot;sameteach&quot;    &quot;g8g9&quot;        </span></span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="co">#&gt;   [7] &quot;ganztag&quot;      &quot;classsize&quot;    &quot;repeated&quot;     &quot;gender&quot;       &quot;age&quot;          &quot;language&quot;    </span></span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a><span class="co">#&gt;  [13] &quot;migration&quot;    &quot;hisced&quot;       &quot;hisei&quot;        &quot;homepos&quot;      &quot;books&quot;        &quot;pared&quot;       </span></span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a><span class="co">#&gt;  [19] &quot;computer_age&quot; &quot;internet_age&quot; &quot;int_use_a&quot;    &quot;int_use_b&quot;    &quot;truancy_a&quot;    &quot;truancy_b&quot;   </span></span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a><span class="co">#&gt;  [25] &quot;truancy_c&quot;    &quot;int_a&quot;        &quot;int_b&quot;        &quot;int_c&quot;        &quot;int_d&quot;        &quot;instmot_a&quot;   </span></span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a><span class="co">#&gt;  [31] &quot;instmot_b&quot;    &quot;instmot_c&quot;    &quot;instmot_d&quot;    &quot;norms_a&quot;      &quot;norms_b&quot;      &quot;norms_c&quot;     </span></span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a><span class="co">#&gt;  [37] &quot;norms_d&quot;      &quot;norms_e&quot;      &quot;norms_f&quot;      &quot;anxiety_a&quot;    &quot;anxiety_b&quot;    &quot;anxiety_c&quot;   </span></span>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a><span class="co">#&gt;  [43] &quot;anxiety_d&quot;    &quot;anxiety_e&quot;    &quot;selfcon_a&quot;    &quot;selfcon_b&quot;    &quot;selfcon_c&quot;    &quot;selfcon_d&quot;   </span></span>
+<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a><span class="co">#&gt;  [49] &quot;selfcon_e&quot;    &quot;worketh_a&quot;    &quot;worketh_b&quot;    &quot;worketh_c&quot;    &quot;worketh_d&quot;    &quot;worketh_e&quot;   </span></span>
+<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a><span class="co">#&gt;  [55] &quot;worketh_f&quot;    &quot;worketh_g&quot;    &quot;worketh_h&quot;    &quot;worketh_i&quot;    &quot;intent_a&quot;     &quot;intent_b&quot;    </span></span>
+<span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a><span class="co">#&gt;  [61] &quot;intent_c&quot;     &quot;intent_d&quot;     &quot;intent_e&quot;     &quot;behav_a&quot;      &quot;behav_b&quot;      &quot;behav_c&quot;     </span></span>
+<span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a><span class="co">#&gt;  [67] &quot;behav_d&quot;      &quot;behav_e&quot;      &quot;behav_f&quot;      &quot;behav_g&quot;      &quot;behav_h&quot;      &quot;teach_a&quot;     </span></span>
+<span id="cb4-14"><a href="#cb4-14" tabindex="-1"></a><span class="co">#&gt;  [73] &quot;teach_b&quot;      &quot;teach_c&quot;      &quot;teach_d&quot;      &quot;teach_e&quot;      &quot;cognact_a&quot;    &quot;cognact_b&quot;   </span></span>
+<span id="cb4-15"><a href="#cb4-15" tabindex="-1"></a><span class="co">#&gt;  [79] &quot;cognact_c&quot;    &quot;cognact_d&quot;    &quot;cognact_e&quot;    &quot;cognact_f&quot;    &quot;cognact_g&quot;    &quot;cognact_h&quot;   </span></span>
+<span id="cb4-16"><a href="#cb4-16" tabindex="-1"></a><span class="co">#&gt;  [85] &quot;cognact_i&quot;    &quot;discpline_a&quot;  &quot;discpline_b&quot;  &quot;discpline_c&quot;  &quot;discpline_d&quot;  &quot;discpline_e&quot; </span></span>
+<span id="cb4-17"><a href="#cb4-17" tabindex="-1"></a><span class="co">#&gt;  [91] &quot;relation_a&quot;   &quot;relation_b&quot;   &quot;relation_c&quot;   &quot;relation_d&quot;   &quot;relation_e&quot;   &quot;belong_a&quot;    </span></span>
+<span id="cb4-18"><a href="#cb4-18" tabindex="-1"></a><span class="co">#&gt;  [97] &quot;belong_b&quot;     &quot;belong_c&quot;     &quot;belong_d&quot;     &quot;belong_e&quot;     &quot;belong_f&quot;     &quot;belong_g&quot;    </span></span>
+<span id="cb4-19"><a href="#cb4-19" tabindex="-1"></a><span class="co">#&gt; [103] &quot;belong_h&quot;     &quot;belong_i&quot;     &quot;attitud_a&quot;    &quot;attitud_b&quot;    &quot;attitud_c&quot;    &quot;attitud_d&quot;   </span></span>
+<span id="cb4-20"><a href="#cb4-20" tabindex="-1"></a><span class="co">#&gt; [109] &quot;attitud_e&quot;    &quot;attitud_f&quot;    &quot;attitud_g&quot;    &quot;attitud_h&quot;    &quot;grade_de&quot;     &quot;grade_ma&quot;    </span></span>
+<span id="cb4-21"><a href="#cb4-21" tabindex="-1"></a><span class="co">#&gt; [115] &quot;grade_bio&quot;    &quot;grade_che&quot;    &quot;grade_phy&quot;    &quot;grade_sci&quot;    &quot;ma_pv1&quot;       &quot;ma_pv2&quot;      </span></span>
+<span id="cb4-22"><a href="#cb4-22" tabindex="-1"></a><span class="co">#&gt; [121] &quot;ma_pv3&quot;       &quot;ma_pv4&quot;       &quot;ma_pv5&quot;       &quot;rea_pv1&quot;      &quot;rea_pv2&quot;      &quot;rea_pv3&quot;     </span></span>
+<span id="cb4-23"><a href="#cb4-23" tabindex="-1"></a><span class="co">#&gt; [127] &quot;rea_pv4&quot;      &quot;rea_pv5&quot;      &quot;sci_pv1&quot;      &quot;sci_pv2&quot;      &quot;sci_pv3&quot;      &quot;sci_pv4&quot;     </span></span>
+<span id="cb4-24"><a href="#cb4-24" tabindex="-1"></a><span class="co">#&gt; [133] &quot;sci_pv5&quot;</span></span>
+<span id="cb4-25"><a href="#cb4-25" tabindex="-1"></a><span class="fu">extractMeta</span>(gads_obj, <span class="at">vars =</span> <span class="fu">c</span>(<span class="st">&quot;schtype&quot;</span>, <span class="st">&quot;idschool&quot;</span>))</span>
+<span id="cb4-26"><a href="#cb4-26" tabindex="-1"></a><span class="co">#&gt;    varName     varLabel format display_width labeled value</span></span>
+<span id="cb4-27"><a href="#cb4-27" tabindex="-1"></a><span class="co">#&gt; 2 idschool    School-ID   F8.0            NA      no    NA</span></span>
+<span id="cb4-28"><a href="#cb4-28" tabindex="-1"></a><span class="co">#&gt; 4  schtype School track   F8.0            NA     yes     1</span></span>
+<span id="cb4-29"><a href="#cb4-29" tabindex="-1"></a><span class="co">#&gt; 5  schtype School track   F8.0            NA     yes     2</span></span>
+<span id="cb4-30"><a href="#cb4-30" tabindex="-1"></a><span class="co">#&gt; 6  schtype School track   F8.0            NA     yes     3</span></span>
+<span id="cb4-31"><a href="#cb4-31" tabindex="-1"></a><span class="co">#&gt;                                    valLabel missings</span></span>
+<span id="cb4-32"><a href="#cb4-32" tabindex="-1"></a><span class="co">#&gt; 2                                      &lt;NA&gt;     &lt;NA&gt;</span></span>
+<span id="cb4-33"><a href="#cb4-33" tabindex="-1"></a><span class="co">#&gt; 4                Gymnasium (academic track)    valid</span></span>
+<span id="cb4-34"><a href="#cb4-34" tabindex="-1"></a><span class="co">#&gt; 5                                Realschule    valid</span></span>
+<span id="cb4-35"><a href="#cb4-35" tabindex="-1"></a><span class="co">#&gt; 6 schools with several courses of education    valid</span></span></code></pre></div>
 <p>Commonly the most informative columns are <code>varLabel</code>
 (containing variable labels), <code>value</code> (referencing labeled
 values), <code>valLabel</code> (containing value labels) and
@@ -435,54 +431,42 @@ decisions: (a) how should values marked as missing values be treated
 be treated (<code>convertLabels</code>, <code>dropPartialLabels</code>,
 <code>convertVariables</code>)? See <code>?extractData</code> for more
 details.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="do">## convert labeled variables to characters</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>dat1 <span class="ot">&lt;-</span> <span class="fu">extractData</span>(gads_obj, <span class="at">convertLabels =</span> <span class="st">&quot;character&quot;</span>)</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>dat1[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>]</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   idstud idschool idclass                                   schtype sameteach</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1      1      127     392                                Realschule       Yes</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2      2       65     201 schools with several courses of education        No</span></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3      3       10      34                Gymnasium (academic track)        No</span></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4      4      103     319 schools with several courses of education       Yes</span></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5      5       57     179                                Realschule       Yes</span></span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                     g8g9 ganztag classsize               repeated gender</span></span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1                   &lt;NA&gt;      No         9 Did not repeat a grade Female</span></span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2                   &lt;NA&gt;      No        10 Did not repeat a grade Female</span></span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3 G8 - 8 years to abitur      No        28 Did not repeat a grade   Male</span></span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4                   &lt;NA&gt;      No        12 Did not repeat a grade   Male</span></span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5                   &lt;NA&gt;     Yes        25 Did not repeat a grade Female</span></span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="do">## leave labeled variables as numeric</span></span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>dat2 <span class="ot">&lt;-</span> <span class="fu">extractData</span>(gads_obj, <span class="at">convertLabels =</span> <span class="st">&quot;numeric&quot;</span>)</span>
-<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>dat2[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>]</span>
-<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   idstud idschool idclass schtype sameteach g8g9 ganztag classsize repeated</span></span>
-<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1      1      127     392       2         2   NA       1         9        1</span></span>
-<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2      2       65     201       3         1   NA       1        10        1</span></span>
-<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3      3       10      34       1         1    1       1        28        1</span></span>
-<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4      4      103     319       3         2   NA       1        12        1</span></span>
-<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5      5       57     179       2         2   NA       2        25        1</span></span>
-<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   gender</span></span>
-<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1      1</span></span>
-<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2      1</span></span>
-<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3      2</span></span>
-<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4      2</span></span>
-<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5      1</span></span>
-<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a><span class="do">## leave labeled variables as numeric but convert some variables to character</span></span>
-<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>dat3 <span class="ot">&lt;-</span> <span class="fu">extractData</span>(gads_obj, <span class="at">convertLabels =</span> <span class="st">&quot;character&quot;</span>, </span>
-<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a>                    <span class="at">convertVariables =</span> <span class="fu">c</span>(<span class="st">&quot;gender&quot;</span>, <span class="st">&quot;language&quot;</span>))</span>
-<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>dat3[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>]</span>
-<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   idstud idschool idclass schtype sameteach g8g9 ganztag classsize repeated</span></span>
-<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1      1      127     392       2         2   NA       1         9        1</span></span>
-<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2      2       65     201       3         1   NA       1        10        1</span></span>
-<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3      3       10      34       1         1    1       1        28        1</span></span>
-<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4      4      103     319       3         2   NA       1        12        1</span></span>
-<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5      5       57     179       2         2   NA       2        25        1</span></span>
-<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   gender</span></span>
-<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 Female</span></span>
-<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 Female</span></span>
-<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3   Male</span></span>
-<span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4   Male</span></span>
-<span id="cb5-48"><a href="#cb5-48" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5 Female</span></span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="do">## convert labeled variables to characters</span></span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>dat1 <span class="ot">&lt;-</span> <span class="fu">extractData</span>(gads_obj, <span class="at">convertLabels =</span> <span class="st">&quot;character&quot;</span>)</span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>dat1[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>]</span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a><span class="co">#&gt;   idstud idschool idclass                                   schtype sameteach</span></span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a><span class="co">#&gt; 1      1      127     392                                Realschule       Yes</span></span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a><span class="co">#&gt; 2      2       65     201 schools with several courses of education        No</span></span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a><span class="co">#&gt; 3      3       10      34                Gymnasium (academic track)        No</span></span>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a><span class="co">#&gt; 4      4      103     319 schools with several courses of education       Yes</span></span>
+<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a><span class="co">#&gt; 5      5       57     179                                Realschule       Yes</span></span>
+<span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a><span class="co">#&gt;                     g8g9 ganztag classsize               repeated gender</span></span>
+<span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a><span class="co">#&gt; 1                   &lt;NA&gt;      No         9 Did not repeat a grade Female</span></span>
+<span id="cb5-12"><a href="#cb5-12" tabindex="-1"></a><span class="co">#&gt; 2                   &lt;NA&gt;      No        10 Did not repeat a grade Female</span></span>
+<span id="cb5-13"><a href="#cb5-13" tabindex="-1"></a><span class="co">#&gt; 3 G8 - 8 years to abitur      No        28 Did not repeat a grade   Male</span></span>
+<span id="cb5-14"><a href="#cb5-14" tabindex="-1"></a><span class="co">#&gt; 4                   &lt;NA&gt;      No        12 Did not repeat a grade   Male</span></span>
+<span id="cb5-15"><a href="#cb5-15" tabindex="-1"></a><span class="co">#&gt; 5                   &lt;NA&gt;     Yes        25 Did not repeat a grade Female</span></span>
+<span id="cb5-16"><a href="#cb5-16" tabindex="-1"></a></span>
+<span id="cb5-17"><a href="#cb5-17" tabindex="-1"></a><span class="do">## leave labeled variables as numeric</span></span>
+<span id="cb5-18"><a href="#cb5-18" tabindex="-1"></a>dat2 <span class="ot">&lt;-</span> <span class="fu">extractData</span>(gads_obj, <span class="at">convertLabels =</span> <span class="st">&quot;numeric&quot;</span>)</span>
+<span id="cb5-19"><a href="#cb5-19" tabindex="-1"></a>dat2[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>]</span>
+<span id="cb5-20"><a href="#cb5-20" tabindex="-1"></a><span class="co">#&gt;   idstud idschool idclass schtype sameteach g8g9 ganztag classsize repeated gender</span></span>
+<span id="cb5-21"><a href="#cb5-21" tabindex="-1"></a><span class="co">#&gt; 1      1      127     392       2         2   NA       1         9        1      1</span></span>
+<span id="cb5-22"><a href="#cb5-22" tabindex="-1"></a><span class="co">#&gt; 2      2       65     201       3         1   NA       1        10        1      1</span></span>
+<span id="cb5-23"><a href="#cb5-23" tabindex="-1"></a><span class="co">#&gt; 3      3       10      34       1         1    1       1        28        1      2</span></span>
+<span id="cb5-24"><a href="#cb5-24" tabindex="-1"></a><span class="co">#&gt; 4      4      103     319       3         2   NA       1        12        1      2</span></span>
+<span id="cb5-25"><a href="#cb5-25" tabindex="-1"></a><span class="co">#&gt; 5      5       57     179       2         2   NA       2        25        1      1</span></span>
+<span id="cb5-26"><a href="#cb5-26" tabindex="-1"></a></span>
+<span id="cb5-27"><a href="#cb5-27" tabindex="-1"></a><span class="do">## leave labeled variables as numeric but convert some variables to character</span></span>
+<span id="cb5-28"><a href="#cb5-28" tabindex="-1"></a>dat3 <span class="ot">&lt;-</span> <span class="fu">extractData</span>(gads_obj, <span class="at">convertLabels =</span> <span class="st">&quot;character&quot;</span>, </span>
+<span id="cb5-29"><a href="#cb5-29" tabindex="-1"></a>                    <span class="at">convertVariables =</span> <span class="fu">c</span>(<span class="st">&quot;gender&quot;</span>, <span class="st">&quot;language&quot;</span>))</span>
+<span id="cb5-30"><a href="#cb5-30" tabindex="-1"></a>dat3[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>]</span>
+<span id="cb5-31"><a href="#cb5-31" tabindex="-1"></a><span class="co">#&gt;   idstud idschool idclass schtype sameteach g8g9 ganztag classsize repeated gender</span></span>
+<span id="cb5-32"><a href="#cb5-32" tabindex="-1"></a><span class="co">#&gt; 1      1      127     392       2         2   NA       1         9        1 Female</span></span>
+<span id="cb5-33"><a href="#cb5-33" tabindex="-1"></a><span class="co">#&gt; 2      2       65     201       3         1   NA       1        10        1 Female</span></span>
+<span id="cb5-34"><a href="#cb5-34" tabindex="-1"></a><span class="co">#&gt; 3      3       10      34       1         1    1       1        28        1   Male</span></span>
+<span id="cb5-35"><a href="#cb5-35" tabindex="-1"></a><span class="co">#&gt; 4      4      103     319       3         2   NA       1        12        1   Male</span></span>
+<span id="cb5-36"><a href="#cb5-36" tabindex="-1"></a><span class="co">#&gt; 5      5       57     179       2         2   NA       2        25        1 Female</span></span></code></pre></div>
 <p>In general, we recommend leaving labeled variables as numeric and
 converting values with missing codes to <code>NA</code>. The latter is
 the default behavior for the argument <code>checkMissings</code>. If

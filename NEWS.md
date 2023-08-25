@@ -1,3 +1,26 @@
+# eatGADS 1.1.0
+
+## new features
+* `equalGADS()` now allows pre-sorting the data by an identifier variable
+* `updateMeta()`, `applyChangeMeta()`, `changeVarNames()`, `cloneVariable()`, `createVariable()`, `composeVar()`, and `dummies2char()` now have optional checks of new variables names via the `checkVarNames` argument
+* `reuseMeta()` now can be use on multiple variables at once
+* `inspectMetaDifferences()` now can be applied to data bases as well
+* `recodeNA2missing()` for recoding `NAs` to a specific missing code
+* `recode2NA()` now allows the recoding of multiple `values` at once and returns a warning, if the recoded values have existing value labels in the recoded variables
+* `updateMeta()` is now compatible with `extractData()` and `extractData2()`
+* S3 method of `extractData2()` now available for `trend_GADSdat` objects
+* `recodeGADS()` and `applyChangeMeta()` allow recoding values without recoding value labels (via `existingMeta = "ignore"`)
+* `insertVariable()` has been renamed `relocateVariable()` for clarity. Variables can now be inserted at the very beginning of a `GADSdat`
+* `cloneVariable()` and `autoRecode()` now allow automatic appending of variable label suffixes via the `label_suffix` argument
+* new function `emptyTheseVariables()` allows setting multiple variables to `NA`
+
+## bug fixes
+* `import_spss()` now removes duplicate meta data rows, which caused an error in, e.g., `recodeGADS()`
+* `export_tibble()` and `write_spss()` now throw an error if a conversion of four or more discrete missing tags into a missing range has undesired side effects
+* bug fix in `checkMissingsByValues()`, now correctly reports missing tags outside of the specified value range
+* bug fix in `cloneVariable()`, now new variables names which are also `SQLite` keywords no longer throw a error (fixed conflicts caused by `checkVarName()`)
+
+
 # eatGADS 1.0.0
 
 ## new features

@@ -1,21 +1,21 @@
-## ---- include = FALSE---------------------------------------------------------
+## ---- include = FALSE-----------------------------------------------------------------------------
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
 
-## ----installation, eval = FALSE-----------------------------------------------
+## ----installation, eval = FALSE-------------------------------------------------------------------
 #  devtools::install_github("beckerbenj/eatGADS")
 
-## ----library, message = FALSE-------------------------------------------------
+## ----library, message = FALSE---------------------------------------------------------------------
 # loading the package
 library(eatGADS)
 
-## ----import_spss, eval = FALSE------------------------------------------------
+## ----import_spss, eval = FALSE--------------------------------------------------------------------
 #  # importing an SPSS file
 #  gads <- import_spss("path/example.sav")
 
-## ----import data into r, eval = FALSE-----------------------------------------
+## ----import data into r, eval = FALSE-------------------------------------------------------------
 #  # importing text files
 #  input_txt <- read.table("path/example.txt", stringsAsFactors = FALSE)
 #  # importing German csv files (; separated)
@@ -23,7 +23,7 @@ library(eatGADS)
 #  # importing Excel files
 #  input_xlsx <- readxl::read_excel("path/example.xlsx")
 
-## ----import_raw---------------------------------------------------------------
+## ----import_raw-----------------------------------------------------------------------------------
 # Example data set
 df <- data.frame(ID = 1:4, sex = c(0, 0, 1, 1), 
                  forename = c("Tim", "Bill", "Ann", "Chris"), stringsAsFactors = FALSE)
@@ -45,20 +45,20 @@ valLabels
 # import 
 gads <- import_raw(df = df, varLabels = varLabels, valLabels = valLabels)
 
-## ----print gads---------------------------------------------------------------
+## ----print gads-----------------------------------------------------------------------------------
 # Inpsect resulting object 
 gads 
 
-## ----save gads, eval = FALSE--------------------------------------------------
+## ----save gads, eval = FALSE----------------------------------------------------------------------
 #  # Inpsect resulting object
 #  saveRDS(gads, "path/gads.RDS")
 
-## ----extractMeta--------------------------------------------------------------
+## ----extractMeta----------------------------------------------------------------------------------
 # Inpsect resulting object 
 extractMeta(gads, vars = c("sex"))
 extractMeta(gads)
 
-## ----extractData, message = FALSE---------------------------------------------
+## ----extractData, message = FALSE-----------------------------------------------------------------
 # Extract data without applying labels
 dat1 <- extractData(gads, convertMiss = TRUE, convertLabels = "numeric")
 dat1
@@ -67,7 +67,7 @@ dat2 <- extractData(gads, convertMiss = TRUE, convertLabels = "character")
 dat2
 
 
-## ----modify wrappers----------------------------------------------------------
+## ----modify wrappers------------------------------------------------------------------------------
 ### wrapper functions
 # Modify variable labels
 gads2 <- changeVarLabels(gads, varName = c("ID"), varLabel = c("Test taker ID"))
@@ -84,7 +84,7 @@ extractMeta(gads4, vars = "sex")
 extractData(gads4, convertLabels = "numeric")
 
 
-## ----modify changeTable-------------------------------------------------------
+## ----modify changeTable---------------------------------------------------------------------------
 # extract changeTable
 varChanges <- getChangeMeta(gads, level = "variable")
 # modify changeTable
@@ -93,10 +93,10 @@ varChanges[varChanges$varName == "ID", "varLabel_new"] <- "Test taker ID"
 gads5 <- applyChangeMeta(varChanges, gads)
 extractMeta(gads5, vars = "ID")
 
-## ----write spss, eval = FALSE-------------------------------------------------
+## ----write spss, eval = FALSE---------------------------------------------------------------------
 #  write_spss(gads, "path/example_out.sav")
 
-## ----export to haven, eval = TRUE---------------------------------------------
+## ----export to haven, eval = TRUE-----------------------------------------------------------------
 haven_dat <- export_tibble(gads)
 haven_dat
 lapply(haven_dat, attributes)

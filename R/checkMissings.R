@@ -1,12 +1,12 @@
 #### Check consistency of missings
 #############################################################################
-#' Check and Adjust Missing Coding
+#' Check and Adjust Missing Tags
 #'
-#' Functions to check if missings are coded and labeled correctly in a \code{GADSdat} object.
+#' Functions to check if missings are tagged and labeled correctly in a \code{GADSdat} object.
 #'
 #' \code{checkMissings()} compares value labels (\code{valLabels}) and missing tags (\code{missings}) of a \code{GADSdat} object and its
 #' meta data information.
-#' \code{checkMissingsByValues()} compares labeled values (\code{value}) and missing codes (\code{missings}) of a \code{GADSdat} object
+#' \code{checkMissingsByValues()} compares labeled values (\code{value}) and missing tags (\code{missings}) of a \code{GADSdat} object
 #' and its meta data information.
 #' Mismatches are reported and can be automatically adjusted. Note that all checks are only applied to the
 #' meta data information, not the actual data. For detecting missing value labels, see \code{\link{checkMissingValLabels}}.
@@ -14,7 +14,7 @@
 #'@param GADSdat \code{GADSdat} object imported via \code{eatGADS}.
 #'@param missingLabel Single regular expression indicating how missing labels are commonly named in the value labels.
 #'@param missingValues Numeric vector of values which are commonly used for missing values.
-#'@param addMissingCode If \code{TRUE}, missing codes are added according to  \code{missingLabel} or \code{missingValues}.
+#'@param addMissingCode If \code{TRUE}, missing tags are added according to \code{missingLabel} or \code{missingValues}.
 #'@param addMissingLabel If \code{TRUE}, \code{"generic missing"} is added according to occurrence of \code{"miss"} in \code{"missings"}. As often various value labels for missings are used, this argument should be used with great care.
 #'
 #'@return Returns a \code{GADSdat} object with - if specified - modified missing tags.
@@ -41,6 +41,15 @@ checkMissings <- function(GADSdat, missingLabel = "missing", addMissingCode = TR
 #'@export
 checkMissings.GADSdat <- function(GADSdat, missingLabel = "missing", addMissingCode = TRUE, addMissingLabel = FALSE) {
   check_GADSdat(GADSdat)
+  check_characterArgument(missingLabel, argName = "missingLabel")
+  if(is.na(missingLabel)) {
+    stop("'missingLabel' is NA.")
+  }
+  if(nchar(missingLabel) == 0) {
+    stop("'missingLabel' is an empty string.")
+  }
+  check_logicalArgument(addMissingCode, argName = "addMissingCode")
+  check_logicalArgument(addMissingLabel, argName = "addMissingLabel")
   labels <- GADSdat$labels
 
   missCode_rows_fail <- which(grepl(missingLabel, labels$valLabel) & (is.na(labels$missings) | labels$missings == "valid"))
@@ -79,10 +88,18 @@ checkMissingsByValues <- function(GADSdat, missingValues = -50:-99, addMissingCo
 #'@export
 checkMissingsByValues.GADSdat <- function(GADSdat, missingValues = -50:-99, addMissingCode = TRUE) {
   check_GADSdat(GADSdat)
+  if(!is.numeric(missingValues) || length(missingValues) == 0) {
+    stop("'missingValues' needs to be a numeric vector of at least length 1.")
+  }
+  if(any(is.na(missingValues))) {
+    stop("'missingValues' contains NAs.")
+  }
+  check_logicalArgument(addMissingCode, argName = "addMissingCode")
+
   labels <- GADSdat$labels
 
   missCode_missing_rows <- which(labels$value %in% missingValues & (is.na(labels$missings) | labels$missings == "valid"))
-  missCode_toomuch_rows <- which(labels$missings == "miss" & labels$value %in% missingValues)
+  missCode_toomuch_rows <- which(labels$missings == "miss" & !labels$value %in% missingValues)
 
   ## Which variables are affected, how many adjustments are performed
   if(length(missCode_missing_rows) > 0) {
@@ -100,7 +117,6 @@ checkMissingsByValues.GADSdat <- function(GADSdat, missingValues = -50:-99, addM
   GADSdat$labels <- labels
   GADSdat
 }
-
 
 
 
