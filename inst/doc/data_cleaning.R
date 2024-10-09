@@ -1,4 +1,4 @@
-## ---- include = FALSE---------------------------------------------------------
+## ----include = FALSE----------------------------------------------------------
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
@@ -201,12 +201,12 @@ namesGADS(gads_labeled)[1:5]
 # variable level
 meta_var <- getChangeMeta(GADSdat = pisa, level = "variable")
 
-## ----write excel var, eval = FALSE----------------------------------------------------------------
-#  # write to excel
+## ----write Excel var, eval = FALSE----------------------------------------------------------------
+#  # write to Excel
 #  eatAnalysis::write_xlsx(meta_var, row.names = FALSE, "variable_changes.xlsx")
 
-## ----read excel var, eval = FALSE-----------------------------------------------------------------
-#  # write to excel
+## ----read Excel var, eval = FALSE-----------------------------------------------------------------
+#  # write to Excel
 #  meta_var_changed <- readxl::read_excel("variable_changes.xlsx", col_types = rep("text", 8))
 
 ## ----var changes under the hood, eval = TRUE, echo = FALSE, results='hide'------------------------
@@ -223,12 +223,12 @@ extractMeta(gads2, vars = c("idstud", "idschool", "schoolType"))
 # value level
 meta_val <- getChangeMeta(GADSdat = pisa, level = "value")
 
-## ----write excel val, eval = FALSE----------------------------------------------------------------
-#  # write to excel
+## ----write Excel val, eval = FALSE----------------------------------------------------------------
+#  # write to Excel
 #  eatAnalysis::write_xlsx(meta_val, row.names = FALSE, "value_changes.xlsx")
 
-## ----read excel val, eval = FALSE-----------------------------------------------------------------
-#  # write to excel
+## ----read Excel val, eval = FALSE-----------------------------------------------------------------
+#  # write to Excel
 #  meta_val_changed <- readxl::read_excel("value_changes.xlsx",
 #                                         col_types = c("text", rep(c("numeric", "text", "text"), 2)))
 

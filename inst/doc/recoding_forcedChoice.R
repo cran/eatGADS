@@ -1,4 +1,4 @@
-## ---- include = FALSE-----------------------------------------------------------------------------
+## ----include = FALSE------------------------------------------------------------------------------
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
@@ -22,11 +22,11 @@ lookup <- createLookup(GADSdat = gads, recodeVars = "stringvar", sort_by = 'valu
 lookup
 
 ## ----lookup export, eval=FALSE--------------------------------------------------------------------
-#  # write look up table to Excel
+#  # write lookup table to Excel
 #  eatAnalysis::write_xlsx(lookup, "lookup_forcedChoice.xlsx")
 
 ## ----lookup reimport, eval=FALSE------------------------------------------------------------------
-#  # read look up table back to R
+#  # read lookup table back to R
 #  lookup <- readxl::read_xlsx("lookup_forcedChoice.xlsx")
 #  lookup
 

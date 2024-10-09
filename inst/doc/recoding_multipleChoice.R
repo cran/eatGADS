@@ -1,4 +1,4 @@
-## ---- include = FALSE-----------------------------------------------------------------------------
+## ----include = FALSE------------------------------------------------------------------------------
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
@@ -23,16 +23,16 @@ lookup <- createLookup(GADSdat = gads, recodeVars = "stringvar", sort_by = 'valu
 lookup
 
 ## ----lookup export, eval=FALSE--------------------------------------------------------------------
-#  # write look up table to Excel
+#  # write lookup table to Excel
 #  eatAnalysis::write_xlsx(lookup, "lookup_forcedChoice.xlsx")
 
 ## ----lookup import export, eval=FALSE-------------------------------------------------------------
-#  # write look up table to Excel
+#  # write lookup table to Excel
 #  eatAnalysis::write_xlsx(lookup, "lookup_multipleChoice.xlsx")
 #  
 #  ### perform recodes in Excel sheet!
 #  
-#  # read look up table back to R
+#  # read lookup table back to R
 #  lookup <- readxl::read_xlsx("lookup_multipleChoice.xlsx")
 #  lookup
 
@@ -45,12 +45,12 @@ lookup$language3 <- c(NA, NA, "Italian", NA, NA,
                       "German", -96, NA, NA, NA)
 lookup
 
-## ----integrate the Lookup table-------------------------------------------------------------------
+## ----integrate the lookup table-------------------------------------------------------------------
 gads_string <- applyLookup_expandVar(GADSdat = gads, lookup = lookup)
 
 gads_string$dat
 
-## ----label missings from Lookup table-------------------------------------------------------------
+## ----label missings from lookup table-------------------------------------------------------------
 for(nam in paste0("stringvar_", 1:3)) {
   gads_string <- changeValLabels(gads_string, varName = nam, 
                                  value = -96, valLabel = "Missing: Not codeable")

@@ -43,7 +43,7 @@ For extracting meta data see \code{\link{extractMeta}}.
 \details{
 A \code{GADSdat} object includes actual data (\code{GADSdat$dat}) and the corresponding meta data information
 (\code{GADSdat$labels}). \code{extractData2} extracts the data and applies relevant meta data on value level
-(missing conversion, value labels),
+(missing tags, value labels),
 so the data can be used for analyses in \code{R}. Variable labels are retained as \code{label} attributes on column level.
 
 If \code{factor} are extracted via \code{labels2factor} or \code{labels2ordered}, an attempt is made to preserve the underlying integers.
@@ -51,6 +51,9 @@ If this is not possible, a warning is issued.
 As \code{SPSS} has almost no limitations regarding the underlying values of labeled
 integers and \code{R}'s \code{factor} format is very strict (no \code{0}, only integers increasing by \code{+ 1}),
 this procedure can lead to frequent problems.
+
+If multiple values of the same variable are assigned the same value label and the variable should be transformed to
+\code{character}, \code{factor}, or \code{ordered}, a warning is issued and the transformation is correctly performed.
 }
 \examples{
 # Extract Data for Analysis

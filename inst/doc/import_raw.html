@@ -12,7 +12,7 @@
 
 <meta name="author" content="Benjamin Becker" />
 
-<meta name="date" content="2023-08-25" />
+<meta name="date" content="2024-10-09" />
 
 <title>Handling meta data</title>
 
@@ -51,7 +51,7 @@ overflow: visible;
 </style>
 <style type="text/css" data-origin="pandoc">
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span { line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -62,7 +62,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
 { counter-reset: source-line 0; }
@@ -340,7 +340,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <h1 class="title toc-ignore">Handling meta data</h1>
 <h4 class="author">Benjamin Becker</h4>
-<h4 class="date">2023-08-25</h4>
+<h4 class="date">2024-10-09</h4>
 
 
 
@@ -362,7 +362,7 @@ the various tools for analyzing data that <code>R</code> provides.</p>
 <p><code>eatGADS</code> is an <code>R</code> package that was developed
 to bridge this gap. Its main purpose is providing a data format in
 <code>R</code> specifically designed for storing meta data together with
-data in on place. Therefore it provides an <code>S3</code> class called
+data in one place. Therefore it provides an <code>S3</code> class called
 <code>GADSdat</code>. The following vignette concentrates on how to
 import data into the <code>GADSdat</code> format and work with it in the
 <code>R</code> environment. In collaboration with the
@@ -424,14 +424,14 @@ names in <code>df</code> and <code>varLabels</code> which should contain
 the desired variable labels as strings. Note that this
 <code>data.frame</code> should contain as many rows as there are
 variables in <code>df</code>.</p>
-<p>The optional <code>valLabels</code> object has to contain 4
+<p>The optional <code>valLabels</code> object has to contain four
 variables: <code>varName</code>, which should exactly correspond to the
 variable names in <code>df</code>; <code>values</code>, which should
 correspond to the respective values in <code>df</code> and has to be a
 numeric vector (labels for character vectors are currently not
 supported); <code>valLabels</code>, which should contain the value
-labels as strings and <code>missings</code>, a column indicating whether
-the value indicates a missing value. Valid values for
+labels as strings; and <code>missings</code>, a column indicating
+whether the value indicates a missing value. Valid values for
 <code>missings</code> are <code>&quot;valid&quot;</code> = no missing code and
 <code>&quot;miss&quot;</code> = missing code. Note that this
 <code>data.frame</code> can not contain any <code>varNames</code> that
@@ -503,7 +503,7 @@ contains a data sheet and a meta data sheet.</p>
 <span id="cb6-25"><a href="#cb6-25" tabindex="-1"></a><span class="co">#&gt; [1] &quot;GADSdat&quot; &quot;list&quot;</span></span></code></pre></div>
 <div id="saving-gadsdat-objects" class="section level3">
 <h3>Saving <code>GADSdat</code> objects</h3>
-<p><code>GADSdat</code> objects can for example be saved as
+<p><code>GADSdat</code> objects, for example, can be saved as
 <code>RDS</code> files. This is also the preferred data format for
 distributing <code>GADSdat</code> objects to the <code>FDZ</code>.</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="co"># Inpsect resulting object </span></span>
@@ -566,9 +566,9 @@ labels are not applied.</p>
 <h2>Modifying <code>GADSdat</code> objects</h2>
 <p><code>GADSdat</code> objects can also be modified even though only a
 certain amount of operations are supported. For smaller changes to the
-meta data and data a number of convenience functions exists. These
+data and meta data a number of convenience functions exists. These
 functions allow modifying variable labels
-(<code>chagenVarLabels</code>), modifying variable names
+(<code>changeVarLabels</code>), modifying variable names
 (<code>changeVarNames</code>) and recoding values
 (<code>recodeGADS</code>).</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="do">### wrapper functions</span></span>
@@ -603,8 +603,8 @@ functions allow modifying variable labels
 <span id="cb10-30"><a href="#cb10-30" tabindex="-1"></a><span class="co">#&gt; 2  2   1     Bill</span></span>
 <span id="cb10-31"><a href="#cb10-31" tabindex="-1"></a><span class="co">#&gt; 3  3   2      Ann</span></span>
 <span id="cb10-32"><a href="#cb10-32" tabindex="-1"></a><span class="co">#&gt; 4  4   2    Chris</span></span></code></pre></div>
-<p>For simultaneous changes to multiple variables a set of functions are
-implemented that extract a table for changes and apply the changes as
+<p>For simultaneous changes to multiple variables a set of functions is
+implemented that extract a table for changes and applies the changes as
 written into this change table. To enable an easier work flow the change
 table could also be saved as an Excel file, modified via Excel and again
 imported into <code>R</code>. See the help pages of the respective
@@ -621,14 +621,14 @@ functions for more details.</p>
 </div>
 <div id="writing-spss-files" class="section level2">
 <h2>Writing SPSS files</h2>
-<p>Objects of the class <code>GADSdat</code>can also be exported into
+<p>Objects of the class <code>GADSdat</code> can also be exported into
 the SPSS format, utilizing <code>haven</code>. Note that this function
 is slightly experimental and problems with specific character strings
 might occur.</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="fu">write_spss</span>(gads, <span class="st">&quot;path/example_out.sav&quot;</span>)</span></code></pre></div>
 <p>If the <code>haven</code> format is preferred for working in
 <code>R</code>, a <code>GADSdat</code> object can also be transformed to
-its equivalent <code>tibble</code> format as if the data was imported
+its equivalent <code>tibble</code> format, as if the data was imported
 from SPSS via <code>haven</code>.</p>
 <div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a>haven_dat <span class="ot">&lt;-</span> <span class="fu">export_tibble</span>(gads)</span>
 <span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a>haven_dat</span>

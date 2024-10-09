@@ -12,7 +12,7 @@
 
 <meta name="author" content="Benjamin Becker" />
 
-<meta name="date" content="2023-08-25" />
+<meta name="date" content="2024-10-09" />
 
 <title>import_spss: Importing data from ‘SPSS’</title>
 
@@ -51,7 +51,7 @@ overflow: visible;
 </style>
 <style type="text/css" data-origin="pandoc">
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span { line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -62,7 +62,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
 { counter-reset: source-line 0; }
@@ -341,7 +341,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <h1 class="title toc-ignore"><code>import_spss</code>: Importing data
 from ‘SPSS’</h1>
 <h4 class="author">Benjamin Becker</h4>
-<h4 class="date">2023-08-25</h4>
+<h4 class="date">2024-10-09</h4>
 
 
 
@@ -351,7 +351,7 @@ from ‘SPSS’</h1>
 <code>haven</code>.</p>
 <p>This vignette illustrates a typical workflow of importing a
 <code>SPSS</code> file using <code>import_spss()</code> and
-<code>extractData()</code>. For illustrative purposes we use a small
+<code>extractData2()</code>. For illustrative purposes we use a small
 example data set from the campus files of the German PISA Plus
 assessment. The complete campus files and the original data set can be
 accessed <a href="https://www.iqb.hu-berlin.de/fdz/Datenzugang/CF-Antrag/AntragsformularCF">here</a>
@@ -415,24 +415,32 @@ function.</p>
 <span id="cb4-33"><a href="#cb4-33" tabindex="-1"></a><span class="co">#&gt; 4                Gymnasium (academic track)    valid</span></span>
 <span id="cb4-34"><a href="#cb4-34" tabindex="-1"></a><span class="co">#&gt; 5                                Realschule    valid</span></span>
 <span id="cb4-35"><a href="#cb4-35" tabindex="-1"></a><span class="co">#&gt; 6 schools with several courses of education    valid</span></span></code></pre></div>
-<p>Commonly the most informative columns are <code>varLabel</code>
+<p>Commonly, the most informative columns are <code>varLabel</code>
 (containing variable labels), <code>value</code> (referencing labeled
 values), <code>valLabel</code> (containing value labels) and
-<code>missings</code> (is a labeled value a missing value
+<code>missings</code> (missing tag: is a labeled value a missing value
 (<code>&quot;miss&quot;</code>) or not (<code>&quot;valid&quot;</code>)).</p>
 </div>
 <div id="extracting-data-from-gadsdat" class="section level2">
 <h2>Extracting data from <code>GADSdat</code></h2>
 <p>If we want to use the data for analyses in <code>R</code> we have to
 extract it from the <code>GADSdat</code> object via the function
-<code>extractData()</code>. In doing so, we have to make two important
+<code>extractData2()</code>. In doing so, we have to make two important
 decisions: (a) how should values marked as missing values be treated
 (<code>convertMiss</code>)? And (b) how should labeled values in general
-be treated (<code>convertLabels</code>, <code>dropPartialLabels</code>,
-<code>convertVariables</code>)? See <code>?extractData</code> for more
-details.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="do">## convert labeled variables to characters</span></span>
-<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>dat1 <span class="ot">&lt;-</span> <span class="fu">extractData</span>(gads_obj, <span class="at">convertLabels =</span> <span class="st">&quot;character&quot;</span>)</span>
+be treated (<code>labels2character</code>, <code>labels2factor</code>,
+<code>labels2ordered</code>, <code>dropPartialLabels</code>)?</p>
+<p>If a variable name is not provided under any of
+<code>labels2character</code>, <code>labels2factor</code>,
+<code>labels2ordered</code>, all value labels of the corresponding
+variable are simply dropped. If a variable name is provided under
+<code>labels2character</code>, the value labels of the corresponding
+variable are applied and the resulting variable is a character variable.
+<code>labels2factor</code> converts variables to factor and
+<code>labels2ordered</code> converts variables to ordered factors.</p>
+<p>See <code>?extractData2</code> for more details.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="do">## convert all labeled variables to character</span></span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>dat1 <span class="ot">&lt;-</span> <span class="fu">extractData2</span>(gads_obj, <span class="at">labels2character =</span> <span class="fu">namesGADS</span>(gads_obj))</span>
 <span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>dat1[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>]</span>
 <span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a><span class="co">#&gt;   idstud idschool idclass                                   schtype sameteach</span></span>
 <span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a><span class="co">#&gt; 1      1      127     392                                Realschule       Yes</span></span>
@@ -448,7 +456,7 @@ details.</p>
 <span id="cb5-15"><a href="#cb5-15" tabindex="-1"></a><span class="co">#&gt; 5                   &lt;NA&gt;     Yes        25 Did not repeat a grade Female</span></span>
 <span id="cb5-16"><a href="#cb5-16" tabindex="-1"></a></span>
 <span id="cb5-17"><a href="#cb5-17" tabindex="-1"></a><span class="do">## leave labeled variables as numeric</span></span>
-<span id="cb5-18"><a href="#cb5-18" tabindex="-1"></a>dat2 <span class="ot">&lt;-</span> <span class="fu">extractData</span>(gads_obj, <span class="at">convertLabels =</span> <span class="st">&quot;numeric&quot;</span>)</span>
+<span id="cb5-18"><a href="#cb5-18" tabindex="-1"></a>dat2 <span class="ot">&lt;-</span> <span class="fu">extractData2</span>(gads_obj)</span>
 <span id="cb5-19"><a href="#cb5-19" tabindex="-1"></a>dat2[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>]</span>
 <span id="cb5-20"><a href="#cb5-20" tabindex="-1"></a><span class="co">#&gt;   idstud idschool idclass schtype sameteach g8g9 ganztag classsize repeated gender</span></span>
 <span id="cb5-21"><a href="#cb5-21" tabindex="-1"></a><span class="co">#&gt; 1      1      127     392       2         2   NA       1         9        1      1</span></span>
@@ -457,22 +465,27 @@ details.</p>
 <span id="cb5-24"><a href="#cb5-24" tabindex="-1"></a><span class="co">#&gt; 4      4      103     319       3         2   NA       1        12        1      2</span></span>
 <span id="cb5-25"><a href="#cb5-25" tabindex="-1"></a><span class="co">#&gt; 5      5       57     179       2         2   NA       2        25        1      1</span></span>
 <span id="cb5-26"><a href="#cb5-26" tabindex="-1"></a></span>
-<span id="cb5-27"><a href="#cb5-27" tabindex="-1"></a><span class="do">## leave labeled variables as numeric but convert some variables to character</span></span>
-<span id="cb5-28"><a href="#cb5-28" tabindex="-1"></a>dat3 <span class="ot">&lt;-</span> <span class="fu">extractData</span>(gads_obj, <span class="at">convertLabels =</span> <span class="st">&quot;character&quot;</span>, </span>
-<span id="cb5-29"><a href="#cb5-29" tabindex="-1"></a>                    <span class="at">convertVariables =</span> <span class="fu">c</span>(<span class="st">&quot;gender&quot;</span>, <span class="st">&quot;language&quot;</span>))</span>
+<span id="cb5-27"><a href="#cb5-27" tabindex="-1"></a><span class="do">## leave labeled variables as numeric but convert some variables to character and some to factor</span></span>
+<span id="cb5-28"><a href="#cb5-28" tabindex="-1"></a>dat3 <span class="ot">&lt;-</span> <span class="fu">extractData2</span>(gads_obj, <span class="at">labels2character =</span> <span class="fu">c</span>(<span class="st">&quot;gender&quot;</span>, <span class="st">&quot;language&quot;</span>),</span>
+<span id="cb5-29"><a href="#cb5-29" tabindex="-1"></a>                     <span class="at">labels2factor =</span> <span class="fu">c</span>(<span class="st">&quot;schtype&quot;</span>, <span class="st">&quot;sameteach&quot;</span>))</span>
 <span id="cb5-30"><a href="#cb5-30" tabindex="-1"></a>dat3[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>]</span>
-<span id="cb5-31"><a href="#cb5-31" tabindex="-1"></a><span class="co">#&gt;   idstud idschool idclass schtype sameteach g8g9 ganztag classsize repeated gender</span></span>
-<span id="cb5-32"><a href="#cb5-32" tabindex="-1"></a><span class="co">#&gt; 1      1      127     392       2         2   NA       1         9        1 Female</span></span>
-<span id="cb5-33"><a href="#cb5-33" tabindex="-1"></a><span class="co">#&gt; 2      2       65     201       3         1   NA       1        10        1 Female</span></span>
-<span id="cb5-34"><a href="#cb5-34" tabindex="-1"></a><span class="co">#&gt; 3      3       10      34       1         1    1       1        28        1   Male</span></span>
-<span id="cb5-35"><a href="#cb5-35" tabindex="-1"></a><span class="co">#&gt; 4      4      103     319       3         2   NA       1        12        1   Male</span></span>
-<span id="cb5-36"><a href="#cb5-36" tabindex="-1"></a><span class="co">#&gt; 5      5       57     179       2         2   NA       2        25        1 Female</span></span></code></pre></div>
+<span id="cb5-31"><a href="#cb5-31" tabindex="-1"></a><span class="co">#&gt;   idstud idschool idclass                                   schtype sameteach g8g9 ganztag</span></span>
+<span id="cb5-32"><a href="#cb5-32" tabindex="-1"></a><span class="co">#&gt; 1      1      127     392                                Realschule       Yes   NA       1</span></span>
+<span id="cb5-33"><a href="#cb5-33" tabindex="-1"></a><span class="co">#&gt; 2      2       65     201 schools with several courses of education        No   NA       1</span></span>
+<span id="cb5-34"><a href="#cb5-34" tabindex="-1"></a><span class="co">#&gt; 3      3       10      34                Gymnasium (academic track)        No    1       1</span></span>
+<span id="cb5-35"><a href="#cb5-35" tabindex="-1"></a><span class="co">#&gt; 4      4      103     319 schools with several courses of education       Yes   NA       1</span></span>
+<span id="cb5-36"><a href="#cb5-36" tabindex="-1"></a><span class="co">#&gt; 5      5       57     179                                Realschule       Yes   NA       2</span></span>
+<span id="cb5-37"><a href="#cb5-37" tabindex="-1"></a><span class="co">#&gt;   classsize repeated gender</span></span>
+<span id="cb5-38"><a href="#cb5-38" tabindex="-1"></a><span class="co">#&gt; 1         9        1 Female</span></span>
+<span id="cb5-39"><a href="#cb5-39" tabindex="-1"></a><span class="co">#&gt; 2        10        1 Female</span></span>
+<span id="cb5-40"><a href="#cb5-40" tabindex="-1"></a><span class="co">#&gt; 3        28        1   Male</span></span>
+<span id="cb5-41"><a href="#cb5-41" tabindex="-1"></a><span class="co">#&gt; 4        12        1   Male</span></span>
+<span id="cb5-42"><a href="#cb5-42" tabindex="-1"></a><span class="co">#&gt; 5        25        1 Female</span></span></code></pre></div>
 <p>In general, we recommend leaving labeled variables as numeric and
-converting values with missing codes to <code>NA</code>. The latter is
-the default behavior for the argument <code>checkMissings</code>. If
-required, values labels can always be accessed via using
-<code>extractMeta()</code> on the <code>GADSdat</code> object or the
-data base.</p>
+converting values with missing codes to <code>NA</code>. Both are the
+default behavior for <code>extractData2()</code>. If required, value
+labels can always be accessed via using <code>extractMeta()</code> on
+the <code>GADSdat</code> object or the data base.</p>
 </div>
 
 

@@ -12,7 +12,7 @@
 
 <meta name="author" content="Benjamin Becker" />
 
-<meta name="date" content="2023-08-25" />
+<meta name="date" content="2024-10-09" />
 
 <title>getGADS: Using a relational eatGADS data base</title>
 
@@ -51,7 +51,7 @@ overflow: visible;
 </style>
 <style type="text/css" data-origin="pandoc">
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span { line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -62,7 +62,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
 { counter-reset: source-line 0; }
@@ -341,7 +341,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <h1 class="title toc-ignore"><code>getGADS</code>: Using a relational
 eatGADS data base</h1>
 <h4 class="author">Benjamin Becker</h4>
-<h4 class="date">2023-08-25</h4>
+<h4 class="date">2024-10-09</h4>
 
 
 
@@ -357,7 +357,7 @@ can be accessed via the <code>system.file()</code> function.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(eatGADS)</span>
 <span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>db_path <span class="ot">&lt;-</span> <span class="fu">system.file</span>(<span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;pisa.db&quot;</span>, <span class="at">package =</span> <span class="st">&quot;eatGADS&quot;</span>)</span>
 <span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>db_path</span>
-<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="co">#&gt; [1] &quot;C:/Users/beckerbz/AppData/Local/Temp/RtmpWwxvhW/Rinst44a833da3575/eatGADS/extdata/pisa.db&quot;</span></span></code></pre></div>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="co">#&gt; [1] &quot;C:/Users/beckerbz/AppData/Local/Temp/Rtmp0aBbdI/Rinst2988668d356c/eatGADS/extdata/pisa.db&quot;</span></span></code></pre></div>
 <div id="why" class="section level2">
 <h2>Why?</h2>
 <p>Relational data bases created by <code>eatGADS</code> provide an
@@ -545,9 +545,8 @@ via, for example, setting
 <span id="cb7-32"><a href="#cb7-32" tabindex="-1"></a><span class="co">#&gt; 6      6 schools with several courses of education Female</span></span></code></pre></div>
 <p>In general, we recommend leaving labeled variables as numeric and
 converting values with missing codes to <code>NA</code>. If required,
-values labels can always be accessed via using
-<code>extractMeta()</code> on the <code>GADSdat</code> object or the
-data base.</p>
+value labels can always be accessed via using <code>extractMeta()</code>
+on the <code>GADSdat</code> object or the data base.</p>
 </div>
 <div id="selecting-different-hierarchy-levels" class="section level2">
 <h2>Selecting different hierarchy levels</h2>

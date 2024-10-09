@@ -1,3 +1,25 @@
+# eatGADS 1.1.1
+## new features
+* `inspectDifferences()` and `inspectMetaDifferences()` now allow comparisons of variables within the same `GADSdat` object (#62)
+* new function `import_tibble()` allows importing `tibbles` as `GADSdat` objects (#88)
+
+## bug fixes
+* `applyLookup()` now works for multiple variables that contain `NAs` (#68)
+* `applyChangeMeta()` and `recodeGADS()` now correctly perform recodings (and throw errors) if multiple meta data conflicts occur (#57)
+* `removeEmptyValLabels()` for removing unused missing tags and value labels (#4)
+* `extractData()` and `extractData2()` now correctly apply value labels, even when value and value label conflicts exist
+* `write_spss2()` now also handles variables containing only NA values when `format` is also NA (#72)
+* `changeMissings()` now correctly changes missing labels for values of variables with partially non-existent `value`s and/or `valLabel`s (#73)
+* `autoRecode()` now correctly overwrites the existing variable if `var_suffix = ""` (#84)
+* The output of `inspectMetaDifferences()` is now correctly named even if differences in variable labels and `SPSS` format occur (#81)
+* `extractData2()` and `extractData()` now correctly transform variables with duplicate value labels (#77)
+
+## documentation
+* `import_spss` vignette updated to use `extractData2()` instead of `extractData()`
+
+## internal
+* refactored `extractData()` to use `extractData2()` internally (#82)
+
 # eatGADS 1.1.0
 
 ## new features

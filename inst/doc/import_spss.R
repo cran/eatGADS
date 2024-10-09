@@ -1,4 +1,4 @@
-## ---- include = FALSE-----------------------------------------------------------------------------
+## ----include = FALSE------------------------------------------------------------------------------
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
@@ -20,16 +20,16 @@ namesGADS(gads_obj)
 extractMeta(gads_obj, vars = c("schtype", "idschool"))
 
 ## ----extractdata----------------------------------------------------------------------------------
-## convert labeled variables to characters
-dat1 <- extractData(gads_obj, convertLabels = "character")
+## convert all labeled variables to character
+dat1 <- extractData2(gads_obj, labels2character = namesGADS(gads_obj))
 dat1[1:5, 1:10]
 
 ## leave labeled variables as numeric
-dat2 <- extractData(gads_obj, convertLabels = "numeric")
+dat2 <- extractData2(gads_obj)
 dat2[1:5, 1:10]
 
-## leave labeled variables as numeric but convert some variables to character
-dat3 <- extractData(gads_obj, convertLabels = "character", 
-                    convertVariables = c("gender", "language"))
+## leave labeled variables as numeric but convert some variables to character and some to factor
+dat3 <- extractData2(gads_obj, labels2character = c("gender", "language"),
+                     labels2factor = c("schtype", "sameteach"))
 dat3[1:5, 1:10]
 

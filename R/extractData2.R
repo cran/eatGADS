@@ -9,7 +9,7 @@
 #'
 #' A \code{GADSdat} object includes actual data (\code{GADSdat$dat}) and the corresponding meta data information
 #' (\code{GADSdat$labels}). \code{extractData2} extracts the data and applies relevant meta data on value level
-#' (missing conversion, value labels),
+#' (missing tags, value labels),
 #' so the data can be used for analyses in \code{R}. Variable labels are retained as \code{label} attributes on column level.
 #'
 #' If \code{factor} are extracted via \code{labels2factor} or \code{labels2ordered}, an attempt is made to preserve the underlying integers.
@@ -17,6 +17,9 @@
 #' As \code{SPSS} has almost no limitations regarding the underlying values of labeled
 #' integers and \code{R}'s \code{factor} format is very strict (no \code{0}, only integers increasing by \code{+ 1}),
 #' this procedure can lead to frequent problems.
+#'
+#' If multiple values of the same variable are assigned the same value label and the variable should be transformed to
+#' \code{character}, \code{factor}, or \code{ordered}, a warning is issued and the transformation is correctly performed.
 #'
 #'@param GADSdat A \code{GADSdat} object.
 #'@param convertMiss Should values tagged as missing values be recoded to \code{NA}?
@@ -143,38 +146,112 @@ labels2values2 <- function(dat, labels, convertMiss, dropPartialLabels, labels2c
   change_labels <- labels[labels[, "varName"] %in% convertVariables, ]    # careful, from here use only change_labels!
   # check value labels, remove incomplete labels from insertion to protect variables
   if(identical(dropPartialLabels, TRUE)) {
-    drop_labels <- unlist(lapply(unique(labels$varName), check_labels, dat = dat, labels = labels,
+    drop_labels <- unlist(lapply(unique(labels$varName), FUN = check_labels, dat = dat, labels = labels,
                                  convertMiss = convertMiss))
     change_labels <- change_labels[!change_labels$varName %in% drop_labels, ]
   }
-  # convert labels into values
-  changed_variables <- character(0)
   # early return, if no values are to be recoded
   if(nrow(change_labels) == 0) return(dat)
-  # recode values
-  for(i in seq(nrow(change_labels))) {
-    curRow <- change_labels[i, , drop = FALSE]
-    #browser()
-    if(!is.na(curRow$valLabel)) {
-      ## preserve numeric type of variable if possible (although not sure whether this could realistically be the case...)
-      curRow$valLabel <- suppressWarnings(eatTools::asNumericIfPossible(curRow$valLabel, force.string = FALSE))
-      # so far fastest: maybe car? mh...
-      dat[which(dat[, curRow$varName] == curRow$value), curRow$varName] <- curRow$valLabel
-      # dat[, curRow$varName] <- ifelse(dat[, curRow$varName] == curRow$value, curRow$valLabel, dat[, curRow$varName])
-      changed_variables <- unique(c(curRow$varName, changed_variables))
-    }
-  }
+
+  # check for duplicate value labels (unfortunately possible in SPSS)
+  vars_with_duplicate_valLabels <- change_labels[duplicated(change_labels[, c("varName", "valLabel")]), "varName"]
+  if(length(vars_with_duplicate_valLabels) > 0) {
+    for(nam in unique(vars_with_duplicate_valLabels)) {
+      single_change_labels <- change_labels[change_labels$varName == nam, ]
+      dup_valLabels <- single_change_labels[duplicated(single_change_labels$valLabel), "valLabel"]
+      affected_values <- single_change_labels[single_change_labels$valLabel == dup_valLabels, ]
+      for(dup_valLabel in dup_valLabels) {
+        warning("Duplicate value label in variable ", nam, ". The following values (see value column) will be recoded into the same value label (see valLabel column):\n",
+                eatTools::print_and_capture(affected_values))
+
+        # recode actual data to prevent any potential issues with char2fac later
+        value_lookup <- data.frame(oldValues = affected_values[, "value"],
+                                   newValues = affected_values[1, "value"])
+        dat[, nam] <- eatTools::recodeLookup(dat[, nam], value_lookup)
+
+        # remove superfluous meta data
+        change_labels <- change_labels[!(change_labels$varName == nam &
+                                           change_labels$value %in% affected_values[-(1), "value"]), ]
+  }}}
+
+
+  # convert labels into values (use recode function from applyChangeMeta)
+  change_table <- change_labels[, c("varName", "value", "valLabel")]
+  names(change_table) <- c("varName", "value", "value_new")
+  dat2 <- recode_dat(dat, changeTable = change_table)
+
+  # identify modified variables
+  is_character_old <- unlist(lapply(dat, function(var) is.character(var)))
+  is_character_new <- unlist(lapply(dat2, function(var) is.character(var)))
+  changed_variables <- names(dat2)[is_character_new & !is_character_old]
 
   # convert characters to factor if specified (keep ordering if possible)
   #if(!is.null(labels2ordered)) browser()
   changed_variables_labels2factor <- intersect(labels2factor, changed_variables)
   changed_variables <- setdiff(changed_variables, changed_variables_labels2factor)
   if(length(changed_variables_labels2factor) > 0) {
-    dat <- char2fac(dat = dat, labels = labels, vars = changed_variables_labels2factor, convertMiss = convertMiss, ordered = FALSE)
+    dat2 <- char2fac(dat = dat2, labels = change_labels, vars = changed_variables_labels2factor, convertMiss = convertMiss, ordered = FALSE)
   }
   changed_variables_labels2ordered <- intersect(labels2ordered, changed_variables)
   if(length(changed_variables_labels2ordered) > 0) {
-    dat <- char2fac(dat = dat, labels = labels, vars = changed_variables_labels2ordered, convertMiss = convertMiss, ordered = TRUE)
+    dat2 <- char2fac(dat = dat2, labels = change_labels, vars = changed_variables_labels2ordered, convertMiss = convertMiss, ordered = TRUE)
+  }
+  dat2
+}
+
+# check if variable is correctly labeled, issues warning
+check_labels <- function(varName, dat, labels, convertMiss) {
+  # if(varName == "VAR3") browser()
+  real_values <- stats::na.omit(unique(dat[[varName]]))
+  labeled_values <- stats::na.omit(labels[labels$varName == varName, "value"])
+  ## either all labeled
+  if(all(real_values %in% labeled_values)) return()
+  ## or no labels except missings (if missings are recoded, else this is irrelevant)
+  if(identical(convertMiss, TRUE)) {
+    labeled_values <- stats::na.omit(labels[labels$varName == varName & labels$missings == "valid", "value"])
+    if(length(labeled_values) == 0) return(varName)
+  }
+  warning("Variable ", varName, " is partially labeled. Value labels will be dropped for this variable.\n",
+          "Labeled values are: ", paste(labeled_values, collapse = ", "), call. = FALSE)
+
+  varName
+  #warning("Variable ", varName, " is partially labeled. Value labels will be dropped for this variable variable.\nExisting values are: ",
+  #        paste(real_values, collapse = ", "), "\n", "Labeled values are: ", paste(labeled_values_noMiss, collapse = ", "), call. = FALSE)
+}
+
+# convert characters to factor if specified (keep ordering if possible)
+char2fac <- function(dat, labels, vars, convertMiss, ordered = FALSE) {
+  partially_labeled <- unordered_facs <- vars
+  for(i in vars) {
+    fac_meta <- labels[labels$varName == i & (is.na(labels$missings) | labels$missings != "miss")  , c("value", "valLabel")]
+    ## additionalcolumns relevant, if missings are not converted
+    if(convertMiss == FALSE) fac_meta <- labels[labels$varName == i, c("value", "valLabel")]
+    fac_meta <- fac_meta[order(fac_meta$value), ]
+
+    ## 3 scenarios: a) ordering possible, b) ordering impossible because no strictly integers from 1 rising,
+    # c) Ordering impossible because partially labelled
+    if(nrow(fac_meta) < length(unique(dat[!is.na(dat[, i]), i]))) {
+      dat[, i] <- factor(dat[, i])
+      unordered_facs <- unordered_facs[unordered_facs != i]
+    } else{
+      partially_labeled <- partially_labeled[partially_labeled != i]
+      if(all(fac_meta$value == seq(nrow(fac_meta)))) unordered_facs <- unordered_facs[unordered_facs != i]
+
+      dat[, i] <- factor(dat[, i], levels = fac_meta$valLabel, ordered = ordered)
+    }
+  }
+
+  if(length(partially_labeled) > 0) warning("For the following factor variables only incomplete value labels are available, rendering the underlying integers meaningless: ",
+                                            paste(partially_labeled, collapse = ", "))
+  if(length(unordered_facs) > 0) warning("For the following factor variables the underlying integers can not be preserved due to R-incompatible ordering of numeric values: ",
+                                         paste(unordered_facs, collapse = ", "))
+  dat
+}
+
+varLabels_as_labels <- function(dat, labels) {
+  for(i in names(dat)) {
+    varLabel <- labels[match(i, labels$varName), "varLabel"]
+    if(!is.na(varLabel)) attr(dat[[i]], "label") <- varLabel
   }
   dat
 }
