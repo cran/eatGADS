@@ -1,3 +1,28 @@
+# eatGADS 1.2.0
+## new features
+* `dropDuplicateIDs()` allows dropping duplicate IDs based on number of missings on selected variables (#67)
+* `changeValLabels()` and `changeMissings()` allow changing value labels and missing tags for multiple variables at once (#33)
+* `recodeGADS()` allows recoding multiple variables at once (#107)
+* `merge.GADSdat()` allows automatically assigning NAs created through merging a missing code and a value label (#1)
+* `equalData()` and `equalMeta()` now split the functionality of `equalGADS()`
+* `equalData()` and `equalGADS()` now support multiple id variables (`id`)
+
+## changes
+* `inspectMetaDifferences()` now provides consistent output for variable label differences
+
+## bug fixes
+* `extractData2()` and `extractData()` no longer throw an error if multiple values of the same variable are labeled `NA` (#96)
+* `extractData2()` and `extractData()` no longer produce an error if there are multiple duplicate value labels in a variable 
+* `extractData2()` and `extractData()` no longer produce a warning if multiple duplicate value labels occur which are tagged and transformed to `NA` anyway (#98)
+* `extractData2()` and `extractData()` now provide consistent output for values which have `NA` as value label (#100)
+* `inspectMetaDifferences()` now correctly reports differences for meta data with differing row names (#102)
+* hot fix for `existingMeta` argument in `recodeGADS()` and `applyChangeMeta()`, which was ignored when values were recoded into each other (#104)
+* fix unclear documentation in `removeValLabels()` (#111)
+* fix `changeMissings()` bug which dropped a single, existing value label and threw an error (#121)
+* `checkMissingValLabels()` now correctly recognizes large integers (#124)
+* Checks for case insensitive duplicate variable names are now run by `checkVarNames()` and not outside of it
+* `equalData()` and `equalGADS()` now work with `GADSdat` objects of length one (#127)
+
 # eatGADS 1.1.1
 ## new features
 * `inspectDifferences()` and `inspectMetaDifferences()` now allow comparisons of variables within the same `GADSdat` object (#62)

@@ -146,39 +146,50 @@ labels2values2 <- function(dat, labels, convertMiss, dropPartialLabels, labels2c
   change_labels <- labels[labels[, "varName"] %in% convertVariables, ]    # careful, from here use only change_labels!
   # check value labels, remove incomplete labels from insertion to protect variables
   if(identical(dropPartialLabels, TRUE)) {
-    drop_labels <- unlist(lapply(unique(labels$varName), FUN = check_labels, dat = dat, labels = labels,
+    drop_labels <- unlist(lapply(unique(change_labels$varName), FUN = check_labels, dat = dat, labels = labels,
                                  convertMiss = convertMiss))
     change_labels <- change_labels[!change_labels$varName %in% drop_labels, ]
   }
+  # if values tagged as missing are converted to NA anyway, there is no need to recode them
+  if(identical(convertMiss, TRUE)) {
+    change_labels <- change_labels[is.na(change_labels$missings) | change_labels$missings == "valid", ]
+  }
+
   # early return, if no values are to be recoded
   if(nrow(change_labels) == 0) return(dat)
 
   # check for duplicate value labels (unfortunately possible in SPSS)
-  vars_with_duplicate_valLabels <- change_labels[duplicated(change_labels[, c("varName", "valLabel")]), "varName"]
+  vars_with_duplicate_valLabels <- unique(change_labels[duplicated(change_labels[, c("varName", "valLabel")]), "varName"])
   if(length(vars_with_duplicate_valLabels) > 0) {
-    for(nam in unique(vars_with_duplicate_valLabels)) {
+    for(nam in vars_with_duplicate_valLabels) {
       single_change_labels <- change_labels[change_labels$varName == nam, ]
       dup_valLabels <- single_change_labels[duplicated(single_change_labels$valLabel), "valLabel"]
-      affected_values <- single_change_labels[single_change_labels$valLabel == dup_valLabels, ]
+      # exclude NAs. If valLables are NA, no label is applied anyway
+      dup_valLabels <- dup_valLabels[!is.na(dup_valLabels)]
+      affected_values <- single_change_labels[single_change_labels$valLabel %in% dup_valLabels, ]
+
+      warning("Duplicate value label in variable ", nam
+              , ". The following values (see value column) will be recoded into the same value label (see valLabel column):\n",
+              eatTools::print_and_capture(affected_values))
+
       for(dup_valLabel in dup_valLabels) {
-        warning("Duplicate value label in variable ", nam, ". The following values (see value column) will be recoded into the same value label (see valLabel column):\n",
-                eatTools::print_and_capture(affected_values))
+        single_affected_values <- affected_values[affected_values$valLabel == dup_valLabel, ]
 
         # recode actual data to prevent any potential issues with char2fac later
-        value_lookup <- data.frame(oldValues = affected_values[, "value"],
-                                   newValues = affected_values[1, "value"])
+        value_lookup <- data.frame(oldValues = single_affected_values[, "value"],
+                                   newValues = single_affected_values[1, "value"])
         dat[, nam] <- eatTools::recodeLookup(dat[, nam], value_lookup)
 
         # remove superfluous meta data
         change_labels <- change_labels[!(change_labels$varName == nam &
-                                           change_labels$value %in% affected_values[-(1), "value"]), ]
+                                           change_labels$value %in% single_affected_values[-(1), "value"]), ]
   }}}
 
 
   # convert labels into values (use recode function from applyChangeMeta)
   change_table <- change_labels[, c("varName", "value", "valLabel")]
   names(change_table) <- c("varName", "value", "value_new")
-  dat2 <- recode_dat(dat, changeTable = change_table)
+  dat2 <- recode_dat(dat, changeTable = change_table, removeNAs = FALSE)
 
   # identify modified variables
   is_character_old <- unlist(lapply(dat, function(var) is.character(var)))
@@ -190,11 +201,13 @@ labels2values2 <- function(dat, labels, convertMiss, dropPartialLabels, labels2c
   changed_variables_labels2factor <- intersect(labels2factor, changed_variables)
   changed_variables <- setdiff(changed_variables, changed_variables_labels2factor)
   if(length(changed_variables_labels2factor) > 0) {
-    dat2 <- char2fac(dat = dat2, labels = change_labels, vars = changed_variables_labels2factor, convertMiss = convertMiss, ordered = FALSE)
+    dat2 <- char2fac(dat = dat2, ori_dat = dat,
+                     labels = change_labels, vars = changed_variables_labels2factor, convertMiss = convertMiss, ordered = FALSE)
   }
   changed_variables_labels2ordered <- intersect(labels2ordered, changed_variables)
   if(length(changed_variables_labels2ordered) > 0) {
-    dat2 <- char2fac(dat = dat2, labels = change_labels, vars = changed_variables_labels2ordered, convertMiss = convertMiss, ordered = TRUE)
+    dat2 <- char2fac(dat = dat2, ori_dat = dat,
+                     labels = change_labels, vars = changed_variables_labels2ordered, convertMiss = convertMiss, ordered = TRUE)
   }
   dat2
 }
@@ -220,7 +233,7 @@ check_labels <- function(varName, dat, labels, convertMiss) {
 }
 
 # convert characters to factor if specified (keep ordering if possible)
-char2fac <- function(dat, labels, vars, convertMiss, ordered = FALSE) {
+char2fac <- function(dat, ori_dat, labels, vars, convertMiss, ordered = FALSE) {
   partially_labeled <- unordered_facs <- vars
   for(i in vars) {
     fac_meta <- labels[labels$varName == i & (is.na(labels$missings) | labels$missings != "miss")  , c("value", "valLabel")]
@@ -237,7 +250,7 @@ char2fac <- function(dat, labels, vars, convertMiss, ordered = FALSE) {
       partially_labeled <- partially_labeled[partially_labeled != i]
       if(all(fac_meta$value == seq(nrow(fac_meta)))) unordered_facs <- unordered_facs[unordered_facs != i]
 
-      dat[, i] <- factor(dat[, i], levels = fac_meta$valLabel, ordered = ordered)
+      dat[, i] <- factor(ori_dat[, i], levels = fac_meta$value, labels = fac_meta$valLabel, ordered = ordered)
     }
   }
 

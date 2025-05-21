@@ -25,17 +25,19 @@ test_that("Compare two identical GADSdat objects",{
   expect_equal(out2$valDiff, "all.equal")
 })
 
+
 test_that("Differences on variable level",{
   df1_2 <- changeVarLabels(df1, "V1", "some label")
   out <- inspectMetaDifferences(df1, varName = "V1", other_GADSdat = df1_2)
   expect_equal(names(out), c("varDiff", "valDiff"))
-  expect_equal(names(out$varDiff), c("GADSdat_varLabel", "other_GADSdat_varLabel"))
-  expect_equal(as.character(out$varDiff[1, ]), c(NA, "some label"))
+  expect_equal(names(out$varDiff), c("GADSdat_varLabel", "GADSdat_format",
+                                     "other_GADSdat_varLabel", "other_GADSdat_format"))
+  expect_equal(as.character(out$varDiff[1, ]), c(NA, "F8.2", "some label", "F8.2"))
   expect_equal(out$valDiff, "all.equal")
 
   out2 <- inspectMetaDifferences(df1_2, varName = "ID1", other_varName = "V1")
-  expect_equal(names(out2$varDiff), c("ID1_varLabel", "V1_varLabel"))
-  expect_equal(as.character(out2$varDiff[1, ]), c(NA, "some label"))
+  expect_equal(names(out2$varDiff), c("ID1_varLabel", "ID1_format", "V1_varLabel", "V1_format"))
+  expect_equal(as.character(out2$varDiff[1, ]), c(NA, "F8.2", "some label", "F8.2"))
 })
 
 
@@ -66,6 +68,19 @@ test_that("Differences on value level",{
   expect_equal(out3$valDiff[, "value"], 1)
   expect_equal(out3$valDiff[, "GADSdat_missings"], c("miss"))
   expect_equal(out3$valDiff[, "other_GADSdat_missings"], c("valid"))
+})
+
+# inspectMetaDifferences should ignore differences in row.names
+test_that("Differences on value level which lead to differences in row.names",{
+  gads1 <- import_DF(data.frame(var1 = 1:4))
+  gads1 <- changeValLabels(gads1, varName = "var1", value = 1:4, valLabel = paste0("Value ", 1:4))
+  gads1 <- changeMissings(gads1, varName = "var1", value = 99, missings = "miss")
+  gads2 <- changeValLabels(gads1, varName = "var1", value = 2, valLabel = "Value 2b")
+  gads2 <- changeMissings(gads2, varName = "var1", value = -99, missings = "miss")
+
+  out <- inspectMetaDifferences(gads1, varName = "var1", other_GADSdat = gads2)
+  expect_equal(nrow(out$valDiff), 2)
+  expect_equal(out$valDiff$value, c(-99, 2))
 })
 
 test_that("Differences after recoding",{

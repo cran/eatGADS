@@ -22,13 +22,13 @@ lookup <- createLookup(GADSdat = gads, recodeVars = "stringvar", sort_by = 'valu
 lookup
 
 ## ----lookup export, eval=FALSE--------------------------------------------------------------------
-#  # write lookup table to Excel
-#  eatAnalysis::write_xlsx(lookup, "lookup_forcedChoice.xlsx")
+# # write lookup table to Excel
+# eatAnalysis::write_xlsx(lookup, "lookup_forcedChoice.xlsx")
 
 ## ----lookup reimport, eval=FALSE------------------------------------------------------------------
-#  # read lookup table back to R
-#  lookup <- readxl::read_xlsx("lookup_forcedChoice.xlsx")
-#  lookup
+# # read lookup table back to R
+# lookup <- readxl::read_xlsx("lookup_forcedChoice.xlsx")
+# lookup
 
 ## ----fill in values, echo=FALSE-------------------------------------------------------------------
 lookup$new <- c("missing", "England", NA, "Germany", "Germany", NA, "Italy")

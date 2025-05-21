@@ -5,23 +5,23 @@ knitr::opts_chunk$set(
 )
 
 ## ----installation, eval = FALSE-------------------------------------------------------------------
-#  devtools::install_github("beckerbenj/eatGADS")
+# devtools::install_github("beckerbenj/eatGADS")
 
 ## ----library, message = FALSE---------------------------------------------------------------------
 # loading the package
 library(eatGADS)
 
 ## ----import_spss, eval = FALSE--------------------------------------------------------------------
-#  # importing an SPSS file
-#  gads <- import_spss("path/example.sav")
+# # importing an SPSS file
+# gads <- import_spss("path/example.sav")
 
 ## ----import data into r, eval = FALSE-------------------------------------------------------------
-#  # importing text files
-#  input_txt <- read.table("path/example.txt", stringsAsFactors = FALSE)
-#  # importing German csv files (; separated)
-#  input_csv <- read.csv2("path/example.csv", stringsAsFactors = FALSE)
-#  # importing Excel files
-#  input_xlsx <- readxl::read_excel("path/example.xlsx")
+# # importing text files
+# input_txt <- read.table("path/example.txt", stringsAsFactors = FALSE)
+# # importing German csv files (; separated)
+# input_csv <- read.csv2("path/example.csv", stringsAsFactors = FALSE)
+# # importing Excel files
+# input_xlsx <- readxl::read_excel("path/example.xlsx")
 
 ## ----import_raw-----------------------------------------------------------------------------------
 # Example data set
@@ -50,8 +50,8 @@ gads <- import_raw(df = df, varLabels = varLabels, valLabels = valLabels)
 gads 
 
 ## ----save gads, eval = FALSE----------------------------------------------------------------------
-#  # Inpsect resulting object
-#  saveRDS(gads, "path/gads.RDS")
+# # Inpsect resulting object
+# saveRDS(gads, "path/gads.RDS")
 
 ## ----extractMeta----------------------------------------------------------------------------------
 # Inpsect resulting object 
@@ -94,7 +94,7 @@ gads5 <- applyChangeMeta(varChanges, gads)
 extractMeta(gads5, vars = "ID")
 
 ## ----write spss, eval = FALSE---------------------------------------------------------------------
-#  write_spss(gads, "path/example_out.sav")
+# write_spss(gads, "path/example_out.sav")
 
 ## ----export to haven, eval = TRUE-----------------------------------------------------------------
 haven_dat <- export_tibble(gads)
